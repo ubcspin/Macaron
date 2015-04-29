@@ -48,10 +48,12 @@ var ClickDrag = React.createClass({
 						.range([0,this.props.height]);
 
 		return (
+			<div id="app">
+				<SoundGen frequency={this.state.x*400+50}/>
 				<svg id="chart" width={this.props.width} height={this.props.height} onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp}>
 					<circle cx={xScale(this.state.x)} cy={yScale(this.state.y)} fill="black" r={this.state.r}></circle>
 				</svg>
-				);
+			</div>);
 		}
 
 	});
