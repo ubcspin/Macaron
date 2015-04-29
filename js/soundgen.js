@@ -3,7 +3,7 @@
 	SoundGen
 
 	A react component that wraps a sound generator,
-	right now, this is Flocking. 
+	right now, this is Audiolet. 
 
 */
 
