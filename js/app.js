@@ -31,7 +31,7 @@ var ClickDrag = React.createClass({
 						.range([0,this.props.height]);
 
 			var newX = xScale.invert(event.clientX);
-			var newY = xScale.invert(event.clientY);
+			var newY = yScale.invert(event.clientY);
 
 	 		this.setState({x:newX, y:newY});
 		}
