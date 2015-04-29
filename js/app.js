@@ -46,10 +46,16 @@ var ClickDrag = React.createClass({
 			var yScale = d3.scale.linear()
 						.domain([0,1])
 						.range([0,this.props.height]);
+			var freqScale = d3.scale.linear()
+						.domain([0,1])
+						.range([50, 500]);
+			var ampScale = d3.scale.linear()
+						.domain([0,1])
+						.range([1, 0]);
 
 		return (
 			<div id="app">
-				<SoundGen frequency={this.state.x*400+50}/>
+				<SoundGen frequency={freqScale(this.state.x)} amplitude={ampScale(this.state.y)}/>
 				<svg id="chart" width={this.props.width} height={this.props.height} onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp}>
 					<circle cx={xScale(this.state.x)} cy={yScale(this.state.y)} fill="black" r={this.state.r}></circle>
 				</svg>

@@ -10,13 +10,15 @@
 var SoundGen = React.createClass({
 
 	propTypes: {
-		frequency: React.PropTypes.number.isRequired
+		frequency: React.PropTypes.number.isRequired,
+		amplitude: React.PropTypes.number.isRequired
 			},
 
 	getInitialState : function() {
 		return {
 			audiolet: null,
-			sine: null
+			sine: null,
+			mult: null
 		}
 
 	},
@@ -25,11 +27,15 @@ var SoundGen = React.createClass({
 
 		var audiolet = new Audiolet();
 		var sine = new Sine(audiolet, this.props.frequency);
-		sine.connect(audiolet.output);
+		var mult = new Multiply(audiolet, this.props.amplitude);
+		sine.connect(mult);
+		mult.connect(audiolet.output);
+
 
 		this.setState( {
 			audiolet: audiolet,
-			sine: sine
+			sine: sine,
+			mult: mult
 		});
 	},
 
@@ -42,6 +48,7 @@ var SoundGen = React.createClass({
 
 	render: function() {
 		this.state.sine.frequency.setValue(this.props.frequency);
+		this.state.mult.value.setValue(this.props.amplitude);
 		return <div id="soundgen"></div>
 
 	}
