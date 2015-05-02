@@ -1,0 +1,28 @@
+
+
+/* Control bar Styles */
+.controlbar {
+	background:orange;
+	height:20px;
+	width:300;
+}
+
+
+/* PlayHead */
+.playhead {
+	height:20px;
+	background:blue;
+}
+
+/* IconVis */
+.iconvis {
+	height:20px;
+	background:purple;
+
+}
+
+/* Keyframe Editor */
+.keyframeeditor {
+	height:20px;
+	background:red;
+}

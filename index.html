@@ -3,11 +3,19 @@
 <head>
   	<!--<meta http-equiv="content-type" content="text/html; charset=UTF8">-->
   	<meta charset="UTF8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+   
+    <title>Macaron Editor</title>
 
 	<!-- CSS -->
-  	<script src="thirdparty/bootstrap-3.3.4-dist/css/bootstrap.css"></script>
+  	<script type="text/css" src="thirdparty/bootstrap-3.3.4-dist/css/bootstrap.css"></script>
+	<script type="text/css" src="css/macaron.css"></script>
+
 
   	<!-- Libraries-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
   	<script src="thirdparty/bootstrap-3.3.4-dist/js/bootstrap.js"></script>
 	<script src="thirdparty/react/react.js"></script>
 	<script src="thirdparty/jsx/JSXTransformer.js"></script>
@@ -16,11 +24,14 @@
 
 	<!-- Source code -->
 	<script type="text/jsx" src="js/soundgen.js"></script>
+	<script type="text/jsx" src="js/controlbar.js"></script>
+	<script type="text/jsx" src="js/playhead.js"></script>
+	<script type="text/jsx" src="js/iconvis.js"></script>
+	<script type="text/jsx" src="js/keyframeeditor.js"></script>
 </head>
 
 
 <body>
-	<div id="mount-point"><div>
 	<script type="text/jsx" src="js/app.js"></script>
 </body>
 
