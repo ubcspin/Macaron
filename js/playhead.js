@@ -5,7 +5,9 @@ var PlayHead = React.createClass({
 	propTypes: {
 		duration: React.PropTypes.number.isRequired,
 		currentTime: React.PropTypes.number.isRequired,
-		keyframeCircleRadius: React.PropTypes.number.isRequired
+		keyframeCircleRadius: React.PropTypes.number.isRequired,
+		playheadFill: React.PropTypes.string.isRequired
+
 
 			},
 	
@@ -14,7 +16,6 @@ var PlayHead = React.createClass({
 	      height: 20,
 	      width:'100%',
 	      playheadWidth: 20,
-	      playheadFill: "red",
 	      background:'#EEEEEE'
 	    }
 	},

@@ -37,7 +37,8 @@ var App = React.createClass({
 	getDefaultProps: function() {
 
 		return {
-			keyframeCircleRadius:5
+			keyframeCircleRadius:5,
+			playheadFill:"red"
 		}
 
 	},
@@ -47,10 +48,10 @@ var App = React.createClass({
 		return (
 			<div id="app">
 				<ControlBar playing={this.state.playing} />
-				<PlayHead currentTime={this.state.currentTime} duration={this.state.vtIcon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius}/>
+				<PlayHead currentTime={this.state.currentTime} duration={this.state.vtIcon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 				<IconVis />
-				<KeyframeEditor parameter="amplitude" vticon={this.state.vtIcon} keyframeCircleRadius={this.props.keyframeCircleRadius}/>
-				<KeyframeEditor  parameter="frequency" vticon={this.state.vtIcon} keyframeCircleRadius={this.props.keyframeCircleRadius}/>
+				<KeyframeEditor currentTime={this.state.currentTime} parameter="amplitude" vticon={this.state.vtIcon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+				<KeyframeEditor currentTime={this.state.currentTime} parameter="frequency" vticon={this.state.vtIcon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 			</div>);
 		}
 

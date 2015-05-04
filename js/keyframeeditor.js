@@ -5,7 +5,9 @@ var KeyframeEditor = React.createClass({
 	propTypes: {
 		parameter : React.PropTypes.string.isRequired,
 		vticon : React.PropTypes.object.isRequired,
-		keyframeCircleRadius: React.PropTypes.number.isRequired
+		keyframeCircleRadius: React.PropTypes.number.isRequired,
+		playheadFill: React.PropTypes.string.isRequired,
+		currentTime: React.PropTypes.number.isRequired,
 			},
 	
 	getDefaultProps: function() {
@@ -91,6 +93,21 @@ var KeyframeEditor = React.createClass({
 				.concat([{t:this.props.vticon.duration, value:lastValue}])
 				.concat([{t:this.props.vticon.duration, value:valueScale[0]}]));
 
+
+		//current time vis
+
+		var currentTimeLineFunc = d3.svg.line()
+								.x(function(d) {
+									return d[0]
+								})
+								.y(function(d) {
+									return d[1]
+								});
+		var currentTimePath = currentTimeLineFunc([
+						[scaleX(this.props.currentTime), 0],
+						[scaleX(this.props.currentTime), this.state.actualHeight]	
+				]);
+
 		return (
 				<div ref="divWrapper" style={divStyle}>
 					<svg  width="100%" height="100%">
@@ -109,6 +126,8 @@ var KeyframeEditor = React.createClass({
 
 							})
 						}
+						<path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />
+
 					</svg>
 				</div>
 			);
