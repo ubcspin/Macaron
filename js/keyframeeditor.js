@@ -13,7 +13,7 @@ var KeyframeEditor = React.createClass({
 	      width:500,
 	      background:'yellow',
 	      circleRadius:5,
-	      circleColor:'blue'
+	      circleColor:'#FF8400'
 	    }
 	},
 
@@ -22,13 +22,27 @@ var KeyframeEditor = React.createClass({
 		var circleRadius = this.props.circleRadius;
 		var circleColor = this.props.circleColor;
 
+		var data = this.props.vticon[this.props.parameter].data;
+		var valueScale = this.props.vticon[this.props.parameter].valueScale;
+
+
 		var scaleX = d3.scale.linear()
                     .domain([0, this.props.vticon.duration])
                     .range([circleRadius, this.props.width-circleRadius]);
 
         var scaleY = d3.scale.linear()
-                    .domain(this.props.vticon[this.props.parameter].valueScale)
+                    .domain(valueScale)
                     .range([this.props.height-circleRadius, circleRadius]);
+
+        var lineGen = d3.svg.line()
+                            .x(function(d)
+                            {
+                                return scaleX(d.t);
+                            })
+                            .y(function(d)
+                            {
+                                return scaleY(d.value);
+                            });
 
 		var divStyle = {
 			height:this.props.height,
@@ -37,9 +51,25 @@ var KeyframeEditor = React.createClass({
 		};
 
 
+		var firstValue = data[0].value;
+		var lastValue = data[data.length-1].value;
+
+		var fillPath =lineGen(
+				[{t:0, value:valueScale[0]}]
+				.concat([{t:0, value:firstValue}])
+				.concat(data)
+				.concat([{t:this.props.vticon.duration, value:lastValue}])
+				.concat([{t:this.props.vticon.duration, value:valueScale[0]}]));
+
 		return (
 			<svg width={this.props.width} height={this.props.height}>
-				{this.props.vticon[this.props.parameter].data.map(function(d)
+				<path
+					d={fillPath}
+					fill="#FFDDAD"
+					stroke="#FFDDAD">
+				</path>
+
+				{data.map(function(d)
 					{
 						return (
 							<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={circleRadius} fill={circleColor}>
