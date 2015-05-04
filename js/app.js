@@ -50,4 +50,4 @@ var App = React.createClass({
 	});
 
 
-		React.render(<App width="500" height="500" />, document.body);
+		React.render(<App width="100%" height="100%" />, document.body);
