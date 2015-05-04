@@ -17,7 +17,7 @@ var App = React.createClass({
 						amplitude: {
 							valueScale:[0,1], //normalized
 							data : [
-								{ t: 0, value:0}, 
+								{ t: 200, value:0.5}, 
 								{ t: 500, value:1},
 								{ t: 1000, value:0}]
 						},
