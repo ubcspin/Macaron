@@ -3,18 +3,56 @@
 var PlayHead = React.createClass({
 
 	propTypes: {
+		duration: React.PropTypes.number.isRequired,
+		currentTime: React.PropTypes.number.isRequired,
+		keyframeCircleRadius: React.PropTypes.number.isRequired
+
 			},
 	
 	getDefaultProps: function() {
 	    return {
-	      height: '50px',
+	      height: 20,
 	      width:'100%',
-	      background:'blue'
-
+	      playheadWidth: 20,
+	      playheadFill: "red",
+	      background:'#EEEEEE'
 	    }
 	},
 
+	//TODO: move this resizing stuff into a mixin
+
+	handleResize: function(e) {
+    	var width = this.refs.divWrapper.getDOMNode().clientWidth;
+    	var height = this.refs.divWrapper.getDOMNode().clientHeight;;
+
+    	this.setState( {actualWidth:width, actualHeight:height} );
+
+	},
+
+
+	getInitialState: function() {
+
+		return {
+			actualWidth:10,
+			actualHeight:10
+		}
+
+	},
+
+
+  	componentDidMount: function () {
+
+		window.addEventListener('resize', this.handleResize);
+    	
+    	var width = this.refs.divWrapper.getDOMNode().clientWidth;
+    	var height = this.refs.divWrapper.getDOMNode().clientHeight;;
+
+    	this.setState( {actualWidth:width, actualHeight:height} );
+   	},
+
 	render : function() {
+		var circleRadius = this.props.keyframeCircleRadius;
+
 
 		var divStyle = {
 			height:this.props.height,
@@ -22,8 +60,25 @@ var PlayHead = React.createClass({
 			background:this.props.background
 		};
 
+		//TODO: Put this scaleX into App somewhere, it's shared with several components
+		var scaleX = d3.scale.linear()
+                    .domain([0, this.props.duration])
+                    .range([circleRadius, this.state.actualWidth-circleRadius]);
+
+
+        var x = scaleX(this.props.currentTime);
+        var playheadWidth = this.props.playheadWidth;
+        var h = this.props.height;
+		var playheadPoints = (x-playheadWidth/2) + "," + 0 + " " 
+								+ (x+playheadWidth/2) + "," + 0 + " "
+								+ x + "," + h;
 		return (
-			<div style={divStyle}></div>
+
+			<div ref="divWrapper" style={divStyle}>
+				<svg width="100%" height="100%">
+					<polygon points={playheadPoints} fill={this.props.playheadFill} />
+				</svg>
+			</div>
 			);
 	}
 

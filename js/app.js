@@ -4,7 +4,7 @@ var App = React.createClass({
 	getInitialState : function () {
 		return {
 					playing: false,
-					currentTime: 0,
+					currentTime: 450,
 					loop : {
 						enabled:false,
 						start:0, //ms
@@ -34,16 +34,23 @@ var App = React.createClass({
 		}
 	},
 
+	getDefaultProps: function() {
+
+		return {
+			keyframeCircleRadius:5
+		}
+
+	},
 	
 	render : function() {
 
 		return (
 			<div id="app">
 				<ControlBar playing={this.state.playing} />
-				<PlayHead />
+				<PlayHead currentTime={this.state.currentTime} duration={this.state.vtIcon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius}/>
 				<IconVis />
-				<KeyframeEditor parameter="amplitude" vticon={this.state.vtIcon}/>
-				<KeyframeEditor  parameter="frequency" vticon={this.state.vtIcon}/>
+				<KeyframeEditor parameter="amplitude" vticon={this.state.vtIcon} keyframeCircleRadius={this.props.keyframeCircleRadius}/>
+				<KeyframeEditor  parameter="frequency" vticon={this.state.vtIcon} keyframeCircleRadius={this.props.keyframeCircleRadius}/>
 			</div>);
 		}
 

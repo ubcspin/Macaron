@@ -4,14 +4,14 @@ var KeyframeEditor = React.createClass({
 
 	propTypes: {
 		parameter : React.PropTypes.string.isRequired,
-		vticon : React.PropTypes.object.isRequired
+		vticon : React.PropTypes.object.isRequired,
+		keyframeCircleRadius: React.PropTypes.number.isRequired
 			},
 	
 	getDefaultProps: function() {
 	    return {
 	      height: 100,
 	      width:"100%",
-	      circleRadius:5,
 	      circleColor:'#FF8400'
 	    }
 	},
@@ -48,20 +48,21 @@ var KeyframeEditor = React.createClass({
 
 	render : function() {
 
-		var circleRadius = this.props.circleRadius;
+		var keyframeCircleRadius = this.props.keyframeCircleRadius;
 		var circleColor = this.props.circleColor;
 
 		var data = this.props.vticon[this.props.parameter].data;
 		var valueScale = this.props.vticon[this.props.parameter].valueScale;
 
 
+		//TODO: Put this scaleX into App somewhere, it's shared with several components
 		var scaleX = d3.scale.linear()
                     .domain([0, this.props.vticon.duration])
-                    .range([circleRadius, this.state.actualWidth-circleRadius]);
+                    .range([keyframeCircleRadius, this.state.actualWidth-keyframeCircleRadius]);
 
         var scaleY = d3.scale.linear()
                     .domain(valueScale)
-                    .range([this.state.actualHeight-circleRadius, circleRadius]);
+                    .range([this.state.actualHeight-keyframeCircleRadius, keyframeCircleRadius]);
 
         var lineGen = d3.svg.line()
                             .x(function(d)
@@ -102,7 +103,7 @@ var KeyframeEditor = React.createClass({
 						{data.map(function(d)
 							{
 								return (
-									<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={circleRadius} fill={circleColor}>
+									<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={keyframeCircleRadius} fill={circleColor}>
 									</circle>
 									);
 
