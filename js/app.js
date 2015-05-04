@@ -39,7 +39,7 @@ var App = React.createClass({
 
 		return (
 			<div id="app">
-				<ControlBar />
+				<ControlBar playing={this.state.playing} />
 				<PlayHead />
 				<IconVis />
 				<KeyframeEditor parameter="amplitude" vticon={this.state.vtIcon}/>

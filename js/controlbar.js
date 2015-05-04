@@ -3,13 +3,15 @@
 var ControlBar = React.createClass({
 
 	propTypes: {
+		playing: React.PropTypes.bool.isRequired
 			},
 
 	getDefaultProps: function() {
 	    return {
-	      height: '50px',
 	      width:'100%',
-	      background:'black'
+	      background:'lightgrey',
+	      fontSize: "28pt",
+
 
 	    }
 	},
@@ -19,11 +21,34 @@ var ControlBar = React.createClass({
 		var divStyle = {
 			height:this.props.height,
 			width:this.props.width,
-			background:this.props.background
+			background:this.props.background,
+			fontSize:this.props.fontSize
 		};
 
+		var timeControlStyle  = {
+			marginLeft:'auto',
+			marginRight:'auto',
+			textAlign:'center'
+		};
+
+		var buttonStyle = {
+			marginLeft:'0.5em',
+			marginRight:'0.5em'
+		};
+
+		var iconText = "fa fa-play";
+		if (this.props.playing) {
+			iconText = "fa fa-pause";
+		}
+
 		return (
-			<div style={divStyle}></div>
+			<div className="controlbar" style={divStyle}>
+				<div className="time-control" style={timeControlStyle}>
+					 <i className="fa fa-step-backward" style={buttonStyle}></i>
+					 <i className={iconText} style={buttonStyle}></i>
+					 <i className="fa fa-step-forward" style={buttonStyle}></i>
+				</div>	
+			</div>
 			);
 	}
 

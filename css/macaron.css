@@ -1,12 +1,9 @@
 
 
 /* Control bar Styles */
-.controlbar {
-	background:orange;
-	height:20px;
-	width:300;
+.controlbutton {
+	padding:5px;
 }
-
 
 /* PlayHead */
 .playhead {
