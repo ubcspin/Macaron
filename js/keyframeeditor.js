@@ -9,13 +9,42 @@ var KeyframeEditor = React.createClass({
 	
 	getDefaultProps: function() {
 	    return {
-	      height: 50,
-	      width:500,
-	      background:'yellow',
+	      height: 100,
+	      width:"100%",
 	      circleRadius:5,
 	      circleColor:'#FF8400'
 	    }
 	},
+
+
+	handleResize: function(e) {
+    	var width = this.refs.divWrapper.getDOMNode().clientWidth;
+    	var height = this.refs.divWrapper.getDOMNode().clientHeight;;
+
+    	this.setState( {actualWidth:width, actualHeight:height} );
+
+	},
+
+
+	getInitialState: function() {
+
+		return {
+			actualWidth:10,
+			actualHeight:10
+		}
+
+	},
+
+
+  	componentDidMount: function () {
+
+		window.addEventListener('resize', this.handleResize);
+    	
+    	var width = this.refs.divWrapper.getDOMNode().clientWidth;
+    	var height = this.refs.divWrapper.getDOMNode().clientHeight;;
+
+    	this.setState( {actualWidth:width, actualHeight:height} );
+   	},
 
 	render : function() {
 
@@ -28,11 +57,11 @@ var KeyframeEditor = React.createClass({
 
 		var scaleX = d3.scale.linear()
                     .domain([0, this.props.vticon.duration])
-                    .range([circleRadius, this.props.width-circleRadius]);
+                    .range([circleRadius, this.state.actualWidth-circleRadius]);
 
         var scaleY = d3.scale.linear()
                     .domain(valueScale)
-                    .range([this.props.height-circleRadius, circleRadius]);
+                    .range([this.state.actualHeight-circleRadius, circleRadius]);
 
         var lineGen = d3.svg.line()
                             .x(function(d)
@@ -62,23 +91,25 @@ var KeyframeEditor = React.createClass({
 				.concat([{t:this.props.vticon.duration, value:valueScale[0]}]));
 
 		return (
-			<svg width={this.props.width} height={this.props.height}>
-				<path
-					d={fillPath}
-					fill="#FFDDAD"
-					stroke="#FFDDAD">
-				</path>
+				<div ref="divWrapper" style={divStyle}>
+					<svg  width="100%" height="100%">
+						<path
+							d={fillPath}
+							fill="#FFDDAD"
+							stroke="#FFDDAD">
+						</path>
 
-				{data.map(function(d)
-					{
-						return (
-							<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={circleRadius} fill={circleColor}>
-							</circle>
-							);
+						{data.map(function(d)
+							{
+								return (
+									<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={circleRadius} fill={circleColor}>
+									</circle>
+									);
 
-					})
-				}
-			</svg>
+							})
+						}
+					</svg>
+				</div>
 			);
 	}
 
