@@ -42,8 +42,8 @@ var App = React.createClass({
 				<ControlBar />
 				<PlayHead />
 				<IconVis />
-				<KeyframeEditor parameter="amplitude"/>
-				<KeyframeEditor  parameter="frequency"/>
+				<KeyframeEditor parameter="amplitude" vticon={this.state.vtIcon}/>
+				<KeyframeEditor  parameter="frequency" vticon={this.state.vtIcon}/>
 			</div>);
 		}
 
