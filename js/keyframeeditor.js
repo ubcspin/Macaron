@@ -95,7 +95,7 @@ var KeyframeEditor = React.createClass({
 
 
 		//current time vis
-
+		//TODO: put this in a seperate location
 		var currentTimeLineFunc = d3.svg.line()
 								.x(function(d) {
 									return d[0]
