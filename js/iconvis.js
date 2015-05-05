@@ -3,7 +3,7 @@
 var IconVis = React.createClass({
 
 	propTypes: {
-		duration: React.PropTypes.number.isRequired,
+		vticon : React.PropTypes.object.isRequired,
 		currentTime: React.PropTypes.number.isRequired,
 		keyframeCircleRadius: React.PropTypes.number.isRequired,
 		playheadFill: React.PropTypes.string.isRequired
@@ -57,8 +57,17 @@ var IconVis = React.createClass({
 
 		//TODO: Put this scaleX into App somewhere, it's shared with several components
 		var scaleX = d3.scale.linear()
-                    .domain([0, this.props.duration])
+                    .domain([0, this.props.vticon.duration])
                     .range([this.props.keyframeCircleRadius, this.state.actualWidth-this.props.keyframeCircleRadius]);
+
+
+        var vticonline = d3.svg.line()
+								.x(function(d) {
+									return scaleX(d.x)
+								})
+								.y(function(d) {
+									return d[1]
+								});           
 
 		//current time vis
 		//TODO: put this in a seperate location

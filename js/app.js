@@ -11,7 +11,7 @@ var App = React.createClass({
 						end:0 //ms
 					},
 					playStaticOutput : false,
-					vtIcon: {
+					vticon: {
 						duration: 1000, //ms
 
 						amplitude: {
@@ -48,10 +48,10 @@ var App = React.createClass({
 		return (
 			<div id="app">
 				<ControlBar playing={this.state.playing}/>
-				<PlayHead currentTime={this.state.currentTime} duration={this.state.vtIcon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
-				<IconVis currentTime={this.state.currentTime} duration={this.state.vtIcon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} />
-				<KeyframeEditor currentTime={this.state.currentTime} parameter="amplitude" vticon={this.state.vtIcon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
-				<KeyframeEditor currentTime={this.state.currentTime} parameter="frequency" vticon={this.state.vtIcon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+				<PlayHead currentTime={this.state.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+				<IconVis vticon={this.state.vticon} currentTime={this.state.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} />
+				<KeyframeEditor currentTime={this.state.currentTime} parameter="amplitude" vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+				<KeyframeEditor currentTime={this.state.currentTime} parameter="frequency" vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 			</div>);
 		}
 
