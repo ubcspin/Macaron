@@ -63,30 +63,29 @@ var App = React.createClass({
 					next = data[i];
 				}
 			}
+		}
 
-			if (next == null && prev == null) {
-				//if no exact match was found
-				if (rv == null)
-				{
-					//error
-					throw "No keyframes found in parameter " + p;
-				}
-
-				//if an exact match was found, we already stored rv
-				
-			} else if (next == null) {
-				//use prev
-				rv = prev.value;
-			} else if (prev == null || prev.t == next.t) {
-				//use next
-				rv = next.value;
-			} else {
-				//TODO: not just linear interpolation
-				rv = ((t - prev.t)*prev.value + (next.t-t)*next.value)/(next.t-prev.t);
+		if (next == null && prev == null) {
+			//if no exact match was found
+			if (rv == null)
+			{
+				//error
+				throw "No keyframes found in parameter " + p;
 			}
 
-			return rv;
+			//if an exact match was found, we already stored rv
+			
+		} else if (next == null) {
+			//use prev
+			rv = prev.value;
+		} else if (prev == null || prev.t == next.t) {
+			//use next
+			rv = next.value;
+		} else {
+			//TODO: not just linear interpolation
+			rv = ((t - prev.t)*prev.value + (next.t-t)*next.value)/(next.t-prev.t);
 		}
+		return rv;
 
 	} ,
 
