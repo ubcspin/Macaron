@@ -53,8 +53,8 @@ var KeyframeEditor = React.createClass({
 		var keyframeCircleRadius = this.props.keyframeCircleRadius;
 		var circleColor = this.props.circleColor;
 
-		var data = this.props.vticon[this.props.parameter].data;
-		var valueScale = this.props.vticon[this.props.parameter].valueScale;
+		var data = this.props.vticon.parameters[this.props.parameter].data;
+		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
 
 		//TODO: Put this scaleX into App somewhere, it's shared with several components
