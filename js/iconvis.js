@@ -6,13 +6,16 @@ var IconVis = React.createClass({
 		vticon : React.PropTypes.object.isRequired,
 		currentTime: React.PropTypes.number.isRequired,
 		keyframeCircleRadius: React.PropTypes.number.isRequired,
-		playheadFill: React.PropTypes.string.isRequired
+		playheadFill: React.PropTypes.string.isRequired,
+		interpolateParameters: React.PropTypes.func.isRequired
 			},
 	
 	getDefaultProps: function() {
 	    return {
 	      height: '50px',
-	      width:'100%'
+	      width:'100%',
+	      visColor:'#FFDDAD',
+	      resolution:10000
 	    }
 	},
 
@@ -60,14 +63,33 @@ var IconVis = React.createClass({
                     .domain([0, this.props.vticon.duration])
                     .range([this.props.keyframeCircleRadius, this.state.actualWidth-this.props.keyframeCircleRadius]);
 
+        var scaleY = d3.scale.linear()
+                    .domain( [-1, 1]) // return value from sine
+                    .range([this.state.actualHeight, 0]);
 
         var vticonline = d3.svg.line()
 								.x(function(d) {
-									return scaleX(d.x)
+									return scaleX(d[0])
 								})
 								.y(function(d) {
-									return d[1]
-								});           
+									return scaleY(d[1])
+								});
+
+		//do icon visualization
+		var visPoints = [];
+		for (var i = 0; i < this.props.resolution; i++) {
+			var t_in_ms = i/this.props.resolution*this.props.vticon.duration;
+			var t_in_s = t_in_ms/1000;
+
+			var paramValues = this.props.interpolateParameters(t_in_ms);
+			var amplitude =paramValues.amplitude;
+			var frequency = i/this.props.resolution*250 + 50;
+			var v = amplitude * Math.sin(t_in_s*frequency*2*Math.PI)
+			visPoints.push ( [t_in_ms, v]);
+		}
+
+		var visPath = vticonline(visPoints);
+
 
 		//current time vis
 		//TODO: put this in a seperate location
@@ -83,12 +105,15 @@ var IconVis = React.createClass({
 						[scaleX(this.props.currentTime), this.state.actualHeight]	
 				]);
 
+		
+
+		
 
 		return (
 			<div ref="divWrapper" style={divStyle}>
 				<svg height="100%" width="100%">
+					<path stroke={this.props.visColor} strokeWidth="2" fill="none" d={visPath} />
 					<path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />
-
 				</svg>
 
 			</div>
