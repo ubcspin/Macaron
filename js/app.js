@@ -27,7 +27,7 @@ var App = React.createClass({
 								valueScale:[50,500], //Hz
 								data : [
 									{ t: 0, value:250}, 
-									{ t: 200, value:50},
+									{ t: 400, value:50},
 									{ t: 600, value:500}]
 							}
 						}
@@ -83,7 +83,19 @@ var App = React.createClass({
 			rv = next.value;
 		} else {
 			//TODO: not just linear interpolation
-			rv = ((t - prev.t)*prev.value + (next.t-t)*next.value)/(next.t-prev.t);
+			var dt = next.t-prev.t;
+			var proportionPrev = (t-prev.t)/dt;
+			var dvalue = next.value - prev.value;
+			rv = proportionPrev*dvalue + prev.value;
+			/*
+			console.log("INTERPOLATE");
+			console.log(t);
+			console.log(prev.t, prev.value);
+			console.log(next.t, next.value);
+			console.log(dt, dvalue);
+			console.log(proportionPrev);
+			console.log(rv);*/
+			
 		}
 		return rv;
 
