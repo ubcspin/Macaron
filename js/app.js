@@ -51,52 +51,61 @@ var App = React.createClass({
 			
 			if (data[i].t == t)
 			{
-				rv = data[i];
+				rv = data[i].value;
 			}
 			else if (data[i].t < t) 
 			{
-				if (prev == null || prev.t < data[i].t) {
+				if (prev == null || prev.t <= data[i].t) {
 					prev = data[i];
 				}
 			} else {
-				if (next == null || next.t > data[i].t) {
+				if (next == null || next.t >= data[i].t) {
 					next = data[i];
 				}
 			}
 		}
 
-		if (next == null && prev == null) {
+		if (rv == null)
+		{
+
+			if (next == null && prev == null) {
 			//if no exact match was found
 			if (rv == null)
 			{
 				//error
 				throw "No keyframes found in parameter " + p;
 			}
-
 			//if an exact match was found, we already stored rv
-			
-		} else if (next == null) {
-			//use prev
-			rv = prev.value;
-		} else if (prev == null || prev.t == next.t) {
-			//use next
-			rv = next.value;
-		} else {
-			//TODO: not just linear interpolation
-			var dt = next.t-prev.t;
-			var proportionPrev = (t-prev.t)/dt;
-			var dvalue = next.value - prev.value;
-			rv = proportionPrev*dvalue + prev.value;
-			/*
-			console.log("INTERPOLATE");
-			console.log(t);
-			console.log(prev.t, prev.value);
-			console.log(next.t, next.value);
-			console.log(dt, dvalue);
-			console.log(proportionPrev);
-			console.log(rv);*/
-			
+				
+			} else if (next == null) {
+				//use prev
+				rv = prev.value;
+			} else if (prev == null) {
+				//use next
+				rv = next.value;
+			} else {
+				//TODO: not just linear interpolation
+				if (prev.t == next.t) 
+				{
+					rv = prev.value;
+				} else {
+					var dt = next.t-prev.t;
+					var proportionPrev = (t-prev.t)/dt;
+					var dvalue = next.value - prev.value;
+					rv = proportionPrev*dvalue + prev.value;
+					/*
+					console.log("INTERPOLATE");
+					console.log(t);
+					console.log(prev.t, prev.value);
+					console.log(next.t, next.value);
+					console.log(dt, dvalue);
+					console.log(proportionPrev);
+					console.log(rv);*/
+				}
+			}
+
 		}
+	
 		return rv;
 
 	} ,
@@ -127,7 +136,7 @@ var App = React.createClass({
 			<div id="app">
 				<ControlBar playing={this.state.playing}/>
 				<PlayHead currentTime={this.state.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
-				<IconVis vticon={this.state.vticon} currentTime={this.state.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters}/>
+				<IconVis vticon={this.state.vticon} currentTime={this.state.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
 				{Object.keys(this.state.vticon.parameters).map( (p) => (
 						<KeyframeEditor currentTime={this.state.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 					))}
