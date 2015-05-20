@@ -15,7 +15,7 @@ var IconVis = React.createClass({
 	      height: '50px',
 	      width:'100%',
 	      visColor:'#FFDDAD',
-	      resolution:10000
+	      resolution:2000
 	    }
 	},
 
@@ -84,8 +84,8 @@ var IconVis = React.createClass({
 			//var paramValues = this.props.interpolateParameters(t_in_ms);
 			var amplitude = this.props.interpolateParameter("amplitude", t_in_ms);//paramValues.amplitude;
 			var frequency = this.props.interpolateParameter("frequency", t_in_ms); //paramValues.frequency;
+			//console.log("Frequency for ", i, " at time", t_in_ms, "is", frequency);
 			//var frequency = this.props.interpolateParameter("frequency", t_in_ms);
-			//console.log(amplitude);
 			var v = amplitude * Math.sin(t_in_s*frequency*2*Math.PI);
 			visPoints.push ( [t_in_ms, v]);
 		}
