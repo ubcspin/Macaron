@@ -8,7 +8,6 @@ var PlayHead = React.createClass({
 		keyframeCircleRadius: React.PropTypes.number.isRequired,
 		playheadFill: React.PropTypes.string.isRequired
 
-
 			},
 	
 	getDefaultProps: function() {
@@ -49,7 +48,30 @@ var PlayHead = React.createClass({
     	var height = this.refs.divWrapper.getDOMNode().clientHeight;;
 
     	this.setState( {actualWidth:width, actualHeight:height} );
+
+    	this.mouseDown = false;
    	},
+
+   	_handleMouseDown : function(e) {
+   		this.mouseDown = true;
+   		this._handleMouseMove(e);
+   	},
+
+   	_handleMouseMove : function(e) {
+   		if (this.mouseDown) {
+	   		//TODO: Put this scaleX into App somewhere, it's shared with several components
+			var circleRadius = this.props.keyframeCircleRadius;
+			var scaleX = d3.scale.linear()
+	                    .domain([0, this.props.duration])
+	                    .range([circleRadius, this.state.actualWidth-circleRadius]);
+	        this.props.timeActions.setTime(scaleX.invert(e.clientX));
+    	}
+   	},
+
+   	_handleMouseUp : function(e) {
+   		this.mouseDown = false;
+   	},
+
 
 	render : function() {
 		var circleRadius = this.props.keyframeCircleRadius;
@@ -75,7 +97,7 @@ var PlayHead = React.createClass({
 								+ x + "," + h;
 		return (
 
-			<div ref="divWrapper" style={divStyle}>
+			<div onMouseUp={this._handleMouseUp} onMouseDown={this._handleMouseDown} onMouseMove={this._handleMouseMove} ref="divWrapper" style={divStyle}>
 				<svg width="100%" height="100%">
 					<polygon points={playheadPoints} fill={this.props.playheadFill} />
 				</svg>

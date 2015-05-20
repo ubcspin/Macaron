@@ -1,6 +1,32 @@
 /** @jsx React.DOM */
 
+
+//TODO: Put this in a separate file
+var timeActions = Reflux.createActions(
+	['setTime']
+
+);
+
+
+//TODO: Put this in a separate file
+var timeStore = Reflux.createStore({
+	listenables: [timeActions],
+
+	onSetTime(newtime){
+		this.trigger(newtime);
+	}
+
+	// getInitialState: function () {
+
+	// }
+
+	});
+
+
+
 var App = React.createClass({
+	mixins : [Reflux.connect(timeStore, 'currentTime')], //emitted updates go to 'currentTime' key
+
 	getInitialState : function () {
 		return {
 					playing: false,
@@ -135,7 +161,7 @@ var App = React.createClass({
 		return (
 			<div id="app">
 				<ControlBar playing={this.state.playing}/>
-				<PlayHead currentTime={this.state.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+				<PlayHead timeActions={timeActions} currentTime={this.state.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 				<IconVis vticon={this.state.vticon} currentTime={this.state.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
 				{Object.keys(this.state.vticon.parameters).map( (p) => (
 						<KeyframeEditor currentTime={this.state.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
