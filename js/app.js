@@ -158,9 +158,13 @@ var App = React.createClass({
 	
 	render : function() {
 
+		var frequency = this.interpolateParameter('frequency', this.state.currentTime);
+		var amplitude = this.interpolateParameter('amplitude', this.state.currentTime);
+
 		return (
 			<div id="app">
 				<ControlBar playing={this.state.playing}/>
+				<SoundGen amplitude={amplitude} frequency={frequency} />
 				<PlayHead timeActions={timeActions} currentTime={this.state.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 				<IconVis vticon={this.state.vticon} currentTime={this.state.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
 				{Object.keys(this.state.vticon.parameters).map( (p) => (
