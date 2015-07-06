@@ -4,7 +4,9 @@
     "dev": "webpack-dev-server --devtool eval --progress --colors --hot --content-base build"
   },
   "dependencies": {
+    "d3": "^3.5.6",
     "react": "^0.13.3",
+    "reflux": "^0.2.8",
     "webpack-dev-server": "^1.10.1"
   },
   "devDependencies": {

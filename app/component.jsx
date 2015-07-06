@@ -1,7 +1,9 @@
 import React from 'react';
 
-export default class Hello extends React.Component {
+var Hello = React.createClass({
   render() {
     return <h1>Hello brand new world</h1>;
   }
-}
+});
+
+module.exports = Hello;

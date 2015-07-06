@@ -1,4 +1,6 @@
-/** @jsx React.DOM */
+
+import React from 'react';
+import d3 from 'd3';
 
 var KeyframeEditor = React.createClass({
 
@@ -134,3 +136,5 @@ var KeyframeEditor = React.createClass({
 	}
 
 });
+
+module.exports = KeyframeEditor;

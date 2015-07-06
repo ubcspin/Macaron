@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 /*
 	SoundGen
 
@@ -6,6 +5,10 @@
 	right now, this is Audiolet. 
 
 */
+
+import React from 'react';
+
+//TODO: import Audiolet
 
 var SoundGen = React.createClass({
 
@@ -56,4 +59,5 @@ var SoundGen = React.createClass({
 });
 
 
+module.exports = SoundGen;
 

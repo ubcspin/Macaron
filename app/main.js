@@ -1,9 +1,9 @@
 import React from 'react';
-import Hello from './component.jsx';
+var VTEditor = require('./vteditor.jsx');
 
 
 main();
 
 function main() {
-    React.render(<Hello />, document.getElementById('app'));
-}
+		React.render(<VTEditor />, document.getElementById('app'));
+	}

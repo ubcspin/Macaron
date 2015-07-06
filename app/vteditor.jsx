@@ -1,4 +1,14 @@
-/** @jsx React.DOM */
+
+import React from 'react';
+import Reflux from 'reflux';
+
+
+var ControlBar = require('./controlbar.jsx');
+//var SoundGen = require('./soundgen.jsx'); //TODO
+var PlayHead = require('./playhead.jsx');
+var IconVis = require('./iconvis.jsx');
+var KeyframeEditor = require('./keyframeeditor.jsx');
+
 
 
 //TODO: Put this in a separate file
@@ -24,7 +34,7 @@ var timeStore = Reflux.createStore({
 
 
 
-var App = React.createClass({
+var VTEditor = React.createClass({
 	mixins : [Reflux.connect(timeStore, 'currentTime')], //emitted updates go to 'currentTime' key
 
 	getInitialState : function () {
@@ -164,7 +174,6 @@ var App = React.createClass({
 		return (
 			<div id="app">
 				<ControlBar playing={this.state.playing}/>
-				<SoundGen amplitude={amplitude} frequency={frequency} />
 				<PlayHead timeActions={timeActions} currentTime={this.state.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 				<IconVis vticon={this.state.vticon} currentTime={this.state.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
 				{Object.keys(this.state.vticon.parameters).map( (p) => (
@@ -176,4 +185,4 @@ var App = React.createClass({
 	});
 
 
-		React.render(<App width="100%" height="100%" />, document.body);
+module.exports = VTEditor;
