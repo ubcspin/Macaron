@@ -1,4 +1,7 @@
-/** @jsx React.DOM */
+
+import React from 'react';
+import d3 from 'd3';
+
 
 var IconVis = React.createClass({
 
@@ -123,3 +126,5 @@ var IconVis = React.createClass({
 	}
 
 });
+
+module.exports = IconVis;

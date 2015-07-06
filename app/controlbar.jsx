@@ -1,4 +1,7 @@
-/** @jsx React.DOM */
+
+import React from 'react';
+import d3 from 'd3';
+
 
 var ControlBar = React.createClass({
 
@@ -53,3 +56,5 @@ var ControlBar = React.createClass({
 	}
 
 });
+
+module.exports = ControlBar;

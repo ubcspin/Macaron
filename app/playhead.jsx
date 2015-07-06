@@ -1,4 +1,6 @@
-/** @jsx React.DOM */
+
+import React from 'react';
+import d3 from 'd3';
 
 var PlayHead = React.createClass({
 
@@ -106,3 +108,5 @@ var PlayHead = React.createClass({
 	}
 
 });
+
+module.exports = PlayHead;
