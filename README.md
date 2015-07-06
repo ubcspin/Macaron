@@ -21,6 +21,9 @@ Macaron requires the following libraries:
 
  Now, you can build the environtment with `npm run build`.
 
+
+ For more information, follow this tutorial: https://github.com/christianalfoni/react-webpack-cookbook/wiki
+
 [nodejs]: http://nodejs.org
 [npmjs]: https://www.npmjs.org
 [react]: http://facebook.github.io/react/
