@@ -21,6 +21,10 @@ Macaron requires the following libraries:
  `npm i webpack --save-dev`
  `npm i webpack-dev-server --save`
 
+ and the JSX syntax handler:
+
+`npm install babel-loader --save-dev`
+
  Now, you can build the environtment with `npm run build`, and serve it on `localhost:8080` with `npm run dev`. When served, it will automatically refresh when you change components.
 
 
