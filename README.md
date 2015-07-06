@@ -8,14 +8,18 @@ Macaron requires the following libraries:
  - [React][react]
  - [NodeJS tools][nodejs]
  - [NodeJS Package Manager (NPM)][npm]
+ - [Webpack][webpack]
 
  Once NPM is installed, install react-tools as follows:
 
  `npm install -g react-tools`
 
- To build JSX files (in /js), use `jsx --watch js/ build/` and leave it running.
+ and install webpack:
 
+ `npm install -g webpack`
+ `npm i webpack --save-dev`
 
+ Now, you can build the environtment with `npm run build`.
 
 [nodejs]: http://nodejs.org
 [npmjs]: https://www.npmjs.org

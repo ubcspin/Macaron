@@ -1,1 +1,2 @@
-build/
+build/bundle.js
+node_modules

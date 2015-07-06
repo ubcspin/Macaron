@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack-dev-server --devtool eval --progress --colors --hot --content-base build"
+  },
+  "dependencies": {
+    "webpack-dev-server": "^1.10.1"
+  }
+}
