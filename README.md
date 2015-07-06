@@ -18,8 +18,9 @@ Macaron requires the following libraries:
 
  `npm install -g webpack`
  `npm i webpack --save-dev`
+ `npm i webpack-dev-server --save`
 
- Now, you can build the environtment with `npm run build`.
+ Now, you can build the environtment with `npm run build`, and serve it on `localhost:8080` with `npm run dev`.
 
 
  For more information, follow this tutorial: https://github.com/christianalfoni/react-webpack-cookbook/wiki
