@@ -10,9 +10,10 @@ Macaron requires the following libraries:
  - [NodeJS Package Manager (NPM)][npm]
  - [Webpack][webpack]
 
- Once NPM is installed, install react-tools as follows:
+ Once NPM is installed, install react and react-tools as follows:
 
  `npm install -g react-tools`
+ `npm install react --save`
 
  and install webpack:
 
