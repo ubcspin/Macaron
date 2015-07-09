@@ -12,9 +12,8 @@ Macaron requires the following libraries:
  - [d3][d3]
  - [reflux][reflux]
 
- Once NPM is installed, install react and react-tools as follows:
+ Begin by installing [NPM][npm] for your OS. Once NPM is installed, install react as follows:
 
- `npm install -g react-tools`
  `npm install react --save`
 
  and install webpack:
