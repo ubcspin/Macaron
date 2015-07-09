@@ -4,7 +4,7 @@ import Reflux from 'reflux';
 
 
 var ControlBar = require('./controlbar.jsx');
-//var SoundGen = require('./soundgen.jsx'); //TODO
+var SoundGen = require('./soundgen.jsx'); //TODO
 var PlayHead = require('./playhead.jsx');
 var IconVis = require('./iconvis.jsx');
 var KeyframeEditor = require('./keyframeeditor.jsx');
@@ -174,6 +174,7 @@ var VTEditor = React.createClass({
 		return (
 			<div id="app">
 				<ControlBar playing={this.state.playing}/>
+				<SoundGen frequency={frequency} amplitude={amplitude} />
 				<PlayHead timeActions={timeActions} currentTime={this.state.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 				<IconVis vticon={this.state.vticon} currentTime={this.state.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
 				{Object.keys(this.state.vticon.parameters).map( (p) => (

@@ -31,6 +31,11 @@ You will also need to install the following libraries:
 - [d3][d3]: `npm install d3 --save`
 - [reflux][reflux]: `npm install reflux --save`
 
+And you will need two custom loaders for webpack, to import Audiolet, a non-NPM library contained in `thirdparty/audiolet`:
+
+ - `npm install imports-loader --save`
+ - `npm install script-loader --save`
+
 Now, you can build the environment with `npm run build`, and serve it on `localhost:8080` with `npm run dev`. When served, it will automatically refresh when you change components. 
 For more information, follow this tutorial: https://github.com/christianalfoni/react-webpack-cookbook/wiki
 

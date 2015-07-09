@@ -7,6 +7,7 @@
 */
 
 import React from 'react';
+require('./../thirdparty/audiolet/audiolet.js');
 
 //TODO: import Audiolet
 

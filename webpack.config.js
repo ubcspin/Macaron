@@ -17,6 +17,10 @@ config = {
         loaders: [{
             test: /\.jsx?$/,
             loader: 'babel'
+        },
+        {
+            test:/audiolet\.js/,
+            loaders: ['imports?this=>window', 'script']
         }],
         noParse: [pathToReact]
     }    
