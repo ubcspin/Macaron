@@ -37,7 +37,7 @@ Macaron requires the following libraries:
 
 
 [nodejs]: http://nodejs.org
-[npmjs]: https://www.npmjs.org
+[npm]: https://www.npmjs.org
 [react]: http://facebook.github.io/react/
 [webpack]: http://webpack.github.io
 [d3]: http://d3js.org
