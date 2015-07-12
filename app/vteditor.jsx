@@ -8,34 +8,12 @@ var SoundGen = require('./soundgen.jsx'); //TODO
 var PlayHead = require('./playhead.jsx');
 var IconVis = require('./iconvis.jsx');
 var KeyframeEditor = require('./keyframeeditor.jsx');
-
-
-
-//TODO: Put this in a separate file
-var timeActions = Reflux.createActions(
-	['setTime']
-
-);
-
-
-//TODO: Put this in a separate file
-var timeStore = Reflux.createStore({
-	listenables: [timeActions],
-
-	onSetTime(newtime){
-		this.trigger(newtime);
-	}
-
-	// getInitialState: function () {
-
-	// }
-
-	});
+var PlaybackStore = require('./stores/playbackstore.js');
 
 
 
 var VTEditor = React.createClass({
-	mixins : [Reflux.connect(timeStore, 'currentTime')], //emitted updates go to 'currentTime' key
+	mixins : [Reflux.connect(PlaybackStore.timeStore, 'currentTime')], //emitted updates go to 'currentTime' key
 
 	getInitialState : function () {
 		return {
@@ -175,7 +153,7 @@ var VTEditor = React.createClass({
 			<div id="app">
 				<ControlBar playing={this.state.playing}/>
 				<SoundGen frequency={frequency} amplitude={amplitude} />
-				<PlayHead timeActions={timeActions} currentTime={this.state.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+				<PlayHead currentTime={this.state.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 				<IconVis vticon={this.state.vticon} currentTime={this.state.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
 				{Object.keys(this.state.vticon.parameters).map( (p) => (
 						<KeyframeEditor currentTime={this.state.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>

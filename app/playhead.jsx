@@ -2,6 +2,8 @@
 import React from 'react';
 import d3 from 'd3';
 
+var PlaybackStore = require('./stores/playbackstore.js');
+
 var PlayHead = React.createClass({
 
 	propTypes: {
@@ -66,7 +68,7 @@ var PlayHead = React.createClass({
 			var scaleX = d3.scale.linear()
 	                    .domain([0, this.props.duration])
 	                    .range([circleRadius, this.state.actualWidth-circleRadius]);
-	        this.props.timeActions.setTime(scaleX.invert(e.clientX));
+	        PlaybackStore.timeActions.setTime(scaleX.invert(e.clientX));
     	}
    	},
 
