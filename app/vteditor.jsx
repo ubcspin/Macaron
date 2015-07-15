@@ -18,23 +18,23 @@ var VTEditor = React.createClass({
 	getInitialState : function () {
 		return {					
 					vticon: {
-						duration: 1000, //ms
+						duration: 3000, //ms
 
 						parameters: {
 							amplitude: {
 								valueScale:[0,1], //normalized
 								data : [
-									{ t: 200, value:0.5}, 
-									{ t: 500, value:1},
-									{ t: 1000, value:0}]
+									{ t: 600, value:0.5}, 
+									{ t: 1500, value:1},
+									{ t: 3000, value:0}]
 							},
 
 							frequency: {
 								valueScale:[50,500], //Hz
 								data : [
 									{ t: 0, value:250}, 
-									{ t: 400, value:50},
-									{ t: 600, value:500}]
+									{ t: 1200, value:50},
+									{ t: 1800, value:500}]
 							}
 						}
 					}
@@ -140,7 +140,7 @@ var VTEditor = React.createClass({
 
 		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime);
 		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime);
-		
+
 		return (
 			<div id="app">
 				<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
