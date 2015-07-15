@@ -5,7 +5,15 @@ var PLAYBACK_RATE = 60; //Hz
 
 
 var playbackActions = Reflux.createActions(
-	['setTime', 'toggleMute', 'play', 'pause', 'togglePlaying', 'setPlaying']
+	[
+		'setTime',
+		
+		'play',
+		'pause',
+		'togglePlaying',
+		'setPlaying',
+
+		'toggleMute']
 
 );
 
@@ -24,7 +32,6 @@ var playbackStore = Reflux.createStore({
 						end:0 //ms
 					},
 					mute:true,
-					playStaticOutput : false,
 				};
 
 		this._lastTimerTime = Date.now();
@@ -43,7 +50,6 @@ var playbackStore = Reflux.createStore({
 
 
 	onSetTime(newtime){
-		//this.setState({time:newtime});
 		this._data['currentTime'] = newtime;
 		this.trigger(this._data);
 	},
