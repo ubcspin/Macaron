@@ -35,6 +35,14 @@ var ControlBar = React.createClass({
 		PlaybackStore.actions.togglePlaying();
 	},
 
+	_onStepBackwardClick : function (event) {
+		PlaybackStore.actions.stepBackward();
+	},
+
+	_onStepForwardClick : function (event) {
+		PlaybackStore.actions.stepForward();
+	},
+
 	/**
 	* Rendering
 	* 
@@ -68,9 +76,9 @@ var ControlBar = React.createClass({
 		return (
 			<div className="controlbar" style={divStyle}>
 				<div className="time-control" style={timeControlStyle}>
-					 <i className="fa fa-step-backward" style={buttonStyle}></i>
+					 <i onClick={this._onStepBackwardClick} className="fa fa-step-backward" style={buttonStyle}></i>
 					 <i onClick={this._onPlayClick} className={iconText} style={buttonStyle}></i>
-					 <i className="fa fa-step-forward" style={buttonStyle}></i>
+					 <i onClick={this._onStepForwardClick} className="fa fa-step-forward" style={buttonStyle}></i>
 					 <span onClick={this._onMuteClick}><input type="checkbox" checked={this.props.mute}/>Mute</span>
 				</div>	
 			</div>

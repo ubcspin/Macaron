@@ -13,6 +13,9 @@ var playbackActions = Reflux.createActions(
 		'togglePlaying',
 		'setPlaying',
 
+		'stepBackward',
+		'stepForward',
+
 		'toggleMute']
 
 );
@@ -49,11 +52,23 @@ var playbackStore = Reflux.createStore({
 	},
 
 
+	/**
+	* Non-play/pause Time Actions
+	* 
+	*/
+
 	onSetTime(newtime){
 		this._data['currentTime'] = newtime;
 		this.trigger(this._data);
 	},
 
+	onStepBackward() { this.onSetTime(0); },
+
+	onStepForward() {
+		//TODO: Need to know VTIcon duration
+		// this.onSetTime(VT ICON DURATION HERE);
+		console.log("Error: Step Forward not currently implemented.");
+	},
 
 
 	/**
