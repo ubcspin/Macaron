@@ -2,11 +2,14 @@
 import React from 'react';
 import d3 from 'd3';
 
+var PlaybackStore = require('./stores/playbackstore.js');
+
 
 var ControlBar = React.createClass({
 
 	propTypes: {
-		playing: React.PropTypes.bool.isRequired
+		playing: React.PropTypes.bool.isRequired,
+		mute: React.PropTypes.bool.isRequired
 			},
 
 	getDefaultProps: function() {
@@ -18,6 +21,24 @@ var ControlBar = React.createClass({
 
 	    }
 	},
+
+
+	/**
+	* Event handlers
+	* 
+	*/
+	_onMuteClick : function (event) {
+		PlaybackStore.actions.toggleMute();
+	},
+
+	_onPlayClick : function (event) {
+		PlaybackStore.actions.togglePlaying();
+	},
+
+	/**
+	* Rendering
+	* 
+	*/
 
 	render : function() {
 
@@ -48,8 +69,9 @@ var ControlBar = React.createClass({
 			<div className="controlbar" style={divStyle}>
 				<div className="time-control" style={timeControlStyle}>
 					 <i className="fa fa-step-backward" style={buttonStyle}></i>
-					 <i className={iconText} style={buttonStyle}></i>
+					 <i onClick={this._onPlayClick} className={iconText} style={buttonStyle}></i>
 					 <i className="fa fa-step-forward" style={buttonStyle}></i>
+					 <span onClick={this._onMuteClick}><input type="checkbox" checked={this.props.mute}/>Mute</span>
 				</div>	
 			</div>
 			);

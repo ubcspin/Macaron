@@ -68,7 +68,7 @@ var PlayHead = React.createClass({
 			var scaleX = d3.scale.linear()
 	                    .domain([0, this.props.duration])
 	                    .range([circleRadius, this.state.actualWidth-circleRadius]);
-	        PlaybackStore.timeActions.setTime(scaleX.invert(e.clientX));
+	        PlaybackStore.actions.setTime(scaleX.invert(e.clientX));
     	}
    	},
 

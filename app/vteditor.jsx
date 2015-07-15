@@ -13,19 +13,10 @@ var PlaybackStore = require('./stores/playbackstore.js');
 
 
 var VTEditor = React.createClass({
-	mixins : [Reflux.connect(PlaybackStore.timeStore, 'currentTime')], //emitted updates go to 'currentTime' key
+	mixins : [Reflux.connect(PlaybackStore.store, 'playback')], //emitted updates go to 'playback' key
 
 	getInitialState : function () {
-		return {
-					playing: false,
-					currentTime: 450,
-					loop : {
-						enabled:false,
-						start:0, //ms
-						end:0 //ms
-					},
-					mute:true,
-					playStaticOutput : false,
+		return {					
 					vticon: {
 						duration: 1000, //ms
 
@@ -147,17 +138,17 @@ var VTEditor = React.createClass({
 	
 	render : function() {
 
-		var frequency = this.interpolateParameter('frequency', this.state.currentTime);
-		var amplitude = this.interpolateParameter('amplitude', this.state.currentTime);
-
+		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime);
+		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime);
+		
 		return (
 			<div id="app">
-				<ControlBar playing={this.state.playing}/>
-				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.mute} />
-				<PlayHead currentTime={this.state.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
-				<IconVis vticon={this.state.vticon} currentTime={this.state.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
+				<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
+				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.playback.mute} />
+				<PlayHead currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+				<IconVis vticon={this.state.vticon} currentTime={this.state.playback.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
 				{Object.keys(this.state.vticon.parameters).map( (p) => (
-						<KeyframeEditor currentTime={this.state.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+						<KeyframeEditor currentTime={this.state.playback.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 					))}
 			</div>);
 		}

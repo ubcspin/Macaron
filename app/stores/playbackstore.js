@@ -1,22 +1,107 @@
 import Reflux from 'reflux';
 
 
-var timeActions = Reflux.createActions(
-	['setTime']
+var PLAYBACK_RATE = 60; //Hz
+
+
+var playbackActions = Reflux.createActions(
+	['setTime', 'toggleMute', 'play', 'pause', 'togglePlaying', 'setPlaying']
 
 );
 
 
-var timeStore = Reflux.createStore({
-	listenables: [timeActions],
+var playbackStore = Reflux.createStore({
+
+	listenables: [playbackActions],
+
+	init : function() {
+		this._data = {
+					playing: false,
+					currentTime: 450,
+					loop : {
+						enabled:false,
+						start:0, //ms
+						end:0 //ms
+					},
+					mute:true,
+					playStaticOutput : false,
+				};
+
+		this._lastTimerTime = Date.now();
+		this._updateTimer = null;
+	},
+
+	getInitialState : function() {
+		return this._data;
+
+	},
+
+	onToggleMute() {
+		this._data.mute = !this._data.mute;
+		this.trigger(this._data);
+	},
+
 
 	onSetTime(newtime){
-		this.trigger(newtime);
+		//this.setState({time:newtime});
+		this._data['currentTime'] = newtime;
+		this.trigger(this._data);
+	},
+
+
+
+	/**
+	* Play/Pause Action Functions
+	* 
+	*/
+
+	onPlay() { this.onSetPlaying(true); },
+
+	onPause() { this.onSetPlaying(false); },
+
+	onTogglePlaying () { this.onSetPlaying(!this._data.playing); },
+
+	onSetPlaying(newplaying) {
+		this._data['playing'] = newplaying;
+		this.trigger(this._data);
+
+		if(this._data['playing']) {
+			this._startUpdateTimer();
+		} else {
+			this._stopUpdateTimer();
+		}
+	},
+
+
+	/**
+	* Timer functions for updating playback (when playing, etc.)
+	* 
+	*/
+
+	_startUpdateTimer() {
+		this._lastTimerTime = Date.now()
+		this._updateTimer = setInterval(this._updateTimerFunction, 1000.0/PLAYBACK_RATE);
+	},
+
+	_updateTimerFunction() {
+		var t = Date.now();
+		var dt = t - this._lastTimerTime;
+		this._lastTimerTime = t;
+
+		//TODO: Check duration
+		this._data['currentTime'] = this._data.currentTime+dt;
+		this.trigger(this._data);
+	},
+
+	_stopUpdateTimer() {
+		if (this._updateTimer != null)
+		{
+			clearInterval(this._updateTimer);
+		}
 	}
 
-	// getInitialState: function () {
 
-	// }
+
 
 	});
 
@@ -24,6 +109,6 @@ var timeStore = Reflux.createStore({
 
 
 module.exports = {
-	timeActions:timeActions,
-	timeStore:timeStore
+	actions:playbackActions,
+	store:playbackStore
 };
