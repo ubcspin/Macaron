@@ -15,7 +15,8 @@ var SoundGen = React.createClass({
 
 	propTypes: {
 		frequency: React.PropTypes.number.isRequired,
-		amplitude: React.PropTypes.number.isRequired
+		amplitude: React.PropTypes.number.isRequired,
+		mute: React.PropTypes.bool
 			},
 
 	getInitialState : function() {
@@ -52,7 +53,11 @@ var SoundGen = React.createClass({
 
 	render: function() {
 		this.state.sine.frequency.setValue(this.props.frequency);
-		this.state.mult.value.setValue(this.props.amplitude);
+		if(this.props.mute) {
+			this.state.mult.value.setValue(0);
+		} else {
+			this.state.mult.value.setValue(this.props.amplitude);
+		}
 		return <div id="soundgen"></div>
 
 	}

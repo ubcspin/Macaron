@@ -24,6 +24,7 @@ var VTEditor = React.createClass({
 						start:0, //ms
 						end:0 //ms
 					},
+					mute:true,
 					playStaticOutput : false,
 					vticon: {
 						duration: 1000, //ms
@@ -152,7 +153,7 @@ var VTEditor = React.createClass({
 		return (
 			<div id="app">
 				<ControlBar playing={this.state.playing}/>
-				<SoundGen frequency={frequency} amplitude={amplitude} />
+				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.mute} />
 				<PlayHead currentTime={this.state.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 				<IconVis vticon={this.state.vticon} currentTime={this.state.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
 				{Object.keys(this.state.vticon.parameters).map( (p) => (
