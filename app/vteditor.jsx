@@ -9,37 +9,18 @@ var PlayHead = require('./playhead.jsx');
 var IconVis = require('./iconvis.jsx');
 var KeyframeEditor = require('./keyframeeditor.jsx');
 var PlaybackStore = require('./stores/playbackstore.js');
+var VTIconStore = require('./stores/vticonstore.js');
 
 
 
 var VTEditor = React.createClass({
-	mixins : [Reflux.connect(PlaybackStore.store, 'playback')], //emitted updates go to 'playback' key
+	mixins : [
+				Reflux.connect(PlaybackStore.store, 'playback'), //emitted updates go to 'playback' key
+				Reflux.connect(VTIconStore.store, 'vticon') //emitted updates go to 'vticon' key			
+	],
 
 	getInitialState : function () {
-		return {					
-					vticon: {
-						duration: 3000, //ms
-
-						parameters: {
-							amplitude: {
-								valueScale:[0,1], //normalized
-								data : [
-									{ t: 600, value:0.5}, 
-									{ t: 1500, value:1},
-									{ t: 3000, value:0}]
-							},
-
-							frequency: {
-								valueScale:[50,500], //Hz
-								data : [
-									{ t: 0, value:250}, 
-									{ t: 1200, value:50},
-									{ t: 1800, value:500}]
-							}
-						}
-					}
-					/* TODO: Selection, key frames, etc. */
-		}
+		return {}; //handled as stores
 	},
 
 
