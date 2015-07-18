@@ -3,8 +3,11 @@ import React from 'react';
 import d3 from 'd3';
 
 var VTIconStore = require('./stores/vticonstore.js');
+var TimelineMixin = require('./util/timelinemixin.js')
 
 var KeyframeEditor = React.createClass({
+
+	mixins : [TimelineMixin],
 
 	propTypes: {
 		parameter : React.PropTypes.string.isRequired,
@@ -22,54 +25,6 @@ var KeyframeEditor = React.createClass({
 	    }
 	},
 
-
-	handleResize: function(e) {
-    	var width = this.refs.divWrapper.getDOMNode().clientWidth;
-    	var height = this.refs.divWrapper.getDOMNode().clientHeight;
-
-
-    	var currentElement = this.refs.divWrapper.getDOMNode();
-
-    	var offsetLeft = this.refs.divWrapper.getDOMNode().offsetLeft;
-    	var offsetTop = this.refs.divWrapper.getDOMNode().offsetTop;
-
-    	// while(currentElement)
-    	// {
-    	// 	offsetLeft += this.refs.divWrapper.getDOMNode().offsetLeft;
-    	// 	offsetTop += this.refs.divWrapper.getDOMNode().offsetTop;
-    	// 	currentElement = currentElement.offsetParent;
-    	// }
-
-    	this.setState( {actualWidth:width, actualHeight:height, offsetLeft:offsetLeft, offsetTop:offsetTop} );
-
-	},
-
-
-	getInitialState: function() {
-
-		return {
-			actualWidth:10,
-			actualHeight:10,
-			offsetLeft:10,
-			offsetTop:10
-		}
-
-	},
-
-
-  	componentDidMount: function () {
-
-		window.addEventListener('resize', this.handleResize);
-    	
-    	var width = this.refs.divWrapper.getDOMNode().clientWidth;
-    	var height = this.refs.divWrapper.getDOMNode().clientHeight;
-
-    	var offsetLeft = this.refs.divWrapper.getDOMNode().offsetLeft;
-    	var offsetTop = this.refs.divWrapper.getDOMNode().offsetTop;
-
-
-    	this.setState( {actualWidth:width, actualHeight:height, offsetLeft:offsetLeft, offsetTop:offsetTop} );
-   	},
 
 	render : function() {
 
@@ -178,7 +133,7 @@ var KeyframeEditor = React.createClass({
 
         var x = e.clientX - this.state.offsetLeft;
         var y = e.clientY - this.state.offsetTop;
-        
+
         VTIconStore.actions.newKeyframe(this.props.parameter, scaleX.invert(x), scaleY.invert(y));
 
 	}

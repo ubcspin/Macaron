@@ -4,7 +4,11 @@ import d3 from 'd3';
 
 var PlaybackStore = require('./stores/playbackstore.js');
 
+var TimelineMixin = require('./util/timelinemixin.js');
+
 var PlayHead = React.createClass({
+
+	mixins:[TimelineMixin],
 
 	propTypes: {
 		duration: React.PropTypes.number.isRequired,
@@ -23,36 +27,8 @@ var PlayHead = React.createClass({
 	    }
 	},
 
-	//TODO: move this resizing stuff into a mixin
-
-	handleResize: function(e) {
-    	var width = this.refs.divWrapper.getDOMNode().clientWidth;
-    	var height = this.refs.divWrapper.getDOMNode().clientHeight;;
-
-    	this.setState( {actualWidth:width, actualHeight:height} );
-
-	},
-
-
-	getInitialState: function() {
-
-		return {
-			actualWidth:10,
-			actualHeight:10
-		}
-
-	},
-
 
   	componentDidMount: function () {
-
-		window.addEventListener('resize', this.handleResize);
-    	
-    	var width = this.refs.divWrapper.getDOMNode().clientWidth;
-    	var height = this.refs.divWrapper.getDOMNode().clientHeight;;
-
-    	this.setState( {actualWidth:width, actualHeight:height} );
-
     	this.mouseDown = false;
    	},
 

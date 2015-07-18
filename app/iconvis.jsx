@@ -2,8 +2,12 @@
 import React from 'react';
 import d3 from 'd3';
 
+var TimelineMixin = require('./util/timelinemixin.js')
+
 
 var IconVis = React.createClass({
+
+	mixins : [TimelineMixin],
 
 	propTypes: {
 		vticon : React.PropTypes.object.isRequired,
@@ -21,37 +25,6 @@ var IconVis = React.createClass({
 	      resolution:2000
 	    }
 	},
-
-	//TODO: put this in a mixin or something
-	handleResize: function(e) {
-    	var width = this.refs.divWrapper.getDOMNode().clientWidth;
-    	var height = this.refs.divWrapper.getDOMNode().clientHeight;;
-
-    	this.setState( {actualWidth:width, actualHeight:height} );
-
-	},
-
-
-	getInitialState: function() {
-
-		return {
-			actualWidth:10,
-			actualHeight:10
-		}
-
-	},
-
-
-  	componentDidMount: function () {
-
-		window.addEventListener('resize', this.handleResize);
-    	
-    	var width = this.refs.divWrapper.getDOMNode().clientWidth;
-    	var height = this.refs.divWrapper.getDOMNode().clientHeight;;
-
-    	this.setState( {actualWidth:width, actualHeight:height} );
-   	},
-
 
 	render : function() {
 
