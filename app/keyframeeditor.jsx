@@ -2,6 +2,8 @@
 import React from 'react';
 import d3 from 'd3';
 
+var VTIconStore = require('./stores/vticonstore.js');
+
 var KeyframeEditor = React.createClass({
 
 	propTypes: {
@@ -23,9 +25,22 @@ var KeyframeEditor = React.createClass({
 
 	handleResize: function(e) {
     	var width = this.refs.divWrapper.getDOMNode().clientWidth;
-    	var height = this.refs.divWrapper.getDOMNode().clientHeight;;
+    	var height = this.refs.divWrapper.getDOMNode().clientHeight;
 
-    	this.setState( {actualWidth:width, actualHeight:height} );
+
+    	var currentElement = this.refs.divWrapper.getDOMNode();
+
+    	var offsetLeft = this.refs.divWrapper.getDOMNode().offsetLeft;
+    	var offsetTop = this.refs.divWrapper.getDOMNode().offsetTop;
+
+    	// while(currentElement)
+    	// {
+    	// 	offsetLeft += this.refs.divWrapper.getDOMNode().offsetLeft;
+    	// 	offsetTop += this.refs.divWrapper.getDOMNode().offsetTop;
+    	// 	currentElement = currentElement.offsetParent;
+    	// }
+
+    	this.setState( {actualWidth:width, actualHeight:height, offsetLeft:offsetLeft, offsetTop:offsetTop} );
 
 	},
 
@@ -34,7 +49,9 @@ var KeyframeEditor = React.createClass({
 
 		return {
 			actualWidth:10,
-			actualHeight:10
+			actualHeight:10,
+			offsetLeft:10,
+			offsetTop:10
 		}
 
 	},
@@ -45,9 +62,13 @@ var KeyframeEditor = React.createClass({
 		window.addEventListener('resize', this.handleResize);
     	
     	var width = this.refs.divWrapper.getDOMNode().clientWidth;
-    	var height = this.refs.divWrapper.getDOMNode().clientHeight;;
+    	var height = this.refs.divWrapper.getDOMNode().clientHeight;
 
-    	this.setState( {actualWidth:width, actualHeight:height} );
+    	var offsetLeft = this.refs.divWrapper.getDOMNode().offsetLeft;
+    	var offsetTop = this.refs.divWrapper.getDOMNode().offsetTop;
+
+
+    	this.setState( {actualWidth:width, actualHeight:height, offsetLeft:offsetLeft, offsetTop:offsetTop} );
    	},
 
 	render : function() {
@@ -56,6 +77,7 @@ var KeyframeEditor = React.createClass({
 		var circleColor = this.props.circleColor;
 
 		var data = this.props.vticon.parameters[this.props.parameter].data;
+
 		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
 
@@ -112,7 +134,7 @@ var KeyframeEditor = React.createClass({
 
 		return (
 				<div ref="divWrapper" style={divStyle}>
-					<svg  width="100%" height="100%">
+					<svg  width="100%" height="100%" onClick={this._onClick}>
 						<path
 							d={fillPath}
 							fill="#FFDDAD"
@@ -133,7 +155,35 @@ var KeyframeEditor = React.createClass({
 					</svg>
 				</div>
 			);
+	},
+
+
+	/**
+	* UI Callbacks
+	*/
+	_onClick(e) {
+
+		var data = this.props.vticon.parameters[this.props.parameter].data;
+		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
+		var keyframeCircleRadius = this.props.keyframeCircleRadius;
+
+		//TODO: Put this scaleX into App somewhere, it's shared with several components
+		var scaleX = d3.scale.linear()
+                    .domain([0, this.props.vticon.duration])
+                    .range([keyframeCircleRadius, this.state.actualWidth-keyframeCircleRadius]);
+
+        var scaleY = d3.scale.linear()
+                    .domain(valueScale)
+                    .range([this.state.actualHeight-keyframeCircleRadius, keyframeCircleRadius]);
+
+        var x = e.clientX - this.state.offsetLeft;
+        var y = e.clientY - this.state.offsetTop;
+        
+        VTIconStore.actions.newKeyframe(this.props.parameter, scaleX.invert(x), scaleY.invert(y));
+
 	}
+
+
 
 });
 

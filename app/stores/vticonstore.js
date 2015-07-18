@@ -45,11 +45,14 @@ var vticonStore = Reflux.createStore({
 	},
 
 	onNewKeyframe(parameter, t, value) {
-		this._data.parameters[parameter].data.append({
+		this._data.parameters[parameter].data.push({
 			id:this._getNewKFUID(),
 			t:t,
 			value:value
 		});
+
+		this._data.parameters[parameter].data.sort(this._keyframeCompare);
+		this.trigger(this._data);
 	},
 
 
@@ -61,6 +64,11 @@ var vticonStore = Reflux.createStore({
 	_getNewKFUID(parameter) {
 		this._kfuidCount  += 1;
 		return this._kfuidCount;
+	},
+
+	//compares two keyframes
+	_keyframeCompare(a, b) {
+		return (a.t - b.t);
 	}
 
 
