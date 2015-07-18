@@ -8,7 +8,7 @@ var TimelineMixin = require('./util/timelinemixin.js');
 
 var PlayHead = React.createClass({
 
-	mixins:[TimelineMixin],
+	mixins:[TimelineMixin("divWrapper")],
 
 	propTypes: {
 		duration: React.PropTypes.number.isRequired,

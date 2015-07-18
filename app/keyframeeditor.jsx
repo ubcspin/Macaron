@@ -7,7 +7,7 @@ var TimelineMixin = require('./util/timelinemixin.js')
 
 var KeyframeEditor = React.createClass({
 
-	mixins : [TimelineMixin],
+	mixins : [TimelineMixin("divWrapper")],
 
 	propTypes: {
 		parameter : React.PropTypes.string.isRequired,

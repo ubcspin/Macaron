@@ -7,7 +7,7 @@ var TimelineMixin = require('./util/timelinemixin.js')
 
 var IconVis = React.createClass({
 
-	mixins : [TimelineMixin],
+	mixins : [TimelineMixin("divWrapper")],
 
 	propTypes: {
 		vticon : React.PropTypes.object.isRequired,
