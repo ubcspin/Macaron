@@ -8,14 +8,10 @@ var TimelineMixin = require('./util/timelinemixin.js');
 
 var PlayHead = React.createClass({
 
-	mixins:[TimelineMixin("divWrapper")],
-
 	propTypes: {
 		duration: React.PropTypes.number.isRequired,
 		currentTime: React.PropTypes.number.isRequired,
-		keyframeCircleRadius: React.PropTypes.number.isRequired,
 		playheadFill: React.PropTypes.string.isRequired
-
 			},
 	
 	getDefaultProps: function() {
@@ -39,12 +35,7 @@ var PlayHead = React.createClass({
 
    	_handleMouseMove : function(e) {
    		if (this.mouseDown) {
-	   		//TODO: Put this scaleX into App somewhere, it's shared with several components
-			var circleRadius = this.props.keyframeCircleRadius;
-			var scaleX = d3.scale.linear()
-	                    .domain([0, this.props.duration])
-	                    .range([circleRadius, this.state.actualWidth-circleRadius]);
-	        PlaybackStore.actions.setTime(scaleX.invert(e.clientX));
+	        PlaybackStore.actions.setTime(this.props.scaleX.invert(e.clientX));
     	}
    	},
 
@@ -54,27 +45,20 @@ var PlayHead = React.createClass({
 
 
 	render : function() {
-		var circleRadius = this.props.keyframeCircleRadius;
-
-
 		var divStyle = {
 			height:this.props.height,
 			width:this.props.width,
 			background:this.props.background
 		};
 
-		//TODO: Put this scaleX into App somewhere, it's shared with several components
-		var scaleX = d3.scale.linear()
-                    .domain([0, this.props.duration])
-                    .range([circleRadius, this.state.actualWidth-circleRadius]);
 
-
-        var x = scaleX(this.props.currentTime);
+        var x = this.props.scaleX(this.props.currentTime);
         var playheadWidth = this.props.playheadWidth;
         var h = this.props.height;
 		var playheadPoints = (x-playheadWidth/2) + "," + 0 + " " 
 								+ (x+playheadWidth/2) + "," + 0 + " "
 								+ x + "," + h;
+
 		return (
 
 			<div onMouseUp={this._handleMouseUp} onMouseDown={this._handleMouseDown} onMouseMove={this._handleMouseMove} ref="divWrapper" style={divStyle}>

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Reflux from 'reflux';
-
+import d3 from 'd3';
 
 var ControlBar = require('./controlbar.jsx');
 var SoundGen = require('./soundgen.jsx'); //TODO
@@ -20,7 +20,10 @@ var VTEditor = React.createClass({
 	],
 
 	getInitialState : function () {
-		return {}; //handled as stores
+		return {
+				actualWidth:10,
+				actualHeight:10
+		}; //handled as stores
 	},
 
 
@@ -121,18 +124,48 @@ var VTEditor = React.createClass({
 
 		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime);
 		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime);
+		var scaleX = d3.scale.linear()
+                .domain([0, this.state.vticon.duration])
+                .range([this.props.keyframeCircleRadius, this.state.actualWidth-this.props.keyframeCircleRadius]);
 
 		return (
-			<div id="app">
+			<div id="app" ref="appRef">
 				<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
 				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.playback.mute} />
-				<PlayHead currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
-				<IconVis vticon={this.state.vticon} currentTime={this.state.playback.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
+				<PlayHead scaleX={scaleX} currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+				<IconVis scaleX={scaleX} vticon={this.state.vticon} currentTime={this.state.playback.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
 				{Object.keys(this.state.vticon.parameters).map( (p) => (
-						<KeyframeEditor currentTime={this.state.playback.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+						<KeyframeEditor scaleX={scaleX} currentTime={this.state.playback.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 					))}
 			</div>);
-		}
+		},
+
+
+	/**
+	*Resizing functions
+	*/
+				
+	componentDidMount: function () {
+
+		window.addEventListener('resize', this.handleResize);			   
+
+    	var actualWidth = this.refs.appRef.getDOMNode().clientWidth;
+    	var actualHeight = this.refs.appRef.getDOMNode().clientHeight;
+
+
+    	this.setState( {actualWidth:actualWidth, actualHeight:actualHeight} );
+   	},
+
+
+   	handleResize: function(e) {
+
+    	var actualWidth = this.refs.appRef.getDOMNode().clientWidth;
+    	var actualHeight = this.refs.appRef.getDOMNode().clientHeight;
+
+
+    	this.setState( {actualWidth:actualWidth, actualHeight:actualHeight} );
+
+	}
 
 	});
 

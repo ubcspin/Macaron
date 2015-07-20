@@ -3,7 +3,7 @@ import React from 'react';
 import d3 from 'd3';
 
 var VTIconStore = require('./stores/vticonstore.js');
-var TimelineMixin = require('./util/timelinemixin.js')
+var TimelineMixin = require('./util/timelinemixin.js');
 
 var KeyframeEditor = React.createClass({
 
@@ -14,7 +14,7 @@ var KeyframeEditor = React.createClass({
 		vticon : React.PropTypes.object.isRequired,
 		keyframeCircleRadius: React.PropTypes.number.isRequired,
 		playheadFill: React.PropTypes.string.isRequired,
-		currentTime: React.PropTypes.number.isRequired,
+		currentTime: React.PropTypes.number.isRequired
 			},
 	
 	getDefaultProps: function() {
@@ -36,14 +36,15 @@ var KeyframeEditor = React.createClass({
 		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
 
-		//TODO: Put this scaleX into App somewhere, it's shared with several components
-		var scaleX = d3.scale.linear()
-                    .domain([0, this.props.vticon.duration])
-                    .range([keyframeCircleRadius, this.state.actualWidth-keyframeCircleRadius]);
-
         var scaleY = d3.scale.linear()
                     .domain(valueScale)
-                    .range([this.state.actualHeight-keyframeCircleRadius, keyframeCircleRadius]);
+                    .range([this.props.height-keyframeCircleRadius, keyframeCircleRadius]);
+
+        var scaleX = this.props.scaleX;
+        var height = this.props.height;
+
+        console.log("here1");
+
 
         var lineGen = d3.svg.line()
                             .x(function(d)
@@ -84,7 +85,7 @@ var KeyframeEditor = React.createClass({
 								});
 		var currentTimePath = currentTimeLineFunc([
 						[scaleX(this.props.currentTime), 0],
-						[scaleX(this.props.currentTime), this.state.actualHeight]	
+						[scaleX(this.props.currentTime), height]	
 				]);
 
 		return (
@@ -117,24 +118,18 @@ var KeyframeEditor = React.createClass({
 	* UI Callbacks
 	*/
 	_onClick(e) {
-
-		var data = this.props.vticon.parameters[this.props.parameter].data;
-		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 		var keyframeCircleRadius = this.props.keyframeCircleRadius;
 
-		//TODO: Put this scaleX into App somewhere, it's shared with several components
-		var scaleX = d3.scale.linear()
-                    .domain([0, this.props.vticon.duration])
-                    .range([keyframeCircleRadius, this.state.actualWidth-keyframeCircleRadius]);
+		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
         var scaleY = d3.scale.linear()
                     .domain(valueScale)
-                    .range([this.state.actualHeight-keyframeCircleRadius, keyframeCircleRadius]);
+                    .range([this.props.height-keyframeCircleRadius, keyframeCircleRadius]);
 
         var x = e.clientX - this.state.offsetLeft;
         var y = e.clientY - this.state.offsetTop;
 
-        VTIconStore.actions.newKeyframe(this.props.parameter, scaleX.invert(x), scaleY.invert(y));
+        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y));
 
 	}
 

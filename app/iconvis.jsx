@@ -2,7 +2,7 @@
 import React from 'react';
 import d3 from 'd3';
 
-var TimelineMixin = require('./util/timelinemixin.js')
+var TimelineMixin = require('./util/timelinemixin.js');
 
 
 var IconVis = React.createClass({
@@ -19,7 +19,7 @@ var IconVis = React.createClass({
 	
 	getDefaultProps: function() {
 	    return {
-	      height: '50px',
+	      height: 50,
 	      width:'100%',
 	      visColor:'#FFDDAD',
 	      resolution:2000
@@ -28,20 +28,17 @@ var IconVis = React.createClass({
 
 	render : function() {
 
+
 		var divStyle = {
 			height:this.props.height,
 			width:this.props.width
 		};
 
-
-		//TODO: Put this scaleX into App somewhere, it's shared with several components
-		var scaleX = d3.scale.linear()
-                    .domain([0, this.props.vticon.duration])
-                    .range([this.props.keyframeCircleRadius, this.state.actualWidth-this.props.keyframeCircleRadius]);
-
         var scaleY = d3.scale.linear()
                     .domain( [-1, 1]) // return value from sine
-                    .range([this.state.actualHeight, 0]);
+                    .range([this.props.height, 0]);
+
+        var scaleX = this.props.scaleX;
 
         var vticonline = d3.svg.line()
 								.x(function(d) {
@@ -50,6 +47,7 @@ var IconVis = React.createClass({
 								.y(function(d) {
 									return scaleY(d[1])
 								});
+
 
 		//do icon visualization
 		var visPoints = [];
@@ -68,7 +66,6 @@ var IconVis = React.createClass({
 
 		var visPath = vticonline(visPoints);
 
-
 		//current time vis
 		//TODO: put this in a seperate location
 		var currentTimeLineFunc = d3.svg.line()
@@ -80,12 +77,8 @@ var IconVis = React.createClass({
 								});
 		var currentTimePath = currentTimeLineFunc([
 						[scaleX(this.props.currentTime), 0],
-						[scaleX(this.props.currentTime), this.state.actualHeight]	
+						[scaleX(this.props.currentTime), this.props.height]	
 				]);
-
-		
-
-		
 
 		return (
 			<div ref="divWrapper" style={divStyle}>
