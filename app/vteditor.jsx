@@ -10,6 +10,7 @@ var IconVis = require('./iconvis.jsx');
 var KeyframeEditor = require('./keyframeeditor.jsx');
 var PlaybackStore = require('./stores/playbackstore.js');
 var VTIconStore = require('./stores/vticonstore.js');
+var DragStore = require('./stores/dragstore.js');
 
 
 
@@ -119,7 +120,27 @@ var VTEditor = React.createClass({
 		}
 
 	},
-	
+
+	/**
+	* Event handlers for interactions
+	*/
+
+	_handleMouseMove(e) {
+		//TODO: move this
+		var scaleX = d3.scale.linear()
+                .domain([0, this.state.vticon.duration])
+                .range([this.props.keyframeCircleRadius, this.state.actualWidth-this.props.keyframeCircleRadius]);
+		DragStore.actions.handleMoveToTime(scaleX.invert(e.clientX));
+	},
+
+	_handleMouseUp : function(e) {
+		DragStore.actions.stopDrag();
+   	},
+
+
+	/**
+	* Render
+	*/
 	render : function() {
 
 		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime);
@@ -129,7 +150,7 @@ var VTEditor = React.createClass({
                 .range([this.props.keyframeCircleRadius, this.state.actualWidth-this.props.keyframeCircleRadius]);
 
 		return (
-			<div id="app" ref="appRef">
+			<div id="app" ref="appRef" onMouseMove={this._handleMouseMove} onMouseUp={this._handleMouseUp}>
 				<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
 				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.playback.mute} />
 				<PlayHead scaleX={scaleX} currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>

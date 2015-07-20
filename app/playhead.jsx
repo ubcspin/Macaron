@@ -2,8 +2,7 @@
 import React from 'react';
 import d3 from 'd3';
 
-var PlaybackStore = require('./stores/playbackstore.js');
-
+var DragStore = require('./stores/dragstore.js');
 var TimelineMixin = require('./util/timelinemixin.js');
 
 var PlayHead = React.createClass({
@@ -23,26 +22,9 @@ var PlayHead = React.createClass({
 	    }
 	},
 
-
-  	componentDidMount: function () {
-    	this.mouseDown = false;
-   	},
-
    	_handleMouseDown : function(e) {
-   		this.mouseDown = true;
-   		this._handleMouseMove(e);
+   		DragStore.actions.startPlayheadDrag(this.props.scaleX.invert(e.clientX));
    	},
-
-   	_handleMouseMove : function(e) {
-   		if (this.mouseDown) {
-	        PlaybackStore.actions.setTime(this.props.scaleX.invert(e.clientX));
-    	}
-   	},
-
-   	_handleMouseUp : function(e) {
-   		this.mouseDown = false;
-   	},
-
 
 	render : function() {
 		var divStyle = {
@@ -61,7 +43,7 @@ var PlayHead = React.createClass({
 
 		return (
 
-			<div onMouseUp={this._handleMouseUp} onMouseDown={this._handleMouseDown} onMouseMove={this._handleMouseMove} ref="divWrapper" style={divStyle}>
+			<div onMouseDown={this._handleMouseDown} ref="divWrapper" style={divStyle}>
 				<svg width="100%" height="100%">
 					<polygon points={playheadPoints} fill={this.props.playheadFill} />
 				</svg>
