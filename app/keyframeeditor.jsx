@@ -43,8 +43,6 @@ var KeyframeEditor = React.createClass({
         var scaleX = this.props.scaleX;
         var height = this.props.height;
 
-        console.log("here1");
-
 
         var lineGen = d3.svg.line()
                             .x(function(d)
