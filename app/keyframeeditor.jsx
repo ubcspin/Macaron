@@ -21,7 +21,8 @@ var KeyframeEditor = React.createClass({
 	    return {
 	      height: 100,
 	      width:"100%",
-	      circleColor:'#FF8400'
+	      circleColor:'#FF8400',
+	      selectedCircleColor:'#B05B00'
 	    }
 	},
 
@@ -30,6 +31,7 @@ var KeyframeEditor = React.createClass({
 
 		var keyframeCircleRadius = this.props.keyframeCircleRadius;
 		var circleColor = this.props.circleColor;
+		var selectedCircleColor = this.props.selectedCircleColor;
 
 		var data = this.props.vticon.parameters[this.props.parameter].data;
 
@@ -63,6 +65,7 @@ var KeyframeEditor = React.createClass({
 
 		var firstValue = data[0].value;
 		var lastValue = data[data.length-1].value;
+		console.log(lastValue);
 
 		var fillPath =lineGen(
 				[{t:0, value:valueScale[0]}]
@@ -86,6 +89,8 @@ var KeyframeEditor = React.createClass({
 						[scaleX(this.props.currentTime), height]	
 				]);
 
+		var keyframeCallback = this._onClickKeyframe;
+
 		return (
 				<div ref="divWrapper" style={divStyle}>
 					<svg  width="100%" height="100%" onClick={this._onClick}>
@@ -98,7 +103,7 @@ var KeyframeEditor = React.createClass({
 						{data.map(function(d)
 							{
 								return (
-									<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={keyframeCircleRadius} fill={circleColor}>
+									<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={keyframeCircleRadius} onClick={keyframeCallback} data-id={d.id} fill={d.selected ? selectedCircleColor : circleColor}>
 									</circle>
 									);
 
@@ -129,6 +134,12 @@ var KeyframeEditor = React.createClass({
 
         VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y));
 
+	},
+
+	_onClickKeyframe(e) {
+		var id = parseInt(e.target.getAttribute("data-id"));
+		VTIconStore.actions.selectKeyframe(id);
+		return false;
 	}
 
 
