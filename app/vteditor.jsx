@@ -11,14 +11,17 @@ var KeyframeEditor = require('./keyframeeditor.jsx');
 var PlaybackStore = require('./stores/playbackstore.js');
 var VTIconStore = require('./stores/vticonstore.js');
 var DragStore = require('./stores/dragstore.js');
+var ScaleStore = require('./stores/scalestore.js');
 
 
 
 var VTEditor = React.createClass({
 	mixins : [
 				Reflux.connect(PlaybackStore.store, 'playback'), //emitted updates go to 'playback' key
-				Reflux.connect(VTIconStore.store, 'vticon') //emitted updates go to 'vticon' key			
+				Reflux.connect(VTIconStore.store, 'vticon'), //emitted updates go to 'vticon' key			
+				Reflux.connect(ScaleStore.store, 'scales') //emitted updates go to 'scales' key			
 	],
+
 
 	getInitialState : function () {
 		return {
@@ -126,11 +129,7 @@ var VTEditor = React.createClass({
 	*/
 
 	_handleMouseMove(e) {
-		//TODO: move this
-		var scaleX = d3.scale.linear()
-                .domain([0, this.state.vticon.duration])
-                .range([this.props.keyframeCircleRadius, this.state.actualWidth-this.props.keyframeCircleRadius]);
-		DragStore.actions.handleMoveToTime(scaleX.invert(e.clientX));
+		DragStore.actions.handleMoveToTime(this.state.scales.scaleTimeline.invert(e.clientX));
 	},
 
 	_handleMouseUp : function(e) {
@@ -145,9 +144,8 @@ var VTEditor = React.createClass({
 
 		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime);
 		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime);
-		var scaleX = d3.scale.linear()
-                .domain([0, this.state.vticon.duration])
-                .range([this.props.keyframeCircleRadius, this.state.actualWidth-this.props.keyframeCircleRadius]);
+		var scaleX = this.state.scales.scaleTimeline;
+
 
 		return (
 			<div id="app" ref="appRef" onMouseMove={this._handleMouseMove} onMouseUp={this._handleMouseUp}>
@@ -173,8 +171,7 @@ var VTEditor = React.createClass({
     	var actualWidth = this.refs.appRef.getDOMNode().clientWidth;
     	var actualHeight = this.refs.appRef.getDOMNode().clientHeight;
 
-
-    	this.setState( {actualWidth:actualWidth, actualHeight:actualHeight} );
+    	ScaleStore.actions.setTimelineRange([this.props.keyframeCircleRadius, actualWidth-this.props.keyframeCircleRadius]);
    	},
 
 
@@ -184,7 +181,7 @@ var VTEditor = React.createClass({
     	var actualHeight = this.refs.appRef.getDOMNode().clientHeight;
 
 
-    	this.setState( {actualWidth:actualWidth, actualHeight:actualHeight} );
+    	ScaleStore.actions.setTimelineRange([this.props.keyframeCircleRadius, actualWidth-this.props.keyframeCircleRadius]);
 
 	}
 
