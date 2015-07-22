@@ -65,8 +65,7 @@ var KeyframeEditor = React.createClass({
 
 		var firstValue = data[0].value;
 		var lastValue = data[data.length-1].value;
-		console.log(lastValue);
-
+		
 		var fillPath =lineGen(
 				[{t:0, value:valueScale[0]}]
 				.concat([{t:0, value:firstValue}])
