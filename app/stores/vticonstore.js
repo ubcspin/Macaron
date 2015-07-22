@@ -8,6 +8,8 @@ var vticonActions = Reflux.createActions(
 		'selectKeyframe',
 		'selectKeyframes',
 		'addSelectedKeyframe',
+		'addSelectedKeyframes',
+		'addToggleSelectedKeyframe',
 		'unselectKeyframe',
 		'unselectKeyframes'
 	]
@@ -50,7 +52,7 @@ var vticonStore = Reflux.createStore({
 
 	},
 
-	onNewKeyframe(parameter, t, value) {
+	onNewKeyframe(parameter, t, value, addToSelection=false) {
 		var new_id = this._getNewKFUID();
 		this._data.parameters[parameter].data.push({
 			id:new_id,
@@ -60,9 +62,14 @@ var vticonStore = Reflux.createStore({
 		});
 
 		this._data.parameters[parameter].data.sort(this._keyframeCompare);
-		this.trigger(this._data);
-	},
 
+		if (addToSelection)
+		{
+			this.trigger(this._data);
+		} else {
+			this.onSelectKeyframe(new_id);
+		}
+	},
 
 	/**
 	* Selection
@@ -82,6 +89,18 @@ var vticonStore = Reflux.createStore({
 
 	onAddSelectedKeyframes(ids) {
 		this._setSelectedKeyframes(ids, true);
+	},
+
+	onAddToggleSelectedKeyframe(id) {
+		for (var p in this._data.parameters) {
+			for (var i = 0; i < this._data.parameters[p].data.length; i++) {
+				if(this._data.parameters[p].data[i].id == id)
+				{
+					this._data.parameters[p].data[i].selected = !this._data.parameters[p].data[i].selected;
+				}
+			}
+		}
+		this.trigger(this._data);
 	},
 
 	onUnselectKeyframe(id) {

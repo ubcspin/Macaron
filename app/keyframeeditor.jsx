@@ -88,11 +88,11 @@ var KeyframeEditor = React.createClass({
 						[scaleX(this.props.currentTime), height]	
 				]);
 
-		var keyframeCallback = this._onClickKeyframe;
+		var keyframeCallback = this._onMouseDownKeyframe;
 
 		return (
 				<div ref="divWrapper" style={divStyle}>
-					<svg  width="100%" height="100%" onClick={this._onClick}>
+					<svg  width="100%" height="100%" onMouseDown={this._onMouseDown}>
 						<path
 							d={fillPath}
 							fill="#FFDDAD"
@@ -102,7 +102,7 @@ var KeyframeEditor = React.createClass({
 						{data.map(function(d)
 							{
 								return (
-									<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={keyframeCircleRadius} onClick={keyframeCallback} data-id={d.id} fill={d.selected ? selectedCircleColor : circleColor}>
+									<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={keyframeCircleRadius} onMouseDown={keyframeCallback} data-id={d.id} fill={d.selected ? selectedCircleColor : circleColor}>
 									</circle>
 									);
 
@@ -119,7 +119,7 @@ var KeyframeEditor = React.createClass({
 	/**
 	* UI Callbacks
 	*/
-	_onClick(e) {
+	_onMouseDown(e) {
 		var keyframeCircleRadius = this.props.keyframeCircleRadius;
 
 		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
@@ -131,13 +131,17 @@ var KeyframeEditor = React.createClass({
         var x = e.clientX - this.state.offsetLeft;
         var y = e.clientY - this.state.offsetTop;
 
-        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y));
 
+        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey);
 	},
 
-	_onClickKeyframe(e) {
+	_onMouseDownKeyframe(e) {
 		var id = parseInt(e.target.getAttribute("data-id"));
-		VTIconStore.actions.selectKeyframe(id);
+		if(e.shiftKey) {
+			VTIconStore.actions.addToggleSelectedKeyframe(id);
+		} else {
+			VTIconStore.actions.selectKeyframe(id);
+		}
 		return false;
 	}
 
