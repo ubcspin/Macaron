@@ -1,13 +1,20 @@
 
 import React from 'react';
 import d3 from 'd3';
+import Reflux from 'reflux';
 
 var VTIconStore = require('./stores/vticonstore.js');
 var TimelineMixin = require('./util/timelinemixin.js');
+var ScaleStore = require('./stores/scalestore.js');
 
 var KeyframeEditor = React.createClass({
 
-	mixins : [TimelineMixin("divWrapper")],
+	mixins : [
+		TimelineMixin("divWrapper"),
+		Reflux.connect(ScaleStore.store, 'scales') //emitted updates go to 'scales' key			
+		],
+
+
 
 	propTypes: {
 		parameter : React.PropTypes.string.isRequired,
@@ -27,6 +34,13 @@ var KeyframeEditor = React.createClass({
 	},
 
 
+	componentDidMount: function () {
+    	var parameter_range = [this.props.height-this.props.keyframeCircleRadius, this.props.keyframeCircleRadius]
+
+    	ScaleStore.actions.setTrackrange(this.props.parameter, parameter_range);  
+	},
+
+
 	render : function() {
 
 		var keyframeCircleRadius = this.props.keyframeCircleRadius;
@@ -37,10 +51,7 @@ var KeyframeEditor = React.createClass({
 
 		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
-
-        var scaleY = d3.scale.linear()
-                    .domain(valueScale)
-                    .range([this.props.height-keyframeCircleRadius, keyframeCircleRadius]);
+		var scaleY = this.state.scales.scaleParameter[this.props.parameter];
 
         var scaleX = this.props.scaleX;
         var height = this.props.height;
@@ -124,9 +135,7 @@ var KeyframeEditor = React.createClass({
 
 		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
-        var scaleY = d3.scale.linear()
-                    .domain(valueScale)
-                    .range([this.props.height-keyframeCircleRadius, keyframeCircleRadius]);
+        var scaleY = this.state.scales.scaleParameter[this.props.parameter];
 
         var x = e.clientX - this.state.offsetLeft;
         var y = e.clientY - this.state.offsetTop;

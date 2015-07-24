@@ -19,8 +19,8 @@ var scaleStore = Reflux.createStore({
 		this._data = {
 			scaleTimeline:stub_fn,
 			scaleParameter:{
-				'amplitude':stub_fn,
-				'frequency':stub_fn
+				amplitude:stub_fn,
+				frequency:stub_fn
 			}
 		};
 
@@ -34,6 +34,7 @@ var scaleStore = Reflux.createStore({
 	},
 
 	getInitialState : function() {
+		this._CalculateScales(VTIconStore.store.getInitialState());
 		return this._data;
 	},
 
@@ -49,13 +50,16 @@ var scaleStore = Reflux.createStore({
 		this.trigger(this._data);
 	},
 
-	_VTIconUpdate(vticon) {
+	_CalculateScales(vticon) {
 		this._duration = vticon.duration;
 		for (var p in vticon.parameters)
 		{
 			this._parameterValues[p] = vticon.parameters[p].valueScale;
 		}
+	},
 
+	_VTIconUpdate(vticon) {
+		this._CalculateScales(vticon);
 		this._update();
 	},
 
