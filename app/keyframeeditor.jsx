@@ -6,6 +6,7 @@ import Reflux from 'reflux';
 var VTIconStore = require('./stores/vticonstore.js');
 var TimelineMixin = require('./util/timelinemixin.js');
 var ScaleStore = require('./stores/scalestore.js');
+var DragStore = require('./stores/dragstore.js');
 
 var KeyframeEditor = React.createClass({
 
@@ -150,6 +151,7 @@ var KeyframeEditor = React.createClass({
 			VTIconStore.actions.addToggleSelectedKeyframe(id);
 		} else {
 			VTIconStore.actions.selectKeyframe(id);
+			DragStore.actions.startKeyframeDrag();
 		}
 		return false;
 	}

@@ -129,7 +129,7 @@ var VTEditor = React.createClass({
 	*/
 
 	_handleMouseMove(e) {
-		DragStore.actions.handleMoveToTime(this.state.scales.scaleTimeline.invert(e.clientX));
+		DragStore.actions.handleMouseMove(e.clientX, e.clientY);
 	},
 
 	_handleMouseUp : function(e) {

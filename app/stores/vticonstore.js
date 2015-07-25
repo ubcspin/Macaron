@@ -11,7 +11,9 @@ var vticonActions = Reflux.createActions(
 		'addSelectedKeyframes',
 		'addToggleSelectedKeyframe',
 		'unselectKeyframe',
-		'unselectKeyframes'
+		'unselectKeyframes',
+
+		'moveSelectedKeyframes',
 	]
 
 );
@@ -141,6 +143,23 @@ var vticonStore = Reflux.createStore({
 					this._data.parameters[p].data[i].selected = true;
 				}
 			}
+		}
+		this.trigger(this._data);
+	},
+
+	/**
+	* Move Keyframes
+	*/
+
+	onMoveSelectedKeyframes(dt, dv) {
+		for (var p in this._data.parameters) {
+			for (var i = 0; i < this._data.parameters[p].data.length; i++) {
+					if (this._data.parameters[p].data[i].selected) {
+						this._data.parameters[p].data[i].t += dt;
+						this._data.parameters[p].data[i].value += dv[p];
+					}
+			}
+			this._data.parameters[p].data.sort(this._keyframeCompare);
 		}
 		this.trigger(this._data);
 	},

@@ -1,6 +1,8 @@
 import Reflux from 'reflux';
 
 var PlaybackStore = require('./playbackstore.js');
+var ScaleStore = require('./scalestore.js');
+var VTIconStore = require('./vticonstore.js');
 
 
 //'enum' for possible draggables
@@ -16,7 +18,7 @@ var dragActions = Reflux.createActions(
 		'startPlayheadDrag',
 		'startKeyframeDrag',
 
-		'handleMoveToTime',
+		'handleMouseMove',
 
 		'stopDrag'
 	]
@@ -29,7 +31,14 @@ var dragStore = Reflux.createStore({
 	listenables: [dragActions],
 
 	init() {
+		this.listenTo(ScaleStore.store, this._ScaleUpdate);
+
 		this._dragging = Draggable.NONE;
+		this._lastMouseMove = {};
+	},
+
+	_ScaleUpdate(scales) {
+		this._scales = scales;
 	},
 
 
@@ -38,12 +47,24 @@ var dragStore = Reflux.createStore({
 		PlaybackStore.actions.setTime(newtime);
 	},
 
-	//calls other actions based on what's being dragged
-	onHandleMoveToTime(newtime) {
+	onStartKeyframeDrag() {
+		this._dragging = Draggable.KEYFRAME;
+	},
+
+	onHandleMouseMove(x, y) {		
 		if (this._dragging == Draggable.PLAYHEAD)
 		{
-			PlaybackStore.actions.setTime(newtime);
+			PlaybackStore.actions.setTime(this._scales.scaleTimeline.invert(x));
+		} else if (this._dragging == Draggable.KEYFRAME) {
+			var dt = this._scales.scaleTimeline.invert(x) - this._scales.scaleTimeline.invert(this._lastX);
+			var dv = {};
+			for (var p in this._scales.scaleParameter) {
+				dv[p] = this._scales.scaleParameter[p].invert(y) - this._scales.scaleParameter[p].invert(this._lastY);
+			}
+			VTIconStore.actions.moveSelectedKeyframes(dt, dv);
 		}
+		this._lastX = x;
+		this._lastY = y;
 
 	},
 
