@@ -3,6 +3,7 @@ import Reflux from 'reflux';
 var PlaybackStore = require('./playbackstore.js');
 var ScaleStore = require('./scalestore.js');
 var VTIconStore = require('./vticonstore.js');
+var SelectionStore = require('./selectionstore.js');
 
 
 //'enum' for possible draggables
@@ -55,6 +56,7 @@ var dragStore = Reflux.createStore({
 
 	onStartSelectDrag() {
 		this._dragging = Draggable.SELECT;
+		SelectionStore.actions.startSelecting(this._scales.scaleTimeline.invert(this._lastX), this._calculateSelectionParameterMap(this._lastY)); 
 	},
 
 	onHandleMouseMove(x, y) {		
@@ -68,6 +70,9 @@ var dragStore = Reflux.createStore({
 				dv[p] = this._scales.scaleParameter[p].invert(y) - this._scales.scaleParameter[p].invert(this._lastY);
 			}
 			VTIconStore.actions.moveSelectedKeyframes(dt, dv);
+		} else if (this._dragging == Draggable.SELECT) {
+				SelectionStore.actions.changeSelecting(this._scales.scaleTimeline.invert(x), this._calculateSelectionParameterMap(y)); 
+
 		}
 		this._lastX = x;
 		this._lastY = y;
@@ -75,8 +80,26 @@ var dragStore = Reflux.createStore({
 	},
 
 	onStopDrag() {
+		if(this._dragging == Draggable.SELECT)
+		{
+			SelectionStore.actions.stopSelecting();
+		}
 		this._dragging = Draggable.NONE;
-	}
+	},
+
+	/**
+	 * Helper Functions
+	 */
+	 _calculateSelectionParameterMap(y) {
+	 	var pmap = {};
+
+	 	for (var p in this._scales.topOffsetParameter) {
+	 		pmap[p] = this._scales.scaleParameter[p].invert(y-this._scales.topOffsetParameter[p]);
+	 	}
+
+	 	return pmap;
+
+	 }
 
 
 

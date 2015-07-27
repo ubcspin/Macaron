@@ -42,7 +42,7 @@ var KeyframeEditor = React.createClass({
     	var parameter_range = [this.props.height-this.props.keyframeCircleRadius, this.props.keyframeCircleRadius]
 
     	ScaleStore.actions.setTrackrange(this.props.parameter, parameter_range); 
-    	ScaleStore.actions.setTopOffset(this.props.parameter, this.refs.divWrapper.clientOffset) ;
+    	ScaleStore.actions.setTopOffset(this.props.parameter, this.refs.divWrapper.getDOMNode().offsetTop) ;
 	},
 
 
@@ -175,17 +175,18 @@ var KeyframeEditor = React.createClass({
 	* UI Callbacks
 	*/
 	_onMouseDown(e) {
-		var keyframeCircleRadius = this.props.keyframeCircleRadius;
+		// var keyframeCircleRadius = this.props.keyframeCircleRadius;
 
-		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
+		// var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
-        var scaleY = this.state.scales.scaleParameter[this.props.parameter];
+  //       var scaleY = this.state.scales.scaleParameter[this.props.parameter];
 
-        var x = e.clientX - this.state.offsetLeft;
-        var y = e.clientY - this.state.offsetTop;
+  //       var x = e.clientX - this.state.offsetLeft;
+  //       var y = e.clientY - this.state.offsetTop;
 
 
-        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey);
+  //       VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey);
+  		DragStore.actions.startSelectDrag();
 	},
 
 	_onMouseDownKeyframe(e) {
