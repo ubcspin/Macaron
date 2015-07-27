@@ -46,7 +46,13 @@ var vticonStore = Reflux.createStore({
 						}
 					};
 
-		this._kfuidCount = 6;
+		this._kfuidCount = 0;
+		for (var p in this._data.parameters) {
+			for (var d in this._data.parameters[p].data)
+			{
+				this._kfuidCount += 1;
+			}
+		}
 	},
 
 	getInitialState : function() {
