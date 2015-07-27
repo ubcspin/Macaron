@@ -36,7 +36,7 @@ var IconVis = React.createClass({
 
         var scaleY = d3.scale.linear()
                     .domain( [-1, 1]) // return value from sine
-                    .range([this.props.height, 0]);
+                    .range([0, this.props.height]);
 
         var scaleX = this.props.scaleX;
 
