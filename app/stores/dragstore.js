@@ -9,7 +9,8 @@ var VTIconStore = require('./vticonstore.js');
 var Draggable = {
 	NONE :0,
 	PLAYHEAD:1,
-	KEYFRAME:2
+	KEYFRAME:2,
+	SELECT:3
 };
 
 
@@ -17,6 +18,7 @@ var dragActions = Reflux.createActions(
 	[
 		'startPlayheadDrag',
 		'startKeyframeDrag',
+		'startSelectDrag',
 
 		'handleMouseMove',
 
@@ -49,6 +51,10 @@ var dragStore = Reflux.createStore({
 
 	onStartKeyframeDrag() {
 		this._dragging = Draggable.KEYFRAME;
+	},
+
+	onStartSelectDrag() {
+		this._dragging = Draggable.SELECT;
 	},
 
 	onHandleMouseMove(x, y) {		

@@ -12,6 +12,7 @@ var PlaybackStore = require('./stores/playbackstore.js');
 var VTIconStore = require('./stores/vticonstore.js');
 var DragStore = require('./stores/dragstore.js');
 var ScaleStore = require('./stores/scalestore.js');
+var SelectionStore = require('./stores/selectionstore.js');
 
 
 
@@ -19,7 +20,8 @@ var VTEditor = React.createClass({
 	mixins : [
 				Reflux.connect(PlaybackStore.store, 'playback'), //emitted updates go to 'playback' key
 				Reflux.connect(VTIconStore.store, 'vticon'), //emitted updates go to 'vticon' key			
-				Reflux.connect(ScaleStore.store, 'scales') //emitted updates go to 'scales' key			
+				Reflux.connect(ScaleStore.store, 'scales'), //emitted updates go to 'scales' key			
+				Reflux.connect(SelectionStore.store, 'selection') //emitted updates go to 'selection' key			
 	],
 
 
@@ -154,7 +156,7 @@ var VTEditor = React.createClass({
 				<PlayHead scaleX={scaleX} currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
 				<IconVis scaleX={scaleX} vticon={this.state.vticon} currentTime={this.state.playback.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
 				{Object.keys(this.state.vticon.parameters).map( (p) => (
-						<KeyframeEditor scaleX={scaleX} currentTime={this.state.playback.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+						<KeyframeEditor scaleX={scaleX} currentTime={this.state.playback.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} selection={this.state.selection}/>
 					))}
 			</div>);
 		},

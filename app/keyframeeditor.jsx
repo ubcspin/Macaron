@@ -20,6 +20,7 @@ var KeyframeEditor = React.createClass({
 	propTypes: {
 		parameter : React.PropTypes.string.isRequired,
 		vticon : React.PropTypes.object.isRequired,
+		selection : React.PropTypes.object.isRequired,
 		keyframeCircleRadius: React.PropTypes.number.isRequired,
 		playheadFill: React.PropTypes.string.isRequired,
 		currentTime: React.PropTypes.number.isRequired
@@ -30,7 +31,9 @@ var KeyframeEditor = React.createClass({
 	      height: 100,
 	      width:"100%",
 	      circleColor:'#FF8400',
-	      selectedCircleColor:'#B05B00'
+	      selectedCircleColor:'#B05B00',
+	      selectionColor:'#676767',
+	      selectionOpacity:0.2
 	    }
 	},
 
@@ -38,7 +41,8 @@ var KeyframeEditor = React.createClass({
 	componentDidMount: function () {
     	var parameter_range = [this.props.height-this.props.keyframeCircleRadius, this.props.keyframeCircleRadius]
 
-    	ScaleStore.actions.setTrackrange(this.props.parameter, parameter_range);  
+    	ScaleStore.actions.setTrackrange(this.props.parameter, parameter_range); 
+    	ScaleStore.actions.setTopOffset(this.props.parameter, this.refs.divWrapper.clientOffset) ;
 	},
 
 
@@ -102,6 +106,42 @@ var KeyframeEditor = React.createClass({
 
 		var keyframeCallback = this._onMouseDownKeyframe;
 
+
+		//selection square
+		var selectionSquare = <rect />;
+		if(this.props.selection.active) {
+			var tLeft = this.props.selection.time1;
+			var tRight = this.props.selection.time2;
+			if(tLeft > tRight) {
+				tLeft = this.props.selection.time2;
+				tRight = this.props.selection.time1;
+			}
+
+			var vTop = this.props.selection.parameters[this.props.parameter].value1;
+			var vBottom = this.props.selection.parameters[this.props.parameter].value2;
+			if(vTop < vBottom) {
+				vTop = this.props.selection.parameters[this.props.parameter].value2;
+				vBottom = this.props.selection.parameters[this.props.parameter].value1;
+			
+			}
+			
+
+
+
+			var x = scaleX(tLeft);
+			var y = scaleY(vTop);
+			var width = scaleX(tRight) - x;
+			var height = scaleY(vBottom) - y;
+
+			selectionSquare = <rect
+				x={x}
+				y={y} 
+				width={width}
+				height={height}
+				fill={this.props.selectionColor}
+				opacity={this.props.selectionOpacity} />
+		}
+
 		return (
 				<div ref="divWrapper" style={divStyle}>
 					<svg  width="100%" height="100%" onMouseDown={this._onMouseDown}>
@@ -120,6 +160,9 @@ var KeyframeEditor = React.createClass({
 
 							})
 						}
+
+						{selectionSquare}
+						
 						<path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />
 
 					</svg>

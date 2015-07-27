@@ -7,7 +7,9 @@ var VTIconStore = require('./vticonstore.js');
 var scaleActions = Reflux.createActions([
 			'setTimelineRange',
 			'setTrackrange',
-			'setTrackrangeMultiple'
+			'setTrackrangeMultiple',
+			'setTopOffset',
+			'setTopOffsetMultiple'
 		]);
 
 var scaleStore = Reflux.createStore({
@@ -21,6 +23,10 @@ var scaleStore = Reflux.createStore({
 			scaleParameter:{
 				amplitude:stub_fn,
 				frequency:stub_fn
+			},
+			topOffsetParameter:{
+				amplitude:0,
+				frequency:0
 			}
 		};
 
@@ -81,7 +87,23 @@ var scaleStore = Reflux.createStore({
 		}
 
 		this._update();
+	},
+
+	onSetTopOffset(parameter, offset) {
+		this._data.topOffsetParameter[parameter] = offset;
+
+		this._update();
+	},
+
+	onSetTopOffsetMultiple(parameter_offset_map) {
+		for (var p in parameter_offset_map)
+		{
+			this._data.topOffsetParameter[p] = parameter_offset_map[p];
+		}
+
+		this._update();
 	}
+
 
 });
 
