@@ -33,13 +33,16 @@ var KeyframeEditor = React.createClass({
 	      circleColor:'#FF8400',
 	      selectedCircleColor:'#B05B00',
 	      selectionColor:'#676767',
-	      selectionOpacity:0.2
+	      selectionOpacity:0.2,
+	      doubleClickTime:500 //ms
 	    }
 	},
 
 
 	componentDidMount: function () {
-    	var parameter_range = [this.props.height-this.props.keyframeCircleRadius, this.props.keyframeCircleRadius]
+    	var parameter_range = [this.props.height-this.props.keyframeCircleRadius, this.props.keyframeCircleRadius];
+
+    	this._lastMouseDownTime = 0;
 
     	ScaleStore.actions.setTrackrange(this.props.parameter, parameter_range); 
     	ScaleStore.actions.setTopOffset(this.props.parameter, this.refs.divWrapper.getDOMNode().offsetTop) ;
@@ -144,7 +147,7 @@ var KeyframeEditor = React.createClass({
 
 		return (
 				<div ref="divWrapper" style={divStyle}>
-					<svg  width="100%" height="100%" onMouseDown={this._onMouseDown}>
+					<svg  width="100%" height="100%" onMouseDown={this._onMouseDown} >
 						<path
 							d={fillPath}
 							fill="#FFDDAD"
@@ -175,18 +178,29 @@ var KeyframeEditor = React.createClass({
 	* UI Callbacks
 	*/
 	_onMouseDown(e) {
-		// var keyframeCircleRadius = this.props.keyframeCircleRadius;
 
-		// var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
+		var t = Date.now();
 
-  //       var scaleY = this.state.scales.scaleParameter[this.props.parameter];
+		if ( (t - this._lastMouseDownTime) <= this.props.doubleClickTime)
+		{
+			//double click
+			var keyframeCircleRadius = this.props.keyframeCircleRadius;
 
-  //       var x = e.clientX - this.state.offsetLeft;
-  //       var y = e.clientY - this.state.offsetTop;
+			var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
+	        var scaleY = this.state.scales.scaleParameter[this.props.parameter];
 
-  //       VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey);
-  		DragStore.actions.startSelectDrag(e.shiftKey);
+	        var x = e.clientX - this.state.offsetLeft;
+	        var y = e.clientY - this.state.offsetTop;
+
+	        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey);
+	        DragStore.actions.startKeyframeDrag();
+
+		} else {
+  			DragStore.actions.startSelectDrag(e.shiftKey);
+		}
+
+		this._lastMouseDownTime = t;
 	},
 
 	_onMouseDownKeyframe(e) {
