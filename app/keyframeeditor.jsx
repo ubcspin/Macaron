@@ -154,7 +154,7 @@ var KeyframeEditor = React.createClass({
 						{data.map(function(d)
 							{
 								return (
-									<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={keyframeCircleRadius} onMouseDown={keyframeCallback} data-id={d.id} fill={d.selected ? selectedCircleColor : circleColor}>
+									<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={keyframeCircleRadius} onMouseDown={keyframeCallback} data-id={d.id} data-selected={d.selected} fill={d.selected ? selectedCircleColor : circleColor}>
 									</circle>
 									);
 
@@ -191,12 +191,18 @@ var KeyframeEditor = React.createClass({
 
 	_onMouseDownKeyframe(e) {
 		var id = parseInt(e.target.getAttribute("data-id"));
-		if(e.shiftKey) {
-			VTIconStore.actions.addToggleSelectedKeyframe(id);
-		} else {
-			VTIconStore.actions.selectKeyframe(id);
-			DragStore.actions.startKeyframeDrag();
+		var selected = (e.target.getAttribute("data-selected") === 'true');
+
+		if (!selected)
+		{
+			if(e.shiftKey) {
+				VTIconStore.actions.addToggleSelectedKeyframe(id);
+			} else {
+				VTIconStore.actions.selectKeyframe(id);
+			}
 		}
+		DragStore.actions.startKeyframeDrag();
+
 		return false;
 	}
 
