@@ -138,6 +138,16 @@ var VTEditor = React.createClass({
 		DragStore.actions.stopDrag();
    	},
 
+   	_handleKeyboard : function(e) {
+   		switch(e.code) {
+   			case 'Space':
+   				PlaybackStore.actions.togglePlaying();
+   				break;
+   		}
+
+   		return false;
+   	},
+
 
 	/**
 	* Render
@@ -171,6 +181,7 @@ var VTEditor = React.createClass({
 		window.addEventListener('resize', this.handleResize);
 		window.addEventListener('mousemove', this._handleMouseMove);
 		window.addEventListener('mouseup', this._handleMouseUp);
+		window.addEventListener('keydown', this._handleKeyboard);
 
     	var actualWidth = this.refs.appRef.getDOMNode().clientWidth;
     	var actualHeight = this.refs.appRef.getDOMNode().clientHeight;
