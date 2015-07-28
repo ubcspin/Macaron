@@ -232,6 +232,20 @@ var vticonStore = Reflux.createStore({
 
 		for (var p in this._data.parameters) {
 			this._data.parameters[p].data = this._data.parameters[p].data.filter(kfNotSelected);
+			if (this._data.parameters[p].data.length == 0) {
+				//can't have an empty keyframe track, create new keyframe
+				var new_id = this._getNewKFUID(p);
+				var new_t = this._data.duration/2;
+				//assign a midway value
+				var new_value = (this._data.parameters[p].valueScale[0] + this._data.parameters[p].valueScale[1])/2; 
+				
+				this._data.parameters[p].data.push({
+					id:new_id,
+					t:new_t,
+					value:new_value,
+					selected:false
+				});
+			}
 		}
 
 		this.trigger(this._data);
