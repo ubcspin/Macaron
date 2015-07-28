@@ -54,9 +54,9 @@ var dragStore = Reflux.createStore({
 		this._dragging = Draggable.KEYFRAME;
 	},
 
-	onStartSelectDrag() {
+	onStartSelectDrag(addmode=false) {
 		this._dragging = Draggable.SELECT;
-		SelectionStore.actions.startSelecting(this._scales.scaleTimeline.invert(this._lastX), this._calculateSelectionParameterMap(this._lastY)); 
+		SelectionStore.actions.startSelecting(this._scales.scaleTimeline.invert(this._lastX), this._calculateSelectionParameterMap(this._lastY), addmode); 
 	},
 
 	onHandleMouseMove(x, y) {		

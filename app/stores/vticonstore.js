@@ -10,6 +10,8 @@ var vticonActions = Reflux.createActions(
 		'addSelectedKeyframe',
 		'addSelectedKeyframes',
 		'addToggleSelectedKeyframe',
+		'selectKeyframesInRange',
+		'addSelectedKeyframesInRange',
 		'unselectKeyframe',
 		'unselectKeyframes',
 
@@ -124,8 +126,54 @@ var vticonStore = Reflux.createStore({
 		this.trigger(this._data);
 	},
 
+	//Range select
+	onSelectKeyframesInRange(time1, time2, parameter_value_map) {
+		var ids = this._getKFIDSInRange(time1, time2, parameter_value_map);
+		this._setSelectedKeyframes(ids, true);
+
+	},
+
+	onAddSelectedKeyframesInRange(time1, time2, parameter_value_map) {
+		var ids = this._getKFIDSInRange(time1, time2, parameter_value_map);
+		this._setSelectedKeyframes(ids, false);
+	},
+
 	//helpers
 	//need to refactor into one function at some point?
+
+	_getKFIDSInRange(time1, time2, parameter_value_map) {
+		var tLeft = time1;
+		var tRight = time2;
+		if(tLeft > tRight)
+		{
+			tLeft = time2;
+			tRight = time1;
+		}
+
+		var rv =[];
+
+		for (var p in parameter_value_map) {
+			var vTop = parameter_value_map[p].value1;
+			var vBottom = parameter_value_map[p].value2;
+			if(vTop < vBottom)
+			{
+				vTop = parameter_value_map[p].value2;
+				vBottom = parameter_value_map[p].value1;
+			}
+
+			for (var i = 0; i < this._data.parameters[p].data.length; i++) {
+					if(this._data.parameters[p].data[i].t >= tLeft
+						&& this._data.parameters[p].data[i].t <= tRight
+						&& this._data.parameters[p].data[i].value <= vTop
+						&& this._data.parameters[p].data[i].value >= vBottom)
+					{
+						rv.push(this._data.parameters[p].data[i].id);
+					}
+				}
+		}
+
+		return rv;
+	},
 
 	_setSelectedKeyframes(ids, setUnselected) {
 		for (var p in this._data.parameters) {

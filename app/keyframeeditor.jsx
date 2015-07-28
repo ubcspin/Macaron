@@ -186,7 +186,7 @@ var KeyframeEditor = React.createClass({
 
 
   //       VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey);
-  		DragStore.actions.startSelectDrag();
+  		DragStore.actions.startSelectDrag(e.shiftKey);
 	},
 
 	_onMouseDownKeyframe(e) {
