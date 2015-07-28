@@ -21,7 +21,12 @@ config = {
         {
             test:/audiolet\.js/,
             loaders: ['imports?this=>window', 'script']
-        }],
+        },
+        {
+            test: /\.css$/,
+            loader: "style-loader!css-loader"
+        }
+        ],
         noParse: [pathToReact]
     }    
 };

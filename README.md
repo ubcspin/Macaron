@@ -36,6 +36,10 @@ And you will need two custom loaders for webpack, to import Audiolet, a non-NPM 
  - `npm install imports-loader --save`
  - `npm install script-loader --save`
 
+ As well, the following two loaders for loading CSS stylesheets:
+ 
+ - `npm install style-loader css-loader --save-dev`
+
 Now, you can build the environment with `npm run build`, and serve it on `localhost:8080` with `npm run dev`. When served, it will automatically refresh when you change components. 
 For more information, follow this tutorial: https://github.com/christianalfoni/react-webpack-cookbook/wiki
 

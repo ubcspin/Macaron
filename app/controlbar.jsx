@@ -76,10 +76,10 @@ var ControlBar = React.createClass({
 		return (
 			<div className="controlbar" style={divStyle}>
 				<div className="time-control" style={timeControlStyle}>
-					 <i onClick={this._onStepBackwardClick} className="fa fa-step-backward" style={buttonStyle}></i>
-					 <i onClick={this._onPlayClick} className={iconText} style={buttonStyle}></i>
-					 <i onClick={this._onStepForwardClick} className="fa fa-step-forward" style={buttonStyle}></i>
-					 <span onClick={this._onMuteClick}><input type="checkbox" checked={this.props.mute}/>Mute</span>
+					 <a class="btn" href="#"><i onClick={this._onStepBackwardClick} className="fa fa-step-backward" style={buttonStyle}></i></a>
+					 <a class="btn" href="#"><i onClick={this._onPlayClick} className={iconText} style={buttonStyle}></i></a>
+					 <a class="btn" href="#"><i onClick={this._onStepForwardClick} className="fa fa-step-forward" style={buttonStyle}></i></a>
+					 <a class="btn" href="#"><span onClick={this._onMuteClick}><input type="checkbox" checked={this.props.mute}/>Mute</span></a>
 				</div>	
 			</div>
 			);
