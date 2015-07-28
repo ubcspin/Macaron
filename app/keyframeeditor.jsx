@@ -151,7 +151,8 @@ var KeyframeEditor = React.createClass({
 						<path
 							d={fillPath}
 							fill="#FFDDAD"
-							stroke="#FFDDAD">
+							stroke="#FFDDAD"
+							onMouseDown={this._onMouseDown}>
 						</path>
 
 						{data.map(function(d)
@@ -201,6 +202,8 @@ var KeyframeEditor = React.createClass({
 		}
 
 		this._lastMouseDownTime = t;
+
+		return false;
 	},
 
 	_onMouseDownKeyframe(e) {
