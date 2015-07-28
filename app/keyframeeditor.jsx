@@ -28,13 +28,14 @@ var KeyframeEditor = React.createClass({
 	
 	getDefaultProps: function() {
 	    return {
-	      height: 100,
+	      height: 150,
 	      width:"100%",
 	      circleColor:'#FF8400',
 	      selectedCircleColor:'#B05B00',
 	      selectionColor:'#676767',
 	      selectionOpacity:0.2,
-	      doubleClickTime:500 //ms
+	      doubleClickTime:500, //ms
+	      axisTickLength:5
 	    }
 	},
 
@@ -109,6 +110,11 @@ var KeyframeEditor = React.createClass({
 
 		var keyframeCallback = this._onMouseDownKeyframe;
 
+		//axis
+		// var yAxis = d3.svg.axis()
+		// 					.scale(scaleY);
+		var axisTickLength = this.props.axisTickLength;
+
 
 		//selection square
 		var selectionSquare = <rect />;
@@ -154,6 +160,36 @@ var KeyframeEditor = React.createClass({
 							stroke="#FFDDAD"
 							onMouseDown={this._onMouseDown}>
 						</path>
+
+						{scaleY.ticks(5).map(function(tick, idx) {
+
+								//tick line
+								var lineProps = {
+									stroke:'black',
+									strokeWidth:0.5
+								};
+								lineProps['y1'] = scaleY(tick);
+								lineProps['y2'] = scaleY(tick);
+								lineProps['x1'] = 0;
+								lineProps['x2'] = 0 + axisTickLength;
+								var line = React.DOM.line(lineProps);
+
+								//tick label
+								var labelProps = {
+									fontSize:10
+
+								};
+								labelProps['y'] = scaleY(tick)+3;
+								labelProps['x'] = axisTickLength+4;
+								var label = React.DOM.text(labelProps, tick);
+								return (<g key={idx}>
+											{line}
+											{label}
+										</g>);
+
+
+						})
+						}
 
 						{data.map(function(d)
 							{

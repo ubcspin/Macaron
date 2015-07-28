@@ -17,7 +17,7 @@ var scaleStore = Reflux.createStore({
 	listenables: [scaleActions],
 
 	init() {
-		var stub_fn = function(x){return 0;};
+		var stub_fn = d3.scale.identity();
 		this._data = {
 			scaleTimeline:stub_fn,
 			scaleParameter:{
