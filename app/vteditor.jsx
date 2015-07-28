@@ -150,7 +150,7 @@ var VTEditor = React.createClass({
 
 
 		return (
-			<div id="app" ref="appRef" onMouseMove={this._handleMouseMove} onMouseUp={this._handleMouseUp}>
+			<div id="app" ref="appRef">
 				<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
 				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.playback.mute} />
 				<PlayHead scaleX={scaleX} currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
@@ -168,7 +168,9 @@ var VTEditor = React.createClass({
 				
 	componentDidMount: function () {
 
-		window.addEventListener('resize', this.handleResize);			   
+		window.addEventListener('resize', this.handleResize);
+		window.addEventListener('mousemove', this._handleMouseMove);
+		window.addEventListener('mouseup', this._handleMouseUp);
 
     	var actualWidth = this.refs.appRef.getDOMNode().clientWidth;
     	var actualHeight = this.refs.appRef.getDOMNode().clientHeight;
