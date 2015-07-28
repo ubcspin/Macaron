@@ -151,6 +151,12 @@ var VTEditor = React.createClass({
    			case 8:
    				VTIconStore.actions.deleteSelectedKeyframes();
    				break;
+   			case 37: //left arrow
+   				PlaybackStore.actions.stepBackward();
+   				break;
+   			case 39: //right arrow
+   				PlaybackStore.actions.stepForward();
+   				break;
    		}
 
    		return false;
