@@ -54,7 +54,8 @@ var ControlBar = React.createClass({
 			height:this.props.height,
 			width:this.props.width,
 			background:this.props.background,
-			fontSize:this.props.fontSize
+			fontSize:this.props.fontSize,
+			className:'unselectable'
 		};
 
 		var timeControlStyle  = {
@@ -65,7 +66,8 @@ var ControlBar = React.createClass({
 
 		var buttonStyle = {
 			marginLeft:'0.5em',
-			marginRight:'0.5em'
+			marginRight:'0.5em',
+			className:'unselectable'
 		};
 
 		var iconText = "fa fa-play";
@@ -79,7 +81,7 @@ var ControlBar = React.createClass({
 					 <a class="btn" href="#"><i onClick={this._onStepBackwardClick} className="fa fa-step-backward" style={buttonStyle}></i></a>
 					 <a class="btn" href="#"><i onClick={this._onPlayClick} className={iconText} style={buttonStyle}></i></a>
 					 <a class="btn" href="#"><i onClick={this._onStepForwardClick} className="fa fa-step-forward" style={buttonStyle}></i></a>
-					 <a class="btn" href="#"><span onClick={this._onMuteClick}><input type="checkbox" checked={this.props.mute}/>Mute</span></a>
+					 <a class="btn" href="#"><span onClick={this._onMuteClick} className="unselectable"><input type="checkbox" checked={this.props.mute}/>Mute</span></a>
 				</div>	
 			</div>
 			);
