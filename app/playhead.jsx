@@ -64,17 +64,12 @@ var PlayHead = React.createClass({
 								var labelProps = {
 									fontSize:10,
 									textAlign:'center',
-									width:'100px',
 									className:'unselectable'
-
 								};
+								//hacky way of centering
 								labelProps['x'] = scaleX(tick)-2.5*tick.toString().length;
 								labelProps['y'] = axisTickLength+10;
 								var label = React.DOM.text(labelProps, tick);
-								//console.log(label);
-								// console.log(label.getDOMNode());
-								// label.setAttribute('x', scaleX(tick)-label.getBBox().width);
-								//console.log(label);
 
 
 								return (<g key={idx}>
