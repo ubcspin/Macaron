@@ -145,10 +145,10 @@ var VTEditor = React.createClass({
    		//look for deprecations in future versions
    		var keyCode = e.keyCode || e.which;
    		switch(keyCode) {
-   			case 32:
+   			case 32: //space bar
    				PlaybackStore.actions.togglePlaying();
    				break;
-   			case 8:
+   			case 8: //backspace
    				VTIconStore.actions.deleteSelectedKeyframes();
    				break;
    			case 37: //left arrow
