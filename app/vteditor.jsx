@@ -139,9 +139,17 @@ var VTEditor = React.createClass({
    	},
 
    	_handleKeyboard : function(e) {
-   		switch(e.code) {
-   			case 'Space':
+
+   		//use keyCode because it's supported by more browsers
+   		//especially Safari, which has best performance so far
+   		//look for deprecations in future versions
+   		var keyCode = e.keyCode || e.which;
+   		switch(keyCode) {
+   			case 32:
    				PlaybackStore.actions.togglePlaying();
+   				break;
+   			case 8:
+   				VTIconStore.actions.deleteSelectedKeyframes();
    				break;
    		}
 
