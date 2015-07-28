@@ -1,5 +1,6 @@
 import Reflux from 'reflux';
 
+var VTIconStore = require('./vticonstore.js');
 
 var PLAYBACK_RATE = 60; //Hz
 
@@ -28,7 +29,7 @@ var playbackStore = Reflux.createStore({
 	init : function() {
 		this._data = {
 					playing: false,
-					currentTime: 450,
+					currentTime: 0,
 					loop : {
 						enabled:false,
 						start:0, //ms
@@ -39,6 +40,13 @@ var playbackStore = Reflux.createStore({
 
 		this._lastTimerTime = Date.now();
 		this._updateTimer = null;
+		this.listenTo(VTIconStore.store, this._VTIconUpdate);
+		this._vtduration = VTIconStore.store.getInitialState().duration;
+
+	},
+
+	_VTIconUpdate(vticon) {
+		this._vtduration = vticon.duration;
 	},
 
 	getInitialState : function() {
@@ -64,11 +72,7 @@ var playbackStore = Reflux.createStore({
 
 	onStepBackward() { this.onSetTime(0); },
 
-	onStepForward() {
-		//TODO: Need to know VTIcon duration
-		// this.onSetTime(VT ICON DURATION HERE);
-		console.log("Error: Step Forward not currently implemented.");
-	},
+	onStepForward() {this.onSetTime(this._vtduration);},
 
 
 	/**
@@ -87,6 +91,10 @@ var playbackStore = Reflux.createStore({
 		this.trigger(this._data);
 
 		if(this._data['playing']) {
+			if (this._data.currentTime >= this._vtduration)
+			{
+				this._data.currentTime = 0;
+			}
 			this._startUpdateTimer();
 		} else {
 			this._stopUpdateTimer();
@@ -111,6 +119,12 @@ var playbackStore = Reflux.createStore({
 
 		//TODO: Check duration
 		this._data['currentTime'] = this._data.currentTime+dt;
+		if (this._data['currentTime'] > this._vtduration)
+		{
+			this._data['currentTime'] = this._vtduration;
+			this._data.playing = false;
+			this._stopUpdateTimer();
+		}
 		this.trigger(this._data);
 	},
 
