@@ -35,7 +35,7 @@ var vticonStore = Reflux.createStore({
 							amplitude: {
 								valueScale:[0,1], //normalized
 								data : [
-									{ id: 0, t: 600, value:0.5, selected:true}, 
+									{ id: 0, t: 600, value:0.5, selected:false}, 
 									{ id: 1, t: 1500, value:1, selected:false},
 									{ id: 2, t: 3000, value:0, selected:false}]
 							},
@@ -238,7 +238,7 @@ var vticonStore = Reflux.createStore({
 				var new_t = this._data.duration/2;
 				//assign a midway value
 				var new_value = (this._data.parameters[p].valueScale[0] + this._data.parameters[p].valueScale[1])/2; 
-				
+
 				this._data.parameters[p].data.push({
 					id:new_id,
 					t:new_t,
