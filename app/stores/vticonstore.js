@@ -14,6 +14,7 @@ var vticonActions = Reflux.createActions(
 		'addSelectedKeyframesInRange',
 		'unselectKeyframe',
 		'unselectKeyframes',
+		'selectAllKeyframes',
 
 		'moveSelectedKeyframes',
 
@@ -120,12 +121,11 @@ var vticonStore = Reflux.createStore({
 	},
 
 	onUnselectKeyframes() {
-		for (var p in this._data.parameters) {
-			for (var i = 0; i < this._data.parameters[p].data.length; i++) {
-					this._data.parameters[p].data[i].selected = false;
-			}
-		}
-		this.trigger(this._data);
+		this._setAllKeyframes(false);
+	},
+
+	onSelectAllKeyframes() {
+		this._setAllKeyframes(true);
 	},
 
 	//Range select
@@ -175,6 +175,15 @@ var vticonStore = Reflux.createStore({
 		}
 
 		return rv;
+	},
+
+	_setAllKeyframes(bool) {
+		for (var p in this._data.parameters) {
+			for (var i = 0; i < this._data.parameters[p].data.length; i++) {
+					this._data.parameters[p].data[i].selected = bool;
+			}
+		}
+		this.trigger(this._data);
 	},
 
 	_setSelectedKeyframes(ids, setUnselected) {

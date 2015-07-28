@@ -176,8 +176,8 @@ var KeyframeEditor = React.createClass({
 
 								//tick label
 								var labelProps = {
-									fontSize:10
-
+									fontSize:10,
+									className:'unselectable'
 								};
 								labelProps['y'] = scaleY(tick)+3;
 								labelProps['x'] = axisTickLength+4;

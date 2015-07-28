@@ -149,6 +149,7 @@ var VTEditor = React.createClass({
    				PlaybackStore.actions.togglePlaying();
    				break;
    			case 8: //backspace
+   			case 46: //delete
    				VTIconStore.actions.deleteSelectedKeyframes();
    				break;
    			case 37: //left arrow
@@ -156,6 +157,14 @@ var VTEditor = React.createClass({
    				break;
    			case 39: //right arrow
    				PlaybackStore.actions.stepForward();
+   				break;
+   			case 65: //a
+   				if (e.ctrlKey) {
+   					VTIconStore.actions.selectAllKeyframes();
+   				}
+   				break;
+   			case 27: //esc
+   				VTIconStore.actions.unselectKeyframes();
    				break;
    		}
 
