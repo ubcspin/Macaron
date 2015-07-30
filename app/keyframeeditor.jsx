@@ -36,8 +36,8 @@ var KeyframeEditor = React.createClass({
 	      selectionOpacity:0.2,
 	      doubleClickTime:500, //ms
 	      axisTickLength:5,
-	      axisNameWidth:15,
-	      axisTickLeft:25
+	      axisNameWidth:18,
+	      axisTickLeft:30
 	    }
 	},
 
