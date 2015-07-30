@@ -22,7 +22,7 @@ var IconVis = React.createClass({
 	      height: 50,
 	      width:'100%',
 	      visColor:'#FFDDAD',
-	      resolution:2000
+	      resolution:8000
 	    }
 	},
 
@@ -51,6 +51,9 @@ var IconVis = React.createClass({
 
 		//do icon visualization
 		var visPoints = [];
+		var lastFrequency = 0;
+		var dt_in_s = this.props.vticon.duration/1000/this.props.resolution;
+		var phaseIntegral = 0;
 		for (var i = 0; i < this.props.resolution; i++) {
 			var t_in_ms = i/this.props.resolution*this.props.vticon.duration;
 			var t_in_s = t_in_ms/1000;
@@ -60,8 +63,15 @@ var IconVis = React.createClass({
 			var frequency = this.props.interpolateParameter("frequency", t_in_ms); //paramValues.frequency;
 			//console.log("Frequency for ", i, " at time", t_in_ms, "is", frequency);
 			//var frequency = this.props.interpolateParameter("frequency", t_in_ms);
-			var v = amplitude * Math.sin(t_in_s*frequency*2*Math.PI);
+
+			if (i == 0) {
+				// phaseIntegral = frequency;
+			} else { 
+				phaseIntegral += (frequency)*dt_in_s;
+			};
+			var v = amplitude * Math.sin(2*Math.PI*phaseIntegral);
 			visPoints.push ( [t_in_ms, v]);
+			lastFrequency = frequency;
 		}
 
 		var visPath = vticonline(visPoints);
@@ -83,7 +93,7 @@ var IconVis = React.createClass({
 		return (
 			<div ref="divWrapper" style={divStyle}>
 				<svg height="100%" width="100%">
-					<path stroke={this.props.visColor} strokeWidth="1" fill="none" d={visPath} />
+					<path stroke={this.props.visColor} strokeWidth="0.5" fill="none" d={visPath} />
 					<path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />
 				</svg>
 
