@@ -35,7 +35,9 @@ var KeyframeEditor = React.createClass({
 	      selectionColor:'#676767',
 	      selectionOpacity:0.2,
 	      doubleClickTime:500, //ms
-	      axisTickLength:5
+	      axisTickLength:5,
+	      axisNameWidth:15,
+	      axisTickLeft:25
 	    }
 	},
 
@@ -114,6 +116,7 @@ var KeyframeEditor = React.createClass({
 		// var yAxis = d3.svg.axis()
 		// 					.scale(scaleY);
 		var axisTickLength = this.props.axisTickLength;
+		var axisTickLeft = this.props.axisTickLeft;
 
 
 		//selection square
@@ -161,6 +164,8 @@ var KeyframeEditor = React.createClass({
 							onMouseDown={this._onMouseDown}>
 						</path>
 
+						<text x="0" y="0" transform={"translate("+this.props.axisNameWidth+","+this.props.height/2+") rotate(-90)"}>{this.props.parameter.charAt(0).toUpperCase() + this.props.parameter.slice(1)}</text>
+
 						{scaleY.ticks(5).map(function(tick, idx) {
 
 								//tick line
@@ -170,8 +175,8 @@ var KeyframeEditor = React.createClass({
 								};
 								lineProps['y1'] = scaleY(tick);
 								lineProps['y2'] = scaleY(tick);
-								lineProps['x1'] = 0;
-								lineProps['x2'] = 0 + axisTickLength;
+								lineProps['x1'] = axisTickLeft;
+								lineProps['x2'] = axisTickLeft + axisTickLength;
 								var line = React.DOM.line(lineProps);
 
 								//tick label
@@ -180,7 +185,7 @@ var KeyframeEditor = React.createClass({
 									className:'unselectable'
 								};
 								labelProps['y'] = scaleY(tick)+3;
-								labelProps['x'] = axisTickLength+4;
+								labelProps['x'] = axisTickLeft+axisTickLength+4;
 								var label = React.DOM.text(labelProps, tick);
 								return (<g key={idx}>
 											{line}

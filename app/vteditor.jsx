@@ -122,7 +122,7 @@ var VTEditor = React.createClass({
 		return {
 			keyframeCircleRadius:5,
 			playheadFill:"red",
-			timelineLeftOffset:40,
+			timelineLeftOffset:55,
 			timelineRightOffset:20
 		}
 
