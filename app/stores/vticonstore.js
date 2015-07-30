@@ -1,6 +1,5 @@
 import Reflux from 'reflux';
 
-
 var vticonActions = Reflux.createActions(
 	[
 		'newKeyframe',
@@ -66,22 +65,26 @@ var vticonStore = Reflux.createStore({
 	},
 
 	onNewKeyframe(parameter, t, value, addToSelection=false) {
-		var new_id = this._getNewKFUID();
-		this._data.parameters[parameter].data.push({
-			id:new_id,
-			t:t,
-			value:value,
-			selected:true
-		});
-
-		this._data.parameters[parameter].data.sort(this._keyframeCompare);
-
-		if (addToSelection)
+		if (this._isValidKeyframePosition(parameter, t, value))
 		{
-			this.trigger(this._data);
-		} else {
-			this.onSelectKeyframe(new_id);
+			var new_id = this._getNewKFUID();
+			this._data.parameters[parameter].data.push({
+				id:new_id,
+				t:t,
+				value:value,
+				selected:true
+			});
+
+			this._data.parameters[parameter].data.sort(this._keyframeCompare);
+
+			if (addToSelection)
+			{
+				this.trigger(this._data);
+			} else {
+				this.onSelectKeyframe(new_id);
+			}
 		}
+
 	},
 
 	/**
@@ -217,16 +220,34 @@ var vticonStore = Reflux.createStore({
 	*/
 
 	onMoveSelectedKeyframes(dt, dv) {
+		//guard
+		var valid_move = true;
 		for (var p in this._data.parameters) {
 			for (var i = 0; i < this._data.parameters[p].data.length; i++) {
-					if (this._data.parameters[p].data[i].selected) {
-						this._data.parameters[p].data[i].t += dt;
-						this._data.parameters[p].data[i].value += dv[p];
+				if (this._data.parameters[p].data[i].selected) {
+					if (!this._isValidKeyframePosition(p, this._data.parameters[p].data[i].t+dt, this._data.parameters[p].data[i].value+dv[p]))
+					{
+						valid_move = false;
 					}
+				}
 			}
-			this._data.parameters[p].data.sort(this._keyframeCompare);
 		}
-		this.trigger(this._data);
+
+		if (valid_move)
+		{
+			//move
+			for (var p in this._data.parameters) {
+				for (var i = 0; i < this._data.parameters[p].data.length; i++) {
+						if (this._data.parameters[p].data[i].selected) {
+							this._data.parameters[p].data[i].t += dt;
+							this._data.parameters[p].data[i].value += dv[p];
+						}
+				}
+				this._data.parameters[p].data.sort(this._keyframeCompare);
+			}
+			this.trigger(this._data);
+		}
+
 	},
 
 	/**
@@ -260,6 +281,26 @@ var vticonStore = Reflux.createStore({
 		this.trigger(this._data);
 	},
 
+	/**
+	 * KF Guards
+	 */
+	 _isValidKeyframePosition(parameter, t, v) 
+	 {
+	 	var valid = false;
+
+	 	if(t >= 0 && t <= this._data.duration)
+	 	{
+	 		var min = Math.min(this._data.parameters[parameter].valueScale[0], this._data.parameters[parameter].valueScale[1]);
+	 		var max = Math.max(this._data.parameters[parameter].valueScale[0], this._data.parameters[parameter].valueScale[1]);
+
+	 		if (v >= min &&
+	 			v <= max)
+	 		{
+	 			valid = true;
+	 		}
+	 	}
+	 	return valid;
+	 },
 
 	/**
 	* KFUID helper functions
