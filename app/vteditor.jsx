@@ -121,7 +121,9 @@ var VTEditor = React.createClass({
 
 		return {
 			keyframeCircleRadius:5,
-			playheadFill:"red"
+			playheadFill:"red",
+			timelineLeftOffset:40,
+			timelineRightOffset:20
 		}
 
 	},
@@ -206,20 +208,18 @@ var VTEditor = React.createClass({
 		window.addEventListener('mouseup', this._handleMouseUp);
 		window.addEventListener('keydown', this._handleKeyboard);
 
-    	var actualWidth = this.refs.appRef.getDOMNode().clientWidth;
-    	var actualHeight = this.refs.appRef.getDOMNode().clientHeight;
-
-    	ScaleStore.actions.setTimelineRange([this.props.keyframeCircleRadius, actualWidth-this.props.keyframeCircleRadius]);
+    	ScaleStore.actions.setTimelineRange(this._calculateTimelineRange());
    	},
 
 
    	handleResize: function(e) {
+    	ScaleStore.actions.setTimelineRange(this._calculateTimelineRange());
+	},
 
-    	var actualWidth = this.refs.appRef.getDOMNode().clientWidth;
+	_calculateTimelineRange() {
+	    var actualWidth = this.refs.appRef.getDOMNode().clientWidth;
     	var actualHeight = this.refs.appRef.getDOMNode().clientHeight;
-
-
-    	ScaleStore.actions.setTimelineRange([this.props.keyframeCircleRadius, actualWidth-this.props.keyframeCircleRadius]);
+		return [this.props.timelineLeftOffset+this.props.keyframeCircleRadius, actualWidth-this.props.keyframeCircleRadius-this.props.timelineRightOffset];
 
 	}
 
