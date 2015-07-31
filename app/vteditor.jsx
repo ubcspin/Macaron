@@ -13,6 +13,7 @@ var VTIconStore = require('./stores/vticonstore.js');
 var DragStore = require('./stores/dragstore.js');
 var ScaleStore = require('./stores/scalestore.js');
 var SelectionStore = require('./stores/selectionstore.js');
+var ClipboardStore = require('./stores/clipboardstore.js');
 
 
 
@@ -163,6 +164,17 @@ var VTEditor = React.createClass({
    			case 65: //a
    				if (e.ctrlKey) {
    					VTIconStore.actions.selectAllKeyframes();
+   				}
+   				break;
+   			case 67: //c
+   				if (e.ctrlKey) {
+   					ClipboardStore.actions.copy();
+   				}
+   				break;
+   			// case 80: //p
+   			case 86: //v
+				if (e.ctrlKey) {
+   					ClipboardStore.actions.paste();
    				}
    				break;
    			case 27: //esc

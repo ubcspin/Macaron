@@ -3,6 +3,7 @@ import Reflux from 'reflux';
 var vticonActions = Reflux.createActions(
 	[
 		'newKeyframe',
+		'newMultipleKeyframes',
 
 		'selectKeyframe',
 		'selectKeyframes',
@@ -81,16 +82,16 @@ var vticonStore = Reflux.createStore({
 
 	onNewMultipleKeyframes(parameter_keyframe_map, overwrite=false)
 	{
-		// if (overwrite) {
-		// 	console.log("ERROR: Overwrite not implemented");
-		// } else {
-		// 	this.onUnselectKeyframes();
-		// 	for (var p in parameter_keyframe_map) {
-		// 		this.onNewKeyframe(parameter_keyframe_map[p].t, parameter_keyframe_map[p].value, true)
-		// 	}
-		// }
-		
-
+		console.log(parameter_keyframe_map);
+		if (overwrite) {
+			console.log("ERROR: Overwrite not implemented");
+		} else {
+			this._setAllKeyframes(false);
+			for (var p in parameter_keyframe_map) {
+				this._addNewKeyframe(p, parameter_keyframe_map[p].t, parameter_keyframe_map[p].value, true)
+			}
+			this.trigger(this._data);
+		}
 	},
 
 	_addNewKeyframe(parameter, t, value, addToSelection=false) {
