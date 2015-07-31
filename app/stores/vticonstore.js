@@ -82,7 +82,6 @@ var vticonStore = Reflux.createStore({
 
 	onNewMultipleKeyframes(parameter_keyframe_map, overwrite=false)
 	{
-		console.log(parameter_keyframe_map);
 		if (overwrite) {
 			console.log("ERROR: Overwrite not implemented");
 		} else {
