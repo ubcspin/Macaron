@@ -88,7 +88,10 @@ var vticonStore = Reflux.createStore({
 		} else {
 			this._setAllKeyframes(false);
 			for (var p in parameter_keyframe_map) {
-				this._addNewKeyframe(p, parameter_keyframe_map[p].t, parameter_keyframe_map[p].value, true)
+				for (var i = 0; i < parameter_keyframe_map[p].length; i++)
+				{
+					this._addNewKeyframe(p, parameter_keyframe_map[p][i].t, parameter_keyframe_map[p][i].value, true);
+				}
 			}
 			this.trigger(this._data);
 		}

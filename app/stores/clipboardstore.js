@@ -74,14 +74,15 @@ var clipboardStore = Reflux.createStore({
 		var to_paste = {};
 		for (var p in this._clipboard)
 		{
+			to_paste[p] = [];
 			for(var i = 0; i < this._clipboard[p].length; i++) 
 			{
 				var d = this._clipboard[p][i];
-				to_paste[p] = {
+				to_paste[p].push({
 					t:d.t-this._lowest_time + this._currentTime,
 					value:d.value,
 					selected:true
-				};
+				});
 			}
 		}
 		VTIconStore.actions.newMultipleKeyframes(to_paste);
