@@ -70,7 +70,7 @@ var clipboardStore = Reflux.createStore({
 		console.log("Error: Cut is not implemented!");
 	},
 
-	onPaste() {
+	onPaste(overwrite=true) {
 		var to_paste = {};
 		for (var p in this._clipboard)
 		{
@@ -85,7 +85,7 @@ var clipboardStore = Reflux.createStore({
 				});
 			}
 		}
-		VTIconStore.actions.newMultipleKeyframes(to_paste);
+		VTIconStore.actions.newMultipleKeyframes(to_paste, overwrite=overwrite);
 	}
 
 });
