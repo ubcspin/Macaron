@@ -65,9 +65,39 @@ var vticonStore = Reflux.createStore({
 	},
 
 	onNewKeyframe(parameter, t, value, addToSelection=false) {
+		var new_id = this._addNewKeyframe(parameter, t, value, addToSelection);
+		if (new_id >= 0)
+		{
+			if (addToSelection)
+			{
+				this.trigger(this._data);
+			} else {
+				this.onSelectKeyframe(new_id);
+			}
+		}
+
+
+	},
+
+	onNewMultipleKeyframes(parameter_keyframe_map, overwrite=false)
+	{
+		// if (overwrite) {
+		// 	console.log("ERROR: Overwrite not implemented");
+		// } else {
+		// 	this.onUnselectKeyframes();
+		// 	for (var p in parameter_keyframe_map) {
+		// 		this.onNewKeyframe(parameter_keyframe_map[p].t, parameter_keyframe_map[p].value, true)
+		// 	}
+		// }
+		
+
+	},
+
+	_addNewKeyframe(parameter, t, value, addToSelection=false) {
+		var new_id = -1;
 		if (this._isValidKeyframePosition(parameter, t, value))
 		{
-			var new_id = this._getNewKFUID();
+			new_id = this._getNewKFUID();
 			this._data.parameters[parameter].data.push({
 				id:new_id,
 				t:t,
@@ -76,14 +106,8 @@ var vticonStore = Reflux.createStore({
 			});
 
 			this._data.parameters[parameter].data.sort(this._keyframeCompare);
-
-			if (addToSelection)
-			{
-				this.trigger(this._data);
-			} else {
-				this.onSelectKeyframe(new_id);
-			}
 		}
+		return new_id;
 
 	},
 
