@@ -3,6 +3,7 @@ import Reflux from 'reflux';
 var vticonActions = Reflux.createActions(
 	[
 		'newKeyframe',
+		'newMultipleKeyframes',
 
 		'selectKeyframe',
 		'selectKeyframes',
@@ -65,9 +66,76 @@ var vticonStore = Reflux.createStore({
 	},
 
 	onNewKeyframe(parameter, t, value, addToSelection=false) {
+		var new_id = this._addNewKeyframe(parameter, t, value, addToSelection);
+		if (new_id >= 0)
+		{
+			if (addToSelection)
+			{
+				this.trigger(this._data);
+			} else {
+				this.onSelectKeyframe(new_id);
+			}
+		}
+
+
+	},
+
+	onNewMultipleKeyframes(parameter_keyframe_map, overwrite=true)
+	{
+		if (overwrite) {
+
+			//find range of parameter_keyframe_map
+			var min = -1;
+			var max = -1;
+			for (var p in parameter_keyframe_map) {
+				for (var i = 0; i < parameter_keyframe_map[p].length; i++)
+				{
+					if (min == -1 || parameter_keyframe_map[p][i].t < min)
+					{
+						min = parameter_keyframe_map[p][i].t;
+					}
+
+					if (max == -1 || parameter_keyframe_map[p][i].t > max)
+					{
+						max = parameter_keyframe_map[p][i].t;
+					}
+				}
+			}
+
+			//delete keyframes in range
+			var ids_to_delete = [];
+			for (var p in this._data.parameters) {
+				for (var i = 0; i < this._data.parameters[p].data.length; i++)
+				{
+					if (this._data.parameters[p].data[i].t >= min &&
+						this._data.parameters[p].data[i].t <= max)
+					{
+						ids_to_delete.push(this._data.parameters[p].data[i].id);
+					}
+				}
+			}
+
+			this._setSelectedKeyframes(ids_to_delete, true);
+			this.onDeleteSelectedKeyframes();
+		} 
+
+
+		this._setAllKeyframes(false);
+		for (var p in parameter_keyframe_map) {
+			for (var i = 0; i < parameter_keyframe_map[p].length; i++)
+			{
+				this._addNewKeyframe(p, parameter_keyframe_map[p][i].t, parameter_keyframe_map[p][i].value, true);
+			}
+		}
+		this.trigger(this._data);
+		
+	},
+
+	_addNewKeyframe(parameter, t, value, addToSelection=false) {
+		var new_id = -1;
 		if (this._isValidKeyframePosition(parameter, t, value))
 		{
-			var new_id = this._getNewKFUID();
+			new_id = this._getNewKFUID();
 			this._data.parameters[parameter].data.push({
 				id:new_id,
 				t:t,
@@ -76,14 +144,8 @@ var vticonStore = Reflux.createStore({
 			});
 
 			this._data.parameters[parameter].data.sort(this._keyframeCompare);
-
-			if (addToSelection)
-			{
-				this.trigger(this._data);
-			} else {
-				this.onSelectKeyframe(new_id);
-			}
 		}
+		return new_id;
 
 	},
 
