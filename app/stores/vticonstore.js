@@ -80,20 +80,55 @@ var vticonStore = Reflux.createStore({
 
 	},
 
-	onNewMultipleKeyframes(parameter_keyframe_map, overwrite=false)
+	onNewMultipleKeyframes(parameter_keyframe_map, overwrite=true)
 	{
 		if (overwrite) {
-			console.log("ERROR: Overwrite not implemented");
-		} else {
-			this._setAllKeyframes(false);
+
+			//find range of parameter_keyframe_map
+			var min = -1;
+			var max = -1;
 			for (var p in parameter_keyframe_map) {
 				for (var i = 0; i < parameter_keyframe_map[p].length; i++)
 				{
-					this._addNewKeyframe(p, parameter_keyframe_map[p][i].t, parameter_keyframe_map[p][i].value, true);
+					if (min == -1 || parameter_keyframe_map[p][i].t < min)
+					{
+						min = parameter_keyframe_map[p][i].t;
+					}
+
+					if (max == -1 || parameter_keyframe_map[p][i].t > max)
+					{
+						max = parameter_keyframe_map[p][i].t;
+					}
 				}
 			}
-			this.trigger(this._data);
+
+			//delete keyframes in range
+			var ids_to_delete = [];
+			for (var p in this._data.parameters) {
+				for (var i = 0; i < this._data.parameters[p].data.length; i++)
+				{
+					if (this._data.parameters[p].data[i].t >= min &&
+						this._data.parameters[p].data[i].t <= max)
+					{
+						ids_to_delete.push(this._data.parameters[p].data[i].id);
+					}
+				}
+			}
+
+			this._setSelectedKeyframes(ids_to_delete, true);
+			this.onDeleteSelectedKeyframes();
+		} 
+
+
+		this._setAllKeyframes(false);
+		for (var p in parameter_keyframe_map) {
+			for (var i = 0; i < parameter_keyframe_map[p].length; i++)
+			{
+				this._addNewKeyframe(p, parameter_keyframe_map[p][i].t, parameter_keyframe_map[p][i].value, true);
+			}
 		}
+		this.trigger(this._data);
+		
 	},
 
 	_addNewKeyframe(parameter, t, value, addToSelection=false) {
