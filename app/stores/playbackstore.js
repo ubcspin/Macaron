@@ -66,6 +66,14 @@ var playbackStore = Reflux.createStore({
 	*/
 
 	onSetTime(newtime){
+		if (newtime < 0) {
+			newtime = 0;
+		}
+
+		if (newtime > this._vtduration) {
+			newtime = this._vtduration;
+		}
+
 		this._data['currentTime'] = newtime;
 		this.trigger(this._data);
 	},
