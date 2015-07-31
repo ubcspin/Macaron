@@ -17,6 +17,10 @@ var vticonActions = Reflux.createActions(
 		'selectAllKeyframes',
 
 		'moveSelectedKeyframes',
+		'stopMovingSelectedKeyframes',
+
+		'undo',
+		'redo',
 
 		'deleteSelectedKeyframes'
 	]
@@ -51,6 +55,9 @@ var vticonStore = Reflux.createStore({
 						}
 					};
 
+		this._previousStates = []; //for undo
+		this._nextStates = []; //for redo
+
 		this._kfuidCount = 0;
 		for (var p in this._data.parameters) {
 			for (var d in this._data.parameters[p].data)
@@ -75,9 +82,8 @@ var vticonStore = Reflux.createStore({
 			} else {
 				this.onSelectKeyframe(new_id);
 			}
+			this._saveStateForUndo();
 		}
-
-
 	},
 
 	onNewMultipleKeyframes(parameter_keyframe_map, overwrite=true)
@@ -127,6 +133,7 @@ var vticonStore = Reflux.createStore({
 				this._addNewKeyframe(p, parameter_keyframe_map[p][i].t, parameter_keyframe_map[p][i].value, true);
 			}
 		}
+		this._saveStateForUndo();
 		this.trigger(this._data);
 		
 	},
@@ -312,6 +319,10 @@ var vticonStore = Reflux.createStore({
 
 	},
 
+	onStopMovingSelectedKeyframes() {
+		this._saveStateForUndo();
+	},
+
 	/**
 	* Delete Keyframes
 	*/
@@ -340,6 +351,7 @@ var vticonStore = Reflux.createStore({
 			}
 		}
 
+		this._saveStateForUndo();
 		this.trigger(this._data);
 	},
 
@@ -362,6 +374,59 @@ var vticonStore = Reflux.createStore({
 	 		}
 	 	}
 	 	return valid;
+	 },
+
+
+	 /**
+	 * Undo/Redo
+	 */
+
+	 _copyState() {
+	 	//TODO: Make this more general, right now it's very brittle
+	 	var state = {};
+	 	state.duration = this._data.duration;
+	 	state.parameters = {};
+	 	for (var p in this._data.parameters)
+	 	{
+	 		state.parameters[p] = {};
+	 		state.parameters[p].valueScale = this._data.parameters[p].valueScale;
+	 		state.parameters[p].data = [];
+	 		for (var i = 0; i < this._data.parameters[p].data.length; i++)
+	 		{
+	 			var d = this._data.parameters[p].data[i];
+	 			state.parameters[p].data.push({
+	 				t:d.t,
+	 				value:d.value,
+	 				selected:d.selected,
+	 				id:d.id
+	 			});
+	 		}
+	 	}
+
+	 	return state;
+	 },
+
+	 _saveStateForUndo() {
+	 	this._previousStates.push(this._copyState());
+	 	this._nextStates = [];
+	 },
+
+	 onUndo() {
+	 	if (this._previousStates.length > 0 )
+	 	{
+	 		this._nextStates.push(this._copyState());
+	 		this._data = this._previousStates.pop();
+	 		this.trigger(this._data);
+	 	}
+	 },
+
+	 onRedo() {
+	 	if (this._nextStates.length > 0 )
+	 	{
+	 		this._previousStates.push(this._copyState());
+	 		this._data = this._nextStates.pop();
+	 		this.trigger(this._data);
+	 	}
 	 },
 
 	/**

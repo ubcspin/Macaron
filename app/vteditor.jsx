@@ -177,6 +177,15 @@ var VTEditor = React.createClass({
    					ClipboardStore.actions.paste();
    				}
    				break;
+   			case 82: //r
+   				if (e.ctrlKey) {
+   					VTIconStore.actions.redo();
+   				}
+   				break;
+   			case 85: //u
+   				if(e.ctrlKey) {
+   					VTIconStore.actions.undo();
+   				}
    			case 27: //esc
    				VTIconStore.actions.unselectKeyframes();
    				break;
