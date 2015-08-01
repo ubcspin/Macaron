@@ -94,19 +94,25 @@ var vticonStore = Reflux.createStore({
 		if (overwrite) {
 
 			//find range of parameter_keyframe_map
-			var min = -1;
-			var max = -1;
+			var min = {};
+			var max = {};
 			for (var p in parameter_keyframe_map) {
+				if (!(p in min)) {
+					min[p] = -1;
+				}
+				if (!(p in max)) {
+					max[p] = -1;
+				}
 				for (var i = 0; i < parameter_keyframe_map[p].length; i++)
 				{
-					if (min == -1 || parameter_keyframe_map[p][i].t < min)
+					if (min[p] == -1 || parameter_keyframe_map[p][i].t < min[p])
 					{
-						min = parameter_keyframe_map[p][i].t;
+						min[p] = parameter_keyframe_map[p][i].t;
 					}
 
-					if (max == -1 || parameter_keyframe_map[p][i].t > max)
+					if (max[p] == -1 || parameter_keyframe_map[p][i].t > max[p])
 					{
-						max = parameter_keyframe_map[p][i].t;
+						max[p] = parameter_keyframe_map[p][i].t;
 					}
 				}
 			}
@@ -116,8 +122,8 @@ var vticonStore = Reflux.createStore({
 			for (var p in this._data.parameters) {
 				for (var i = 0; i < this._data.parameters[p].data.length; i++)
 				{
-					if (this._data.parameters[p].data[i].t >= min &&
-						this._data.parameters[p].data[i].t <= max)
+					if (this._data.parameters[p].data[i].t >= min[p] &&
+						this._data.parameters[p].data[i].t <= max[p])
 					{
 						ids_to_delete.push(this._data.parameters[p].data[i].id);
 					}
