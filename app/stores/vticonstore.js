@@ -447,13 +447,11 @@ var vticonStore = Reflux.createStore({
 	 },
 
 	 _saveStateForUndo() {
-	 	console.log(this._hasStateChanged());
 	 	if (this._hasStateChanged())
 	 	{
 		 	this._previousStates.push(this._copyState());
 		 	this._nextStates = [];	
 	 	}
-	 	console.log(this._previousStates);
 	 },
 
 	 onUndo() {
@@ -463,7 +461,6 @@ var vticonStore = Reflux.createStore({
 	 		this._data = this._previousStates.pop();
 	 		this.trigger(this._data);
 	 	}
-	 	console.log(this._previousStates);
 	 },
 
 	 onRedo() {
