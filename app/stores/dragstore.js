@@ -51,6 +51,7 @@ var dragStore = Reflux.createStore({
 	},
 
 	onStartKeyframeDrag() {
+		VTIconStore.actions.startMovingSelectedKeyframes();
 		this._dragging = Draggable.KEYFRAME;
 	},
 

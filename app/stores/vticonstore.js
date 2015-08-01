@@ -17,6 +17,10 @@ var vticonActions = Reflux.createActions(
 		'selectAllKeyframes',
 
 		'moveSelectedKeyframes',
+		'startMovingSelectedKeyframes',
+
+		'undo',
+		'redo',
 
 		'deleteSelectedKeyframes'
 	]
@@ -51,6 +55,9 @@ var vticonStore = Reflux.createStore({
 						}
 					};
 
+		this._previousStates = []; //for undo
+		this._nextStates = []; //for redo
+
 		this._kfuidCount = 0;
 		for (var p in this._data.parameters) {
 			for (var d in this._data.parameters[p].data)
@@ -66,6 +73,8 @@ var vticonStore = Reflux.createStore({
 	},
 
 	onNewKeyframe(parameter, t, value, addToSelection=false) {
+		this._saveStateForUndo();
+
 		var new_id = this._addNewKeyframe(parameter, t, value, addToSelection);
 		if (new_id >= 0)
 		{
@@ -76,12 +85,12 @@ var vticonStore = Reflux.createStore({
 				this.onSelectKeyframe(new_id);
 			}
 		}
-
-
 	},
 
 	onNewMultipleKeyframes(parameter_keyframe_map, overwrite=true)
 	{
+		this._saveStateForUndo();
+
 		if (overwrite) {
 
 			//find range of parameter_keyframe_map
@@ -312,6 +321,10 @@ var vticonStore = Reflux.createStore({
 
 	},
 
+	onStartMovingSelectedKeyframes() {
+		this._saveStateForUndo();
+	},
+
 	/**
 	* Delete Keyframes
 	*/
@@ -321,6 +334,8 @@ var vticonStore = Reflux.createStore({
 		var kfNotSelected = function(value) {
 			return !value.selected;
 		};
+
+		this._saveStateForUndo();
 
 		for (var p in this._data.parameters) {
 			this._data.parameters[p].data = this._data.parameters[p].data.filter(kfNotSelected);
@@ -362,6 +377,101 @@ var vticonStore = Reflux.createStore({
 	 		}
 	 	}
 	 	return valid;
+	 },
+
+
+	 /**
+	 * Undo/Redo
+	 */
+
+	 _copyState() {
+	 	//TODO: Make this more general, right now it's very brittle
+	 	var state = {};
+	 	state.duration = this._data.duration;
+	 	state.parameters = {};
+	 	for (var p in this._data.parameters)
+	 	{
+	 		state.parameters[p] = {};
+	 		state.parameters[p].valueScale = this._data.parameters[p].valueScale;
+	 		state.parameters[p].data = [];
+	 		for (var i = 0; i < this._data.parameters[p].data.length; i++)
+	 		{
+	 			var d = this._data.parameters[p].data[i];
+	 			state.parameters[p].data.push({
+	 				t:d.t,
+	 				value:d.value,
+	 				selected:d.selected,
+	 				id:d.id
+	 			});
+	 		}
+	 	}
+
+	 	return state;
+	 },
+
+	 _hasStateChanged() {
+	 	var rv = true;
+	 	//TODO: Make this less brittle
+	 	if (this._previousStates.length > 0) {
+	 		rv = false;
+	 		var pState = this._previousStates[this._previousStates.length-1];
+
+	 		if (this._data.duration != pState.duration)
+	 		{
+	 			rv = true;
+	 		}
+
+		 	for (var p in this._data.parameters)
+		 	{
+		 		if (this._data.parameters[p].valueScale != pState.parameters[p].valueScale)
+		 		{
+		 			rv = true;
+		 		}
+
+		 		if (this._data.parameters[p].data.length != pState.parameters[p].data.length)
+		 		{
+		 			rv = true;
+		 		} else {
+		 			for (var i = 0; i < this._data.parameters[p].data.length; i++)
+			 		{
+			 			var d = this._data.parameters[p].data[i];
+			 			var pd = pState.parameters[p].data[i];
+			 			if (d.t != pd.t || d.value != pd.value || d.id != pd.id)
+			 			{
+			 				rv = true;
+			 			}
+			 		}
+		 		}
+		 	}
+	 	}
+	 	return rv;
+	 },
+
+	 _saveStateForUndo() {
+	 	if (this._hasStateChanged())
+	 	{
+		 	this._previousStates.push(this._copyState());
+		 	this._nextStates = [];	
+	 	}
+	 },
+
+	 onUndo() {
+	 	if (this._previousStates.length > 0 )
+	 	{
+	 		this._nextStates.push(this._copyState());
+	 		this._data = this._previousStates.pop();
+	 		this.trigger(this._data);
+	 	}
+	 },
+
+	 onRedo() {
+	 	if (this._nextStates.length > 0 )
+	 	{
+	 		this._previousStates.push(this._copyState());
+	 		this._data = this._nextStates.pop();
+	 		this.trigger(this._data);
+	 	}
+
 	 },
 
 	/**
