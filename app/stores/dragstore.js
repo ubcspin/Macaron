@@ -51,6 +51,7 @@ var dragStore = Reflux.createStore({
 	},
 
 	onStartKeyframeDrag() {
+		VTIconStore.actions.startMovingSelectedKeyframes();
 		this._dragging = Draggable.KEYFRAME;
 	},
 
@@ -83,8 +84,6 @@ var dragStore = Reflux.createStore({
 		if(this._dragging == Draggable.SELECT)
 		{
 			SelectionStore.actions.stopSelecting();
-		} else if (this._dragging == Draggable.KEYFRAME) {
-			VTIconStore.actions.stopMovingSelectedKeyframes();
 		}
 		this._dragging = Draggable.NONE;
 	},

@@ -17,7 +17,7 @@ var vticonActions = Reflux.createActions(
 		'selectAllKeyframes',
 
 		'moveSelectedKeyframes',
-		'stopMovingSelectedKeyframes',
+		'startMovingSelectedKeyframes',
 
 		'undo',
 		'redo',
@@ -73,6 +73,8 @@ var vticonStore = Reflux.createStore({
 	},
 
 	onNewKeyframe(parameter, t, value, addToSelection=false) {
+		this._saveStateForUndo();
+
 		var new_id = this._addNewKeyframe(parameter, t, value, addToSelection);
 		if (new_id >= 0)
 		{
@@ -82,7 +84,6 @@ var vticonStore = Reflux.createStore({
 			} else {
 				this.onSelectKeyframe(new_id);
 			}
-			this._saveStateForUndo();
 		}
 	},
 
@@ -319,7 +320,7 @@ var vticonStore = Reflux.createStore({
 
 	},
 
-	onStopMovingSelectedKeyframes() {
+	onStartMovingSelectedKeyframes() {
 		this._saveStateForUndo();
 	},
 
@@ -332,6 +333,8 @@ var vticonStore = Reflux.createStore({
 		var kfNotSelected = function(value) {
 			return !value.selected;
 		};
+
+		this._saveStateForUndo();
 
 		for (var p in this._data.parameters) {
 			this._data.parameters[p].data = this._data.parameters[p].data.filter(kfNotSelected);
@@ -351,7 +354,6 @@ var vticonStore = Reflux.createStore({
 			}
 		}
 
-		this._saveStateForUndo();
 		this.trigger(this._data);
 	},
 
@@ -406,9 +408,52 @@ var vticonStore = Reflux.createStore({
 	 	return state;
 	 },
 
+	 _hasStateChanged() {
+	 	var rv = true;
+	 	//TODO: Make this less brittle
+	 	if (this._previousStates.length > 0) {
+	 		rv = false;
+	 		var pState = this._previousStates[this._previousStates.length-1];
+
+	 		if (this._data.duration != pState.duration)
+	 		{
+	 			rv = true;
+	 		}
+
+		 	for (var p in this._data.parameters)
+		 	{
+		 		if (this._data.parameters[p].valueScale != pState.parameters[p].valueScale)
+		 		{
+		 			rv = true;
+		 		}
+
+		 		if (this._data.parameters[p].data.length != pState.parameters[p].data.length)
+		 		{
+		 			rv = true;
+		 		} else {
+		 			for (var i = 0; i < this._data.parameters[p].data.length; i++)
+			 		{
+			 			var d = this._data.parameters[p].data[i];
+			 			var pd = pState.parameters[p].data[i];
+			 			if (d.t != pd.t || d.value != pd.value || d.id != pd.id)
+			 			{
+			 				rv = true;
+			 			}
+			 		}
+		 		}
+		 	}
+	 	}
+	 	return rv;
+	 },
+
 	 _saveStateForUndo() {
-	 	this._previousStates.push(this._copyState());
-	 	this._nextStates = [];
+	 	console.log(this._hasStateChanged());
+	 	if (this._hasStateChanged())
+	 	{
+		 	this._previousStates.push(this._copyState());
+		 	this._nextStates = [];	
+	 	}
+	 	console.log(this._previousStates);
 	 },
 
 	 onUndo() {
@@ -418,6 +463,7 @@ var vticonStore = Reflux.createStore({
 	 		this._data = this._previousStates.pop();
 	 		this.trigger(this._data);
 	 	}
+	 	console.log(this._previousStates);
 	 },
 
 	 onRedo() {
@@ -427,6 +473,7 @@ var vticonStore = Reflux.createStore({
 	 		this._data = this._nextStates.pop();
 	 		this.trigger(this._data);
 	 	}
+
 	 },
 
 	/**
