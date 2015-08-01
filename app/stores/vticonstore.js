@@ -89,6 +89,8 @@ var vticonStore = Reflux.createStore({
 
 	onNewMultipleKeyframes(parameter_keyframe_map, overwrite=true)
 	{
+		this._saveStateForUndo();
+
 		if (overwrite) {
 
 			//find range of parameter_keyframe_map
@@ -134,7 +136,6 @@ var vticonStore = Reflux.createStore({
 				this._addNewKeyframe(p, parameter_keyframe_map[p][i].t, parameter_keyframe_map[p][i].value, true);
 			}
 		}
-		this._saveStateForUndo();
 		this.trigger(this._data);
 		
 	},
