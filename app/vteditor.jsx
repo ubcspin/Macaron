@@ -7,6 +7,7 @@ var ControlBar = require('./controlbar.jsx');
 var SoundGen = require('./soundgen.jsx'); //TODO
 var PlayHead = require('./playhead.jsx');
 var IconVis = require('./iconvis.jsx');
+var AnimationWindow = require('./animationwindow.jsx');
 var KeyframeEditor = require('./keyframeeditor.jsx');
 var PlaybackStore = require('./stores/playbackstore.js');
 var VTIconStore = require('./stores/vticonstore.js');
@@ -207,6 +208,7 @@ var VTEditor = React.createClass({
 
 		return (
 			<div id="app" ref="appRef">
+				<AnimationWindow />
 				<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
 				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.playback.mute} />
 				<PlayHead scaleX={scaleX} currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
