@@ -35,11 +35,10 @@ var animationStore = Reflux.createStore({
 	listenables:[animationActions],
 
 	init : function() {
-
 		this._data = {
 			animation:"none",
 			animationParameters:{},
-			animationOptions:Animations.keys()
+			animationOptions:Object.keys(Animations)
 		},
 
 		this.listenTo(PlaybackStore.store, this._PlaybackUpdate);
@@ -58,13 +57,15 @@ var animationStore = Reflux.createStore({
 	},
 
 	_update: function () {
-		this.animationParameters = this._SampleParameters(this._currentTime);
+		this._data.animationParameters = this._SampleParameters(this._currentTime);
 		this.trigger(this._data);
 	},
 
 	onSetAnimation(animation) {
+		console.log("setanimation: ", animation);
+		console.log(Animations);
 		if (animation in Animations) {
-			this.animation = animation;
+			this._data.animation = animation;
 			this._update();
 		};
 	},
@@ -85,7 +86,7 @@ var animationStore = Reflux.createStore({
 		//get adjacent keyframes	
 		var prevT = -1;
 		var nextT = -1;
-		for (var tstamp in d.keys())
+		for (var tstamp in Object.keys(d))
 		{
 			if (tstamp <= t)
 			{

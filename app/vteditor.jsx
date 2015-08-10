@@ -15,7 +15,7 @@ var DragStore = require('./stores/dragstore.js');
 var ScaleStore = require('./stores/scalestore.js');
 var SelectionStore = require('./stores/selectionstore.js');
 var ClipboardStore = require('./stores/clipboardstore.js');
-
+var AnimationStore = require('./stores/animationstore.js');
 
 
 var VTEditor = React.createClass({
@@ -23,7 +23,8 @@ var VTEditor = React.createClass({
 				Reflux.connect(PlaybackStore.store, 'playback'), //emitted updates go to 'playback' key
 				Reflux.connect(VTIconStore.store, 'vticon'), //emitted updates go to 'vticon' key			
 				Reflux.connect(ScaleStore.store, 'scales'), //emitted updates go to 'scales' key			
-				Reflux.connect(SelectionStore.store, 'selection') //emitted updates go to 'selection' key			
+				Reflux.connect(SelectionStore.store, 'selection'), //emitted updates go to 'selection' key			
+				Reflux.connect(AnimationStore.store, 'animation') //emitted updates go to 'animation' key						
 	],
 
 
@@ -205,10 +206,11 @@ var VTEditor = React.createClass({
 		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime);
 		var scaleX = this.state.scales.scaleTimeline;
 
+		console.log(this.state.animation.animation);
 
 		return (
 			<div id="app" ref="appRef">
-				<AnimationWindow />
+				<AnimationWindow animation={this.state.animation.animation} animationParameters={this.state.animation.animationParameters} />
 				<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
 				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.playback.mute} />
 				<PlayHead scaleX={scaleX} currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
@@ -232,6 +234,8 @@ var VTEditor = React.createClass({
 		window.addEventListener('keydown', this._handleKeyboard);
 
     	ScaleStore.actions.setTimelineRange(this._calculateTimelineRange());
+
+    	AnimationStore.actions.setAnimation("heartbeat");
    	},
 
 
