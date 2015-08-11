@@ -11,23 +11,30 @@ var animationActions = Reflux.createActions(
 
 
 //animations
+var hbSmallSize = 0.75; //0-1
+var hbLargeSize = 1;
+var hbBeatTime = 110; //ms
+var hbInterBeatTime = 1200; //ms
+var nBeats = 2;
 var Heartbeat = {
-	size: {
-		500:0.5,
-		600:1,
-		700:0.5,
+	size: {}
+};
+for (var i = 0; i < nBeats; i++) 
+{
+	Heartbeat.size[hbInterBeatTime/2 + i*hbInterBeatTime] = hbSmallSize;
+	Heartbeat.size[hbInterBeatTime/2 + i*hbInterBeatTime + hbBeatTime] = hbLargeSize;
+	Heartbeat.size[hbInterBeatTime/2 + i*hbInterBeatTime + 2*hbBeatTime] = hbSmallSize;
+	Heartbeat.size[hbInterBeatTime/2 + i*hbInterBeatTime + 3*hbBeatTime] = hbSmallSize;
+	Heartbeat.size[hbInterBeatTime/2 + i*hbInterBeatTime + 4*hbBeatTime] = hbLargeSize;
+	Heartbeat.size[hbInterBeatTime/2 + i*hbInterBeatTime + 5*hbBeatTime] = hbSmallSize;
 
-		800:0.5,
-		900:1,
-		1000:0.5,
+}
 
-		2000:0.5,
-		2100:1,
-		2200:0.5,
 
-		2300:0.5,
-		2400:1,
-		2500:0.5
+var BouncingBall = {
+	position: {
+		0: 0,
+		3000: 100
 	}
 };
 
