@@ -16,11 +16,19 @@ var AnimationWindow = React.createClass({
 	},
 
 	render : function() {
+
+		var centerStyle = {
+			marginLeft:'auto',
+			marginRight:'auto',
+			display:'block'
+		};
+
+
 		var animationContent = <group />;
 		if (this.props.animation === "heartbeat") {
 			animationContent = (
 					<path
-						transform={"scale(" + this.props.animationParameters.size + ")"}
+						transform={"translate("+((1-this.props.animationParameters.size)*50) + "," + ((1-this.props.animationParameters.size)*50) + ") scale(" + this.props.animationParameters.size + ")"}
 						fill-rule="evenodd" 
 						clip-rule="evenodd"
 						fill="red"
@@ -30,9 +38,10 @@ var AnimationWindow = React.createClass({
 	
 		}
 
+// viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet"
 		return (
-			<div width="100%" height="100%">
-				<svg width="100%" height="100%">
+			<div style={centerStyle}>
+				<svg style={centerStyle} width="100" height="100" >
 					{animationContent}
 				</svg>
 			</div>
