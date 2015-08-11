@@ -62,8 +62,6 @@ var animationStore = Reflux.createStore({
 	},
 
 	onSetAnimation(animation) {
-		console.log("setanimation: ", animation);
-		console.log(Animations);
 		if (animation in Animations) {
 			this._data.animation = animation;
 			this._update();

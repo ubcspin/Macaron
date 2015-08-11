@@ -206,8 +206,6 @@ var VTEditor = React.createClass({
 		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime);
 		var scaleX = this.state.scales.scaleTimeline;
 
-		console.log(this.state.animation.animation);
-
 		return (
 			<div id="app" ref="appRef">
 				<AnimationWindow animation={this.state.animation.animation} animationParameters={this.state.animation.animationParameters} />
