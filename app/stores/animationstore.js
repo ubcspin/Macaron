@@ -84,7 +84,7 @@ var animationStore = Reflux.createStore({
 		//get adjacent keyframes	
 		var prevT = -1;
 		var nextT = -1;
-		for (var tstamp in Object.keys(d))
+		for (var tstamp in d)
 		{
 			if (tstamp <= t)
 			{
@@ -112,8 +112,14 @@ var animationStore = Reflux.createStore({
 			rv = d[prevT];
 		} else {
 			//linear interpolation for now
-			rv = d[prevT] + (t-prevT) / (nextT-prevT) * (d[nextT]-d[prevT]);
+			if (prevT == nextT)
+			{
+				rv = d[prevT];
+			} else {
+				rv = d[prevT] + (t-prevT) / (nextT-prevT) * (d[nextT]-d[prevT]);		
+			}
 		}
+
 
 		return rv;
 	}

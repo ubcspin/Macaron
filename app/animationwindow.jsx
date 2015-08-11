@@ -20,6 +20,7 @@ var AnimationWindow = React.createClass({
 		if (this.props.animation === "heartbeat") {
 			animationContent = (
 					<path
+						transform={"scale(" + this.props.animationParameters.size + ")"}
 						fill-rule="evenodd" 
 						clip-rule="evenodd"
 						fill="red"
