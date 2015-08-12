@@ -3,6 +3,7 @@ import React from 'react';
 import Reflux from 'reflux';
 import d3 from 'd3';
 
+var EditorHeader = require('./editorheader.jsx');
 var ControlBar = require('./controlbar.jsx');
 var SoundGen = require('./soundgen.jsx'); //TODO
 var PlayHead = require('./playhead.jsx');
@@ -208,6 +209,7 @@ var VTEditor = React.createClass({
 
 		return (
 			<div id="app" ref="appRef">
+				<EditorHeader />
 				<AnimationWindow animation={this.state.animation.animation} animationParameters={this.state.animation.animationParameters} />
 				<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
 				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.playback.mute} />
