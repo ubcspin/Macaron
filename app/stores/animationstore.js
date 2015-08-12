@@ -11,6 +11,9 @@ var animationActions = Reflux.createActions(
 
 
 //animations
+
+
+//HEARTBEAT ANIMATION
 var hbSmallSize = 0.75; //0-1
 var hbLargeSize = 1;
 var hbBeatTime = 110; //ms
@@ -31,6 +34,38 @@ for (var i = 0; i < nBeats; i++)
 }
 
 
+//Mobile  ANIMATION
+var mobileSmallSize = 0.8;
+var mobileBigSize = 1;
+var nVibrations = 9;
+var vibrationStart = 500;
+var vibrationEnd = 2500;
+var vibrationDuration = (vibrationEnd-vibrationStart)/nVibrations;
+var vibrationRotation = 20;
+var Mobile = {
+	size: {
+		0: mobileSmallSize,
+		400:mobileSmallSize,
+		600:mobileBigSize,
+		2400:mobileBigSize,
+		2600:mobileSmallSize
+	},
+
+	rotation: {}
+}
+Mobile.rotation[vibrationStart] = 0;
+var rotationSign = 1;
+for (var i = 1; i < nVibrations; i++)
+{
+	rotationSign *= -1;
+	Mobile.rotation[vibrationStart+i*vibrationDuration] = rotationSign*vibrationRotation;
+}
+Mobile.rotation[vibrationEnd] = 0;
+
+
+
+
+
 var BouncingBall = {
 	position: {
 		0: 0,
@@ -41,9 +76,9 @@ var BouncingBall = {
 
 var Animations = {
 	'none' : {},
-	'heartbeat': Heartbeat
+	'heartbeat': Heartbeat,
+	'mobile': Mobile
 };
-
 
 
 
