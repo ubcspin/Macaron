@@ -186,6 +186,7 @@ var VTEditor = React.createClass({
    				}
    				break;
    			case 85: //u
+   			case 90: //z
    				if(e.ctrlKey) {
    					VTIconStore.actions.undo();
    				}
