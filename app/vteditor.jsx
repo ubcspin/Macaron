@@ -165,30 +165,40 @@ var VTEditor = React.createClass({
    				PlaybackStore.actions.stepForward();
    				break;
    			case 65: //a
-   				if (e.ctrlKey) {
+   				if (e.ctrlKey || e.metaKey) {
    					VTIconStore.actions.selectAllKeyframes();
    				}
    				break;
    			case 67: //c
-   				if (e.ctrlKey) {
+   				if (e.ctrlKey || e.metaKey) {
    					ClipboardStore.actions.copy();
    				}
    				break;
    			// case 80: //p
    			case 86: //v
-				if (e.ctrlKey) {
+				if (e.ctrlKey || e.metaKey) {
    					ClipboardStore.actions.paste();
    				}
    				break;
+   			case 88: //x	
+   				if (e.ctrlKey || e.metaKey) {
+   					ClipboardStore.actions.copy();
+   					VTIconStore.actions.deleteSelectedKeyframes();
+   				}
    			case 82: //r
-   				if (e.ctrlKey) {
+   				if (e.ctrlKey || e.metaKey) {
    					VTIconStore.actions.redo();
+   					e.preventDefault();
    				}
    				break;
    			case 85: //u
    			case 90: //z
-   				if(e.ctrlKey) {
-   					VTIconStore.actions.undo();
+   				if(e.ctrlKey || e.metaKey) {
+   					if( e.shiftKey) {
+   						VTIconStore.actions.redo();
+   					} else {
+   						VTIconStore.actions.undo();
+   					}
    				}
    			case 27: //esc
    				VTIconStore.actions.unselectKeyframes();
