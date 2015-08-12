@@ -22,7 +22,9 @@ var IconVis = React.createClass({
 	      height: 50,
 	      width:'100%',
 	      visColor:'#FFDDAD',
-	      resolution:8000
+	      resolution:4000,
+	      maxFrequencyRendered:250,
+	      limitFrequencies:true
 	    }
 	},
 
@@ -61,6 +63,9 @@ var IconVis = React.createClass({
 			//var paramValues = this.props.interpolateParameters(t_in_ms);
 			var amplitude = this.props.interpolateParameter("amplitude", t_in_ms);//paramValues.amplitude;
 			var frequency = this.props.interpolateParameter("frequency", t_in_ms); //paramValues.frequency;
+			if (this.props.limitFrequencies) {
+				frequency = Math.min(this.props.maxFrequencyRendered, frequency/2);
+			}
 			//console.log("Frequency for ", i, " at time", t_in_ms, "is", frequency);
 			//var frequency = this.props.interpolateParameter("frequency", t_in_ms);
 

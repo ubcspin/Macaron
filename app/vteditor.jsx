@@ -3,10 +3,12 @@ import React from 'react';
 import Reflux from 'reflux';
 import d3 from 'd3';
 
+var EditorHeader = require('./editorheader.jsx');
 var ControlBar = require('./controlbar.jsx');
 var SoundGen = require('./soundgen.jsx'); //TODO
 var PlayHead = require('./playhead.jsx');
 var IconVis = require('./iconvis.jsx');
+var AnimationWindow = require('./animationwindow.jsx');
 var KeyframeEditor = require('./keyframeeditor.jsx');
 var PlaybackStore = require('./stores/playbackstore.js');
 var VTIconStore = require('./stores/vticonstore.js');
@@ -14,7 +16,7 @@ var DragStore = require('./stores/dragstore.js');
 var ScaleStore = require('./stores/scalestore.js');
 var SelectionStore = require('./stores/selectionstore.js');
 var ClipboardStore = require('./stores/clipboardstore.js');
-
+var AnimationStore = require('./stores/animationstore.js');
 
 
 var VTEditor = React.createClass({
@@ -22,7 +24,8 @@ var VTEditor = React.createClass({
 				Reflux.connect(PlaybackStore.store, 'playback'), //emitted updates go to 'playback' key
 				Reflux.connect(VTIconStore.store, 'vticon'), //emitted updates go to 'vticon' key			
 				Reflux.connect(ScaleStore.store, 'scales'), //emitted updates go to 'scales' key			
-				Reflux.connect(SelectionStore.store, 'selection') //emitted updates go to 'selection' key			
+				Reflux.connect(SelectionStore.store, 'selection'), //emitted updates go to 'selection' key			
+				Reflux.connect(AnimationStore.store, 'animation') //emitted updates go to 'animation' key						
 	],
 
 
@@ -183,6 +186,7 @@ var VTEditor = React.createClass({
    				}
    				break;
    			case 85: //u
+   			case 90: //z
    				if(e.ctrlKey) {
    					VTIconStore.actions.undo();
    				}
@@ -204,9 +208,10 @@ var VTEditor = React.createClass({
 		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime);
 		var scaleX = this.state.scales.scaleTimeline;
 
-
 		return (
 			<div id="app" ref="appRef">
+				<EditorHeader />
+				<AnimationWindow animation={this.state.animation.animation} animationParameters={this.state.animation.animationParameters} />
 				<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
 				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.playback.mute} />
 				<PlayHead scaleX={scaleX} currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
@@ -230,6 +235,7 @@ var VTEditor = React.createClass({
 		window.addEventListener('keydown', this._handleKeyboard);
 
     	ScaleStore.actions.setTimelineRange(this._calculateTimelineRange());
+
    	},
 
 

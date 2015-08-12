@@ -41,6 +41,29 @@ a:active {
     color:black;
 }
 
+.header {
+    width:100%;
+    text-align:center;
+    font-size: 36pt;
+    box-shadow: 0px 2px 10px #BABABA;
+
+   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffc170+0,ffcc8e+100 */
+    background: #ffc170; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ffc170 0%, #ffcc8e 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffc170), color-stop(100%,#ffcc8e)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ffc170 0%,#ffcc8e 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ffc170 0%,#ffcc8e 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ffc170 0%,#ffcc8e 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ffc170 0%,#ffcc8e 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffc170', endColorstr='#ffcc8e',GradientType=0 ); /* IE6-9 */
+}
+
+.animationoptions {
+    margin-right:auto;
+    margin-left: auto;
+
+}
+
 .unselectable, text {
 -webkit-user-select: none; /* Chrome/Safari */        
 -moz-user-select: none; /* Firefox */
