@@ -4,6 +4,8 @@ var VTIconStore = require('./vticonstore.js');
 
 var PLAYBACK_RATE = 60; //Hz
 
+var STEP_AMOUNT = 100; //ms
+
 
 var playbackActions = Reflux.createActions(
 	[
@@ -78,9 +80,9 @@ var playbackStore = Reflux.createStore({
 		this.trigger(this._data);
 	},
 
-	onStepBackward() { this.onSetTime(0); },
+	onStepBackward() { this.onSetTime(this._data.currentTime-STEP_AMOUNT); },
 
-	onStepForward() {this.onSetTime(this._vtduration);},
+	onStepForward() {this.onSetTime(this._data.currentTime+STEP_AMOUNT);},
 
 
 	/**
