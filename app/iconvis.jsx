@@ -22,6 +22,7 @@ var IconVis = React.createClass({
 	      height: 50,
 	      width:'100%',
 	      visColor:'#FFDDAD',
+	      background:"#FAFAFA",
 	      resolution:4000,
 	      maxFrequencyRendered:250,
 	      limitFrequencies:true
@@ -33,7 +34,8 @@ var IconVis = React.createClass({
 
 		var divStyle = {
 			height:this.props.height,
-			width:this.props.width
+			width:this.props.width,
+			background:this.props.background
 		};
 
         var scaleY = d3.scale.linear()
