@@ -39,8 +39,8 @@ var EditorHeader = React.createClass({
 
 		return (
 			<div className="header" style={headerStyle}>
-				<span className="title"> Macaron Editor </span>
-				<select className="animationoptions" onChange={animationChangeCallback}>
+				<span className="title unselectable"> Macaron Editor </span>
+				<select className="animationoptions unselectable" onChange={animationChangeCallback}>
 					{animationOptions.map( (animationOption) => (
 						<option value={animationOption} selected={animationOption==selectedAnimation}>{animationOption}</option>
 						))}
