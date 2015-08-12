@@ -235,7 +235,6 @@ var VTEditor = React.createClass({
 
     	ScaleStore.actions.setTimelineRange(this._calculateTimelineRange());
 
-    	AnimationStore.actions.setAnimation("heartbeat");
    	},
 
 
