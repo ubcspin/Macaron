@@ -64,6 +64,17 @@ Mobile.rotation[vibrationEnd] = 0;
 
 
 
+//Cat  ANIMATION
+var Cat = {
+	size: {
+		0:1,
+		1000:1,
+		1500:1.25,
+		2000:1
+	}
+}
+
+
 
 
 var BouncingBall = {
@@ -77,7 +88,8 @@ var BouncingBall = {
 var Animations = {
 	'none' : {},
 	'heartbeat': Heartbeat,
-	'mobile': Mobile
+	'mobile': Mobile,
+	'cat':Cat
 };
 
 
