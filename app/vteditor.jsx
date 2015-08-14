@@ -323,7 +323,10 @@ var VTEditor = React.createClass({
 
 
    	handleResize: function(e) {
-    	ScaleStore.actions.setTimelineRange(this._calculateTimelineRange());
+		for (var n in this.state.scales)
+		{
+    		ScaleStore.actions.setTimelineRange(n, this._calculateTimelineRange(n));	
+		}
 	},
 
 	_calculateTimelineRange(name) {
@@ -332,7 +335,6 @@ var VTEditor = React.createClass({
 		
 		// var actualLeft = this.refs[name+"EditorRef"].getDOMNode().offsetLeft;
     	// var actualTop = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
-    	console.log(name, actualWidth);
 		return [this.props.timelineLeftOffset+this.props.keyframeCircleRadius, actualWidth-this.props.keyframeCircleRadius-this.props.timelineRightOffset];
 
 	}
