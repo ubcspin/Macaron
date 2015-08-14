@@ -233,7 +233,7 @@ var KeyframeEditor = React.createClass({
 
 	        var scaleY = this.state.scales[this.props.name].scaleParameter[this.props.parameter];
 
-	        var x = e.clientX;// - this.state.offsetLeft;
+	        var x = e.clientX - this.state.offsetLeft;
 	        var y = e.clientY - this.state.offsetTop;
 
 	        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey);

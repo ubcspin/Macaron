@@ -7,6 +7,10 @@ var TimelineMixin = require('./util/timelinemixin.js');
 
 var PlayHead = React.createClass({
 
+	mixins : [
+		TimelineMixin("divWrapper")
+		],
+
 	propTypes: {
 		duration: React.PropTypes.number.isRequired,
 		currentTime: React.PropTypes.number.isRequired,
@@ -24,7 +28,8 @@ var PlayHead = React.createClass({
 	},
 
    	_handleMouseDown : function(e) {
-   		DragStore.actions.startPlayheadDrag(this.props.scaleX.invert(e.clientX));
+   		var x = e.clientX-this.state.offsetLeft;
+   		DragStore.actions.startPlayheadDrag(this.props.scaleX.invert(x));
    	},
 
 	render : function() {
