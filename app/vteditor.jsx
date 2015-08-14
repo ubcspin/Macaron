@@ -218,17 +218,33 @@ var VTEditor = React.createClass({
 		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime);
 		var scaleX = this.state.scales.scaleTimeline;
 
+		var editorStyle = {
+			width:"50%",
+			display:"block",
+			float:"left"};
+
 		return (
 			<div id="app" ref="appRef">
 				<EditorHeader />
-				<AnimationWindow animation={this.state.animation.animation} animationParameters={this.state.animation.animationParameters} />
-				<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
 				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.playback.mute} />
-				<PlayHead scaleX={scaleX} currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
-				<IconVis scaleX={scaleX} vticon={this.state.vticon} currentTime={this.state.playback.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
-				{Object.keys(this.state.vticon.parameters).map( (p) => (
-						<KeyframeEditor scaleX={scaleX} currentTime={this.state.playback.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} selection={this.state.selection}/>
-					))}
+				<div id="maineditor" ref="mainEditorRef" style={editorStyle}>
+					<AnimationWindow animation={this.state.animation.animation} animationParameters={this.state.animation.animationParameters} />
+					<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
+					<PlayHead scaleX={scaleX} currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+					<IconVis scaleX={scaleX} vticon={this.state.vticon} currentTime={this.state.playback.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
+					{Object.keys(this.state.vticon.parameters).map( (p) => (
+							<KeyframeEditor scaleX={scaleX} currentTime={this.state.playback.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} selection={this.state.selection}/>
+						))}
+				</div>
+				<div id="exampleeditor" ref="exampleEditorRef" style={editorStyle}>
+					<AnimationWindow animation={this.state.animation.animation} animationParameters={this.state.animation.animationParameters} />
+					<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
+					<PlayHead scaleX={scaleX} currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
+					<IconVis scaleX={scaleX} vticon={this.state.vticon} currentTime={this.state.playback.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
+					{Object.keys(this.state.vticon.parameters).map( (p) => (
+							<KeyframeEditor scaleX={scaleX} currentTime={this.state.playback.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} selection={this.state.selection}/>
+						))}
+				</div>				
 			</div>);
 		},
 
@@ -254,8 +270,8 @@ var VTEditor = React.createClass({
 	},
 
 	_calculateTimelineRange() {
-	    var actualWidth = this.refs.appRef.getDOMNode().clientWidth;
-    	var actualHeight = this.refs.appRef.getDOMNode().clientHeight;
+	    var actualWidth = this.refs.mainEditorRef.getDOMNode().clientWidth;
+    	var actualHeight = this.refs.mainEditorRef.getDOMNode().clientHeight;
 		return [this.props.timelineLeftOffset+this.props.keyframeCircleRadius, actualWidth-this.props.keyframeCircleRadius-this.props.timelineRightOffset];
 
 	}
