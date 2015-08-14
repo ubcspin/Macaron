@@ -18,6 +18,7 @@ var KeyframeEditor = React.createClass({
 
 
 	propTypes: {
+		name : React.PropTypes.string.isRequired,
 		parameter : React.PropTypes.string.isRequired,
 		vticon : React.PropTypes.object.isRequired,
 		selection : React.PropTypes.object.isRequired,
@@ -47,8 +48,8 @@ var KeyframeEditor = React.createClass({
 
     	this._lastMouseDownTime = 0;
 
-    	ScaleStore.actions.setTrackrange(this.props.parameter, parameter_range); 
-    	ScaleStore.actions.setTopOffset(this.props.parameter, this.refs.divWrapper.getDOMNode().offsetTop) ;
+    	ScaleStore.actions.setTrackrange(this.props.name, this.props.parameter, parameter_range); 
+    	ScaleStore.actions.setTopOffset(this.props.name, this.props.parameter, this.refs.divWrapper.getDOMNode().offsetTop) ;
 	},
 
 
@@ -62,7 +63,7 @@ var KeyframeEditor = React.createClass({
 
 		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
-		var scaleY = this.state.scales.scaleParameter[this.props.parameter];
+		var scaleY = this.state.scales[this.props.name].scaleParameter[this.props.parameter];
 
         var scaleX = this.props.scaleX;
         var height = this.props.height;
@@ -230,7 +231,7 @@ var KeyframeEditor = React.createClass({
 
 			var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
-	        var scaleY = this.state.scales.scaleParameter[this.props.parameter];
+	        var scaleY = this.state.scales[this.props.name].scaleParameter[this.props.parameter];
 
 	        var x = e.clientX;// - this.state.offsetLeft;
 	        var y = e.clientY - this.state.offsetTop;
