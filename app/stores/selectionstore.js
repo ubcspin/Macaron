@@ -62,6 +62,7 @@ var selectStore = Reflux.createStore({
 	},
 
 	onStopSelecting() {
+		this._data.targetName="";
 		this._data.active = false;
 		this.trigger(this._data);
 	},

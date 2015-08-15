@@ -61,26 +61,31 @@ var dragStore = Reflux.createStore({
 	onStartSelectDrag(name, addmode=false) {
 		this._targetName = name;
 		this._dragging = Draggable.SELECT;
-		var x = this._lastX - this._scales[this._targetName].leftOffset;
-		SelectionStore.actions.startSelecting(name, this._scales[this._targetName].scaleTimeline.invert(x), this._calculateSelectionParameterMap(this._lastY), addmode); 
+		var unoffsetX = this._lastX - this._scales[this._targetName].leftOffset;
+		SelectionStore.actions.startSelecting(name, this._scales[this._targetName].scaleTimeline.invert(unoffsetX), this._calculateSelectionParameterMap(this._lastY), addmode); 
 	},
 
-	onHandleMouseMove(x, y) {		
-		x -= this._scales[this._targetName].leftOffset;
-		if (this._dragging == Draggable.PLAYHEAD)
-		{
-			PlaybackStore.actions.setTime(this._scales[this._targetName].scaleTimeline.invert(x));
-		} else if (this._dragging == Draggable.KEYFRAME) {
-			var dt = this._scales[this._targetName].scaleTimeline.invert(x) - this._scales[this._targetName].scaleTimeline.invert(this._lastX);
-			var dv = {};
-			for (var p in this._scales[this._targetName].scaleParameter) {
-				dv[p] = this._scales[this._targetName].scaleParameter[p].invert(y) - this._scales[this._targetName].scaleParameter[p].invert(this._lastY);
-			}
-			VTIconStore.actions.moveSelectedKeyframes(dt, dv);
-		} else if (this._dragging == Draggable.SELECT) {
-				SelectionStore.actions.changeSelecting(this._scales[this._targetName].scaleTimeline.invert(x), this._calculateSelectionParameterMap(y)); 
+	onHandleMouseMove(x, y) {
+	 	if (this._targetName in this._scales) {
 
-		}
+	 		var unoffsetX = x - this._scales[this._targetName].leftOffset;
+			if (this._dragging == Draggable.PLAYHEAD)
+			{
+				PlaybackStore.actions.setTime(this._scales[this._targetName].scaleTimeline.invert(unoffsetX));
+			} else if (this._dragging == Draggable.KEYFRAME) {
+				var dt = this._scales[this._targetName].scaleTimeline.invert(unoffsetX) - this._scales[this._targetName].scaleTimeline.invert(this._lastX);
+				var dv = {};
+				for (var p in this._scales[this._targetName].scaleParameter) {
+					dv[p] = this._scales[this._targetName].scaleParameter[p].invert(y) - this._scales[this._targetName].scaleParameter[p].invert(this._lastY);
+				}
+				VTIconStore.actions.moveSelectedKeyframes(dt, dv);
+			} else if (this._dragging == Draggable.SELECT) {
+					SelectionStore.actions.changeSelecting(this._scales[this._targetName].scaleTimeline.invert(unoffsetX), this._calculateSelectionParameterMap(y)); 
+
+			}
+
+	 	}	
+		
 		this._lastX = x;
 		this._lastY = y;
 
@@ -92,6 +97,7 @@ var dragStore = Reflux.createStore({
 			SelectionStore.actions.stopSelecting();
 		}
 		this._dragging = Draggable.NONE;
+		this._targetName="";
 	},
 
 	/**
