@@ -61,7 +61,8 @@ var dragStore = Reflux.createStore({
 	onStartSelectDrag(name, addmode=false) {
 		this._targetName = name;
 		this._dragging = Draggable.SELECT;
-		SelectionStore.actions.startSelecting(this._scales.scaleTimeline.invert(this._lastX), this._calculateSelectionParameterMap(this._lastY), addmode); 
+		var x = this._lastX - this._scales[this._targetName].leftOffset;
+		SelectionStore.actions.startSelecting(name, this._scales[this._targetName].scaleTimeline.invert(x), this._calculateSelectionParameterMap(this._lastY), addmode); 
 	},
 
 	onHandleMouseMove(x, y) {		
