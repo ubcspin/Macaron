@@ -240,7 +240,7 @@ var KeyframeEditor = React.createClass({
 	        DragStore.actions.startKeyframeDrag(this.props.name);
 
 		} else {
-  			DragStore.actions.startSelectDrag(this.props.namee.shiftKey);
+  			DragStore.actions.startSelectDrag(this.props.name.shiftKey);
 		}
 
 		this._lastMouseDownTime = t;
