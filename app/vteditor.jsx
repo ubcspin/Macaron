@@ -314,18 +314,23 @@ var VTEditor = React.createClass({
 		window.addEventListener('mouseup', this._handleMouseUp);
 		window.addEventListener('keydown', this._handleKeyboard);
 
-		for (var n in this.state.scales)
-		{
-    		ScaleStore.actions.setTimelineRange(n, this._calculateTimelineRange(n));	
-		}
+		this._updateScales();
 
    	},
 
 
    	handleResize: function(e) {
+		this._updateScales();
+	},
+
+	_updateScales : function() {
 		for (var n in this.state.scales)
 		{
     		ScaleStore.actions.setTimelineRange(n, this._calculateTimelineRange(n));	
+
+			var actualLeft = this.refs[n+"EditorRef"].getDOMNode().offsetLeft;
+	    	// var actualTop = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
+			ScaleStore.actions.setLeftOffset(n, actualLeft);
 		}
 	},
 
@@ -333,8 +338,6 @@ var VTEditor = React.createClass({
 	    var actualWidth = this.refs[name+"EditorRef"].getDOMNode().clientWidth;
     	// var actualHeight = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
 		
-		// var actualLeft = this.refs[name+"EditorRef"].getDOMNode().offsetLeft;
-    	// var actualTop = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
 		return [this.props.timelineLeftOffset+this.props.keyframeCircleRadius, actualWidth-this.props.keyframeCircleRadius-this.props.timelineRightOffset];
 
 	}

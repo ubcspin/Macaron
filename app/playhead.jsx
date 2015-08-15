@@ -12,6 +12,7 @@ var PlayHead = React.createClass({
 		],
 
 	propTypes: {
+		name: React.PropTypes.string.isRequired,
 		duration: React.PropTypes.number.isRequired,
 		currentTime: React.PropTypes.number.isRequired,
 		playheadFill: React.PropTypes.string.isRequired
@@ -29,7 +30,7 @@ var PlayHead = React.createClass({
 
    	_handleMouseDown : function(e) {
    		var x = e.clientX-this.state.offsetLeft;
-   		DragStore.actions.startPlayheadDrag(this.props.scaleX.invert(x));
+   		DragStore.actions.startPlayheadDrag(this.props.name, this.props.scaleX.invert(x));
    	},
 
 	render : function() {

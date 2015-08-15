@@ -8,6 +8,7 @@ var scaleActions = Reflux.createActions([
 			'setTimelineRange',
 			'setTrackrange',
 			'setTrackrangeMultiple',
+			'setLeftOffset',
 			'setTopOffset',
 			'setTopOffsetMultiple'
 		]);
@@ -33,6 +34,7 @@ var scaleStore = Reflux.createStore({
 					amplitude:stub_fn,
 					frequency:stub_fn
 				},
+				leftOffset:0,
 				topOffsetParameter:{
 					amplitude:0,
 					frequency:0
@@ -101,6 +103,11 @@ var scaleStore = Reflux.createStore({
 			this._trackrange[name][p] = parameter_range_map[p];
 		}
 
+		this._update();
+	},
+
+	onSetLeftOffset(name, offset) {
+		this._data[name].leftOffset = offset;
 		this._update();
 	},
 

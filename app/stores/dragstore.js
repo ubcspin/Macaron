@@ -38,6 +38,7 @@ var dragStore = Reflux.createStore({
 
 		this._dragging = Draggable.NONE;
 		this._lastMouseMove = {};
+		this._targetName = "";
 	},
 
 	_ScaleUpdate(scales) {
@@ -45,34 +46,38 @@ var dragStore = Reflux.createStore({
 	},
 
 
-	onStartPlayheadDrag(newtime) {
+	onStartPlayheadDrag(name, newtime) {
+		this._targetName = name;
 		this._dragging = Draggable.PLAYHEAD;
 		PlaybackStore.actions.setTime(newtime);
 	},
 
-	onStartKeyframeDrag() {
+	onStartKeyframeDrag(name) {
+		this._targetName = name;
 		VTIconStore.actions.startMovingSelectedKeyframes();
 		this._dragging = Draggable.KEYFRAME;
 	},
 
-	onStartSelectDrag(addmode=false) {
+	onStartSelectDrag(name, addmode=false) {
+		this._targetName = name;
 		this._dragging = Draggable.SELECT;
 		SelectionStore.actions.startSelecting(this._scales.scaleTimeline.invert(this._lastX), this._calculateSelectionParameterMap(this._lastY), addmode); 
 	},
 
 	onHandleMouseMove(x, y) {		
+		x -= this._scales[this._targetName].leftOffset;
 		if (this._dragging == Draggable.PLAYHEAD)
 		{
-			PlaybackStore.actions.setTime(this._scales.scaleTimeline.invert(x));
+			PlaybackStore.actions.setTime(this._scales[this._targetName].scaleTimeline.invert(x));
 		} else if (this._dragging == Draggable.KEYFRAME) {
-			var dt = this._scales.scaleTimeline.invert(x) - this._scales.scaleTimeline.invert(this._lastX);
+			var dt = this._scales[this._targetName].scaleTimeline.invert(x) - this._scales[this._targetName].scaleTimeline.invert(this._lastX);
 			var dv = {};
-			for (var p in this._scales.scaleParameter) {
-				dv[p] = this._scales.scaleParameter[p].invert(y) - this._scales.scaleParameter[p].invert(this._lastY);
+			for (var p in this._scales[this._targetName].scaleParameter) {
+				dv[p] = this._scales[this._targetName].scaleParameter[p].invert(y) - this._scales[this._targetName].scaleParameter[p].invert(this._lastY);
 			}
 			VTIconStore.actions.moveSelectedKeyframes(dt, dv);
 		} else if (this._dragging == Draggable.SELECT) {
-				SelectionStore.actions.changeSelecting(this._scales.scaleTimeline.invert(x), this._calculateSelectionParameterMap(y)); 
+				SelectionStore.actions.changeSelecting(this._scales[this._targetName].scaleTimeline.invert(x), this._calculateSelectionParameterMap(y)); 
 
 		}
 		this._lastX = x;
@@ -94,8 +99,8 @@ var dragStore = Reflux.createStore({
 	 _calculateSelectionParameterMap(y) {
 	 	var pmap = {};
 
-	 	for (var p in this._scales.topOffsetParameter) {
-	 		pmap[p] = this._scales.scaleParameter[p].invert(y-this._scales.topOffsetParameter[p]);
+	 	for (var p in this._scales[this._targetName].topOffsetParameter) {
+	 		pmap[p] = this._scales[this._targetName].scaleParameter[p].invert(y-this._scales[this._targetName].topOffsetParameter[p]);
 	 	}
 
 	 	return pmap;

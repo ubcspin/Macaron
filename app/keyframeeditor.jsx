@@ -237,10 +237,10 @@ var KeyframeEditor = React.createClass({
 	        var y = e.clientY - this.state.offsetTop;
 
 	        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey);
-	        DragStore.actions.startKeyframeDrag();
+	        DragStore.actions.startKeyframeDrag(this.props.name);
 
 		} else {
-  			DragStore.actions.startSelectDrag(e.shiftKey);
+  			DragStore.actions.startSelectDrag(this.props.namee.shiftKey);
 		}
 
 		this._lastMouseDownTime = t;
@@ -260,7 +260,7 @@ var KeyframeEditor = React.createClass({
 				VTIconStore.actions.selectKeyframe(id);
 			}
 		}
-		DragStore.actions.startKeyframeDrag();
+		DragStore.actions.startKeyframeDrag(this.props.name);
 
 		return false;
 	}
