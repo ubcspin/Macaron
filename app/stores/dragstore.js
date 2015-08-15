@@ -73,7 +73,9 @@ var dragStore = Reflux.createStore({
 			{
 				PlaybackStore.actions.setTime(this._scales[this._targetName].scaleTimeline.invert(unoffsetX));
 			} else if (this._dragging == Draggable.KEYFRAME) {
-				var dt = this._scales[this._targetName].scaleTimeline.invert(unoffsetX) - this._scales[this._targetName].scaleTimeline.invert(this._lastX);
+		 		var unoffsetLastX = this._lastX - this._scales[this._targetName].leftOffset;
+
+				var dt = this._scales[this._targetName].scaleTimeline.invert(unoffsetX) - this._scales[this._targetName].scaleTimeline.invert(unoffsetLastX);
 				var dv = {};
 				for (var p in this._scales[this._targetName].scaleParameter) {
 					dv[p] = this._scales[this._targetName].scaleParameter[p].invert(y) - this._scales[this._targetName].scaleParameter[p].invert(this._lastY);
