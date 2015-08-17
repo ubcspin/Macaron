@@ -122,7 +122,7 @@ var KeyframeEditor = React.createClass({
 
 		//selection square
 		var selectionSquare = <rect />;
-		if(this.props.selection.active) {
+		if(this.props.vticon.selected && this.props.selection.active) {
 			var tLeft = this.props.selection.time1;
 			var tRight = this.props.selection.time2;
 			if(tLeft > tRight) {
@@ -153,6 +153,11 @@ var KeyframeEditor = React.createClass({
 				height={height}
 				fill={this.props.selectionColor}
 				opacity={this.props.selectionOpacity} />
+		}
+
+		var playheadLine = <rect />;
+		if(this.props.vticon.selected) {
+			playheadLine = <path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />
 		}
 
 		return (
@@ -208,8 +213,9 @@ var KeyframeEditor = React.createClass({
 						}
 
 						{selectionSquare}
+
+						{playheadLine}
 						
-						<path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />
 
 					</svg>
 				</div>
@@ -223,6 +229,8 @@ var KeyframeEditor = React.createClass({
 	_onMouseDown(e) {
 
 		var t = Date.now();
+
+		VTIconStore.actions.selectVTIcon(this.props.name);
 
 		if ( (t - this._lastMouseDownTime) <= this.props.doubleClickTime)
 		{

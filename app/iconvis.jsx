@@ -14,7 +14,8 @@ var IconVis = React.createClass({
 		currentTime: React.PropTypes.number.isRequired,
 		keyframeCircleRadius: React.PropTypes.number.isRequired,
 		playheadFill: React.PropTypes.string.isRequired,
-		interpolateParameters: React.PropTypes.func.isRequired
+		interpolateParameters: React.PropTypes.func.isRequired,
+		name : React.PropTypes.string.isRequired
 			},
 	
 	getDefaultProps: function() {

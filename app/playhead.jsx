@@ -15,7 +15,8 @@ var PlayHead = React.createClass({
 		name: React.PropTypes.string.isRequired,
 		duration: React.PropTypes.number.isRequired,
 		currentTime: React.PropTypes.number.isRequired,
-		playheadFill: React.PropTypes.string.isRequired
+		playheadFill: React.PropTypes.string.isRequired,
+		displayPlayhead: React.PropTypes.bool.isRequired
 			},
 	
 	getDefaultProps: function() {
@@ -48,6 +49,11 @@ var PlayHead = React.createClass({
 		var playheadPoints = (x-playheadWidth/2) + "," + 0 + " " 
 								+ (x+playheadWidth/2) + "," + 0 + " "
 								+ x + "," + h;
+
+		var playheadTriangle = <polygon />;
+		if (this.props.displayPlayhead) {
+			playheadTriangle = <polygon points={playheadPoints} fill={this.props.playheadFill} />;
+		}
 
 		return (
 
@@ -86,8 +92,7 @@ var PlayHead = React.createClass({
 
 						})
 						}
-
-					<polygon points={playheadPoints} fill={this.props.playheadFill} />
+						{playheadTriangle}
 				</svg>
 			</div>
 			);
