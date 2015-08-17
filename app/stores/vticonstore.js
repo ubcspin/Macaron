@@ -351,7 +351,7 @@ var vticonStore = Reflux.createStore({
 					this._data[name].parameters[p].data[i].selected = bool;
 			}
 		}
-		this.trigger(this._data[name]);
+		this.trigger(this._data);
 	},
 
 	_setSelectedKeyframes(ids, setUnselected, name="") {
@@ -365,7 +365,7 @@ var vticonStore = Reflux.createStore({
 				}
 			}
 		}
-		this.trigger(this._data[name]);
+		this.trigger(this._data);
 	},
 
 	_setUnselectedKeyframes(ids, setSelected, name="") {
