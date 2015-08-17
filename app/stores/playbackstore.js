@@ -32,6 +32,7 @@ var playbackStore = Reflux.createStore({
 		this._data = {
 					playing: false,
 					currentTime: 0,
+					playingIcon:"main",
 					loop : {
 						enabled:false,
 						start:0, //ms
@@ -43,12 +44,18 @@ var playbackStore = Reflux.createStore({
 		this._lastTimerTime = Date.now();
 		this._updateTimer = null;
 		this.listenTo(VTIconStore.store, this._VTIconUpdate);
-		this._vtduration = VTIconStore.store.getInitialState().duration;
-
+		this._VTIconUpdate(VTIconStore.store.getInitialState());
 	},
 
-	_VTIconUpdate(vticon) {
-		this._vtduration = vticon.duration;
+	_VTIconUpdate(vticons) {
+		for(var n in vticons)
+		{
+			if (vticons[n].selected)
+			{
+				this._vtduration = vticons[n].duration;
+				this._data.playingIcon = n;
+			}
+		}
 	},
 
 	getInitialState : function() {
