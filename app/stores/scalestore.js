@@ -71,14 +71,16 @@ var scaleStore = Reflux.createStore({
 		this.trigger(this._data);
 	},
 
-	_CalculateScales(vticon) {
-		for (var i = 0; i < this._names.length; i++){
-			this._duration[this._names[i]] = vticon.duration;
-			for (var p in vticon.parameters)
+	_CalculateScales(vticons) {
+		for (var n in vticons)
+		{
+			this._duration[n] = vticons[n].duration;
+			for (var p in vticons[n].parameters)
 			{
-				this._parameterValues[this._names[i]][p] = vticon.parameters[p].valueScale;
+				this._parameterValues[n][p] = vticons[n].parameters[p].valueScale;
 			}
 		}
+		
 	},
 
 	_VTIconUpdate(vticon) {

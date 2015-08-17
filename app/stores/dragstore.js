@@ -54,7 +54,7 @@ var dragStore = Reflux.createStore({
 
 	onStartKeyframeDrag(name) {
 		this._targetName = name;
-		VTIconStore.actions.startMovingSelectedKeyframes();
+		VTIconStore.actions.startMovingSelectedKeyframes(name=this._targetName);
 		this._dragging = Draggable.KEYFRAME;
 	},
 
@@ -80,7 +80,7 @@ var dragStore = Reflux.createStore({
 				for (var p in this._scales[this._targetName].scaleParameter) {
 					dv[p] = this._scales[this._targetName].scaleParameter[p].invert(y) - this._scales[this._targetName].scaleParameter[p].invert(this._lastY);
 				}
-				VTIconStore.actions.moveSelectedKeyframes(dt, dv);
+				VTIconStore.actions.moveSelectedKeyframes(dt, dv, name=this._targetName);
 			} else if (this._dragging == Draggable.SELECT) {
 					SelectionStore.actions.changeSelecting(this._scales[this._targetName].scaleTimeline.invert(unoffsetX), this._calculateSelectionParameterMap(y)); 
 
