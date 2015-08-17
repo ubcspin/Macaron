@@ -49,6 +49,7 @@ var dragStore = Reflux.createStore({
 	onStartPlayheadDrag(name, newtime) {
 		this._targetName = name;
 		this._dragging = Draggable.PLAYHEAD;
+		VTIconStore.actions.selectVTIcon(name);
 		PlaybackStore.actions.setTime(newtime);
 	},
 
