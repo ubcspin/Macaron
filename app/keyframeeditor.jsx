@@ -236,7 +236,7 @@ var KeyframeEditor = React.createClass({
 	        var x = e.clientX - this.state.offsetLeft;
 	        var y = e.clientY - this.state.offsetTop;
 
-	        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey);
+	        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey, name=this.props.name);
 	        DragStore.actions.startKeyframeDrag(this.props.name);
 
 		} else {
@@ -255,9 +255,9 @@ var KeyframeEditor = React.createClass({
 		if (!selected)
 		{
 			if(e.shiftKey) {
-				VTIconStore.actions.addToggleSelectedKeyframe(id);
+				VTIconStore.actions.addToggleSelectedKeyframe(id, name=this.props.name);
 			} else {
-				VTIconStore.actions.selectKeyframe(id);
+				VTIconStore.actions.selectKeyframe(id, name=this.props.name);
 			}
 		}
 		DragStore.actions.startKeyframeDrag(this.props.name);

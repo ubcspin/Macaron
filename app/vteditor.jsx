@@ -22,7 +22,7 @@ var AnimationStore = require('./stores/animationstore.js');
 var VTEditor = React.createClass({
 	mixins : [
 				Reflux.connect(PlaybackStore.store, 'playback'), //emitted updates go to 'playback' key
-				Reflux.connect(VTIconStore.store, 'vticon'), //emitted updates go to 'vticon' key			
+				Reflux.connect(VTIconStore.store, 'vticons'), //emitted updates go to 'vticon' key			
 				Reflux.connect(ScaleStore.store, 'scales'), //emitted updates go to 'scales' key			
 				Reflux.connect(SelectionStore.store, 'selection'), //emitted updates go to 'selection' key			
 				Reflux.connect(AnimationStore.store, 'animation') //emitted updates go to 'animation' key						
@@ -38,8 +38,8 @@ var VTEditor = React.createClass({
 
 
 	//returns parameter value for a given time
-	interpolateParameter: function(p, t) {
-		var param = this.state.vticon.parameters[p];
+	interpolateParameter: function(p, t, name) {
+		var param = this.state.vticons[name].parameters[p];
 		var data = param.data;
 		var prev = null;
 		var next = null;
@@ -111,12 +111,12 @@ var VTEditor = React.createClass({
 	} ,
 
 	//returns parameter values as a dictionary for a given time
-	interpolateParameters: function(t) {
+	interpolateParameters: function(t, name) {
 		var interpolateParameter = this.interpolateParameter;
 		//map _interpolateParameter to vticon keys
-		return Object.keys(this.state.vticon.parameters).reduce( function(obj, p) 
+		return Object.keys(this.state.vticons[name].parameters).reduce( function(obj, p) 
 			{
-				obj[p] = interpolateParameter(p, t);
+				obj[p] = interpolateParameter(p, t, name);
 				return obj;
 			}, {});
 	} ,
@@ -214,10 +214,15 @@ var VTEditor = React.createClass({
 	*/
 	render : function() {
 
-		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime);
-		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime);
+		// TODO: sound of SELECTED icon
+		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime, "main");
+		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime, "main");
+		
 		var scaleXMain = this.state.scales.main.scaleTimeline;
 		var scaleXExample = this.state.scales.example.scaleTimeline;
+
+		var design_icon = this.state.vticons["main"];
+		var example_icon = this.state.vticons["example"];
 
 
 		var editorStyle = {
@@ -241,24 +246,24 @@ var VTEditor = React.createClass({
 					<PlayHead name="main"
 						scaleX={scaleXMain} 
 						currentTime={this.state.playback.currentTime} 
-						duration={this.state.vticon.duration} 
+						duration={design_icon.duration} 
 						keyframeCircleRadius={this.props.keyframeCircleRadius} 
 						playheadFill={this.props.playheadFill}/>
 					<IconVis name="main"
 						scaleX={scaleXMain} 
-						vticon={this.state.vticon} 
+						vticon={design_icon} 
 						currentTime={this.state.playback.currentTime} 
 						keyframeCircleRadius={this.props.keyframeCircleRadius} 
 						playheadFill={this.props.playheadFill} 
 						interpolateParameters={this.interpolateParameters} 
 						interpolateParameter={this.interpolateParameter}/>
-					{Object.keys(this.state.vticon.parameters).map( (p) => (
+					{Object.keys(design_icon.parameters).map( (p) => (
 							<KeyframeEditor 
 								name="main" 
 								scaleX={scaleXMain} 
 								currentTime={this.state.playback.currentTime} 
 								parameter={p} 
-								vticon={this.state.vticon} 
+								vticon={design_icon} 
 								keyframeCircleRadius={this.props.keyframeCircleRadius} 
 								playheadFill={this.props.playheadFill} 
 								selection={this.state.selection}/>
@@ -276,24 +281,24 @@ var VTEditor = React.createClass({
 					<PlayHead name="example"
 						scaleX={scaleXExample} 
 						currentTime={this.state.playback.currentTime} 
-						duration={this.state.vticon.duration} 
+						duration={example_icon.duration} 
 						keyframeCircleRadius={this.props.keyframeCircleRadius} 
 						playheadFill={this.props.playheadFill}/>
 					<IconVis name="example"
 						scaleX={scaleXExample} 
-						vticon={this.state.vticon} 
+						vticon={example_icon} 
 						currentTime={this.state.playback.currentTime} 
 						keyframeCircleRadius={this.props.keyframeCircleRadius} 
 						playheadFill={this.props.playheadFill} 
 						interpolateParameters={this.interpolateParameters} 
 						interpolateParameter={this.interpolateParameter}/>
-					{Object.keys(this.state.vticon.parameters).map( (p) => (
+					{Object.keys(example_icon.parameters).map( (p) => (
 							<KeyframeEditor 
 								name="example" 
 								scaleX={scaleXExample} 
 								currentTime={this.state.playback.currentTime} 
 								parameter={p} 
-								vticon={this.state.vticon} 
+								vticon={example_icon} 
 								keyframeCircleRadius={this.props.keyframeCircleRadius} 
 								playheadFill={this.props.playheadFill} 
 								selection={this.state.selection}/>

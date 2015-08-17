@@ -2,6 +2,8 @@ import Reflux from 'reflux';
 
 var vticonActions = Reflux.createActions(
 	[
+		'selectVTIcon',
+
 		'newKeyframe',
 		'newMultipleKeyframes',
 
@@ -38,6 +40,8 @@ var vticonStore = Reflux.createStore({
 					main: {
 						duration: 3000, //ms
 
+						selected: true,
+
 						parameters: {
 							amplitude: {
 								valueScale:[0,1], //normalized
@@ -59,6 +63,8 @@ var vticonStore = Reflux.createStore({
 
 					example: {
 						duration: 3000, //ms
+
+						selected: false,
 
 						parameters: {
 							amplitude: {
@@ -101,10 +107,46 @@ var vticonStore = Reflux.createStore({
 
 	},
 
-	onNewKeyframe(parameter, t, value, addToSelection=false) {
-		this._saveStateForUndo();
+	/**
+	*
+	* VTIcon Selection
+	* 
+	*/
 
-		var new_id = this._addNewKeyframe(parameter, t, value, addToSelection);
+	_selectVTIcon(name="") {
+		var rv = "";
+		if (name in this._data) {
+			rv = name;
+			for (var n in this._data) {
+				this._data[n].selected = (name === n);
+			}
+		} else {
+			for (var n in this._data) {
+				if (this._data[n].selected) {
+					rv = n;
+				}
+			}
+		}
+		return rv;
+	},
+
+	onSelectVTIcon(name) {
+		this._selectVTIcon(name);
+		this.trigger(this._data);
+	},
+
+
+	/*
+	*
+	* Keyframe creation
+	*
+	*/
+
+	onNewKeyframe(parameter, t, value, addToSelection=false, name="") {
+		this._saveStateForUndo();
+		name = this._selectVTIcon(name);
+
+		var new_id = this._addNewKeyframe(parameter, t, value, addToSelection, name=name);
 		if (new_id >= 0)
 		{
 			if (addToSelection)
@@ -116,9 +158,10 @@ var vticonStore = Reflux.createStore({
 		}
 	},
 
-	onNewMultipleKeyframes(name, parameter_keyframe_map, overwrite=true)
+	onNewMultipleKeyframes(parameter_keyframe_map, overwrite=true, name="")
 	{
 		this._saveStateForUndo();
+		name = this._selectVTIcon(name);
 
 		if (overwrite) {
 
@@ -159,25 +202,28 @@ var vticonStore = Reflux.createStore({
 				}
 			}
 
-			this._setSelectedKeyframes(ids_to_delete, true);
+			this._setSelectedKeyframes(ids_to_delete, true, name=name);
 			this.onDeleteSelectedKeyframes(name);
 		} 
 
 
-		this._setAllKeyframes(false);
+		this._setAllKeyframes(false, name=name);
 		for (var p in parameter_keyframe_map) {
 			for (var i = 0; i < parameter_keyframe_map[p].length; i++)
 			{
-				this._addNewKeyframe(p, parameter_keyframe_map[p][i].t, parameter_keyframe_map[p][i].value, true);
+				this._addNewKeyframe(p, parameter_keyframe_map[p][i].t, parameter_keyframe_map[p][i].value, true, name=name);
 			}
 		}
 		this.trigger(this._data);
 		
 	},
 
-	_addNewKeyframe(name, parameter, t, value, addToSelection=false) {
+	_addNewKeyframe(parameter, t, value, addToSelection=false, name="") {
+
+		name = this._selectVTIcon(name);
+
 		var new_id = -1;
-		if (this._isValidKeyframePosition(parameter, t, value))
+		if (this._isValidKeyframePosition(parameter, t, value, name=name))
 		{
 			new_id = this._getNewKFUID();
 			this._data[name].parameters[parameter].data.push({
@@ -197,23 +243,29 @@ var vticonStore = Reflux.createStore({
 	* Selection
 	*/
 
-	onSelectKeyframe(name, id) {
-		this._setSelectedKeyframes(name, [id], true);
+	onSelectKeyframe(id, name="") {
+		name = this._selectVTIcon(name);
+
+		this._setSelectedKeyframes([id], true, name=name);
 	},
 
-	onSelectKeyframes(name, ids) {
-		this._setSelectedKeyframes(name, ids, true);
+	onSelectKeyframes(ids, name="") {
+		name = this._selectVTIcon(name);
+		this._setSelectedKeyframes(ids, true, name=name);
 	},
 
-	onAddSelectedKeyframe(name, id) {
-		this._setSelectedKeyframes(name, [id], false);
+	onAddSelectedKeyframe(id, name="") {
+		name = this._selectVTIcon(name);
+		this._setSelectedKeyframes([id], false, name=name);
 	},
 
-	onAddSelectedKeyframes(name, ids) {
-		this._setSelectedKeyframes(name, ids, true);
+	onAddSelectedKeyframes(ids, name="") {
+		name = this._selectVTIcon(name);
+		this._setSelectedKeyframes(ids, true, name=name);
 	},
 
-	onAddToggleSelectedKeyframe(name, id) {
+	onAddToggleSelectedKeyframe(id, name="") {
+		name = this._selectVTIcon(name);
 		for (var p in this._data[name].parameters) {
 			for (var i = 0; i < this._data[name].parameters[p].data.length; i++) {
 				if(this._data[name].parameters[p].data[i].id == id)
@@ -225,34 +277,40 @@ var vticonStore = Reflux.createStore({
 		this.trigger(this._data);
 	},
 
-	onUnselectKeyframe(name, id) {
-		this._setUnselectedKeyframes(name, [id], false);
+	onUnselectKeyframe(id, name="") {
+		name = this._selectVTIcon(name);
+		this._setUnselectedKeyframes([id], false, name=name);
 	},
 
-	onUnselectKeyframes(name) {
-		this._setAllKeyframes(name, false);
+	onUnselectKeyframes(name="") {
+		name = this._selectVTIcon(name);
+		this._setAllKeyframes(false, name=name);
 	},
 
-	onSelectAllKeyframes() {
-		this._setAllKeyframes(name, true);
+	onSelectAllKeyframes(name="") {
+		name = this._selectVTIcon(name);
+		this._setAllKeyframes(true, name=name);
 	},
 
 	//Range select
-	onSelectKeyframesInRange(name, time1, time2, parameter_value_map) {
-		var ids = this._getKFIDSInRange(name, time1, time2, parameter_value_map);
-		this._setSelectedKeyframes(name, ids, true);
+	onSelectKeyframesInRange(time1, time2, parameter_value_map, name="") {
+		name = this._selectVTIcon(name);
+		var ids = this._getKFIDSInRange(time1, time2, parameter_value_map, name=name);
+		this._setSelectedKeyframes(ids, true, name=name);
 
 	},
 
-	onAddSelectedKeyframesInRange(name, time1, time2, parameter_value_map) {
-		var ids = this._getKFIDSInRange(tname, ime1, time2, parameter_value_map);
-		this._setSelectedKeyframes(name, ids, false);
+	onAddSelectedKeyframesInRange(time1, time2, parameter_value_map, name="") {
+		name = this._selectVTIcon(name);
+		var ids = this._getKFIDSInRange(time1, time2, parameter_value_map, name=name);
+		this._setSelectedKeyframes(ids, false, name=name);
 	},
 
 	//helpers
 	//need to refactor into one function at some point?
 
-	_getKFIDSInRange(name, time1, time2, parameter_value_map) {
+	_getKFIDSInRange(time1, time2, parameter_value_map, name="") {
+		name = this._selectVTIcon(name);
 		var tLeft = time1;
 		var tRight = time2;
 		if(tLeft > tRight)
@@ -286,7 +344,8 @@ var vticonStore = Reflux.createStore({
 		return rv;
 	},
 
-	_setAllKeyframes(name, bool) {
+	_setAllKeyframes(bool, name="") {
+		name = this._selectVTIcon(name);
 		for (var p in this._data[name].parameters) {
 			for (var i = 0; i < this._data[name].parameters[p].data.length; i++) {
 					this._data[name].parameters[p].data[i].selected = bool;
@@ -295,7 +354,8 @@ var vticonStore = Reflux.createStore({
 		this.trigger(this._data[name]);
 	},
 
-	_setSelectedKeyframes(ids, setUnselected) {
+	_setSelectedKeyframes(ids, setUnselected, name="") {
+		name = this._selectVTIcon(name);
 		for (var p in this._data[name].parameters) {
 			for (var i = 0; i < this._data[name].parameters[p].data.length; i++) {
 				if (ids.indexOf(this._data[name].parameters[p].data[i].id) >= 0 ) {
@@ -308,7 +368,8 @@ var vticonStore = Reflux.createStore({
 		this.trigger(this._data[name]);
 	},
 
-	_setUnselectedKeyframes(ids, setSelected) {
+	_setUnselectedKeyframes(ids, setSelected, name="") {
+		name = this._selectVTIcon(name);
 		for (var p in this._data[name].parameters) {
 			for (var i = 0; i < this._data[name].parameters[p].data.length; i++) {
 				if (ids.indexOf(this._data[name].parameters[p].data[i].id) >= 0 ) {
@@ -325,13 +386,14 @@ var vticonStore = Reflux.createStore({
 	* Move Keyframes
 	*/
 
-	onMoveSelectedKeyframes(name, dt, dv) {
+	onMoveSelectedKeyframes(dt, dv, name="") {
+		name = this._selectVTIcon(name);
 		//guard
 		var valid_move = true;
 		for (var p in this._data[name].parameters) {
 			for (var i = 0; i < this._data[name].parameters[p].data.length; i++) {
 				if (this._data[name].parameters[p].data[i].selected) {
-					if (!this._isValidKeyframePosition(p, this._data[name].parameters[p].data[i].t+dt, this._data[name].parameters[p].data[i].value+dv[p]))
+					if (!this._isValidKeyframePosition(p, this._data[name].parameters[p].data[i].t+dt, this._data[name].parameters[p].data[i].value+dv[p], name=name))
 					{
 						valid_move = false;
 					}
@@ -356,7 +418,8 @@ var vticonStore = Reflux.createStore({
 
 	},
 
-	onStartMovingSelectedKeyframes() {
+	onStartMovingSelectedKeyframes(name="") {
+		name = this._selectVTIcon(name);
 		this._saveStateForUndo();
 	},
 
@@ -364,7 +427,8 @@ var vticonStore = Reflux.createStore({
 	* Delete Keyframes
 	*/
 
-	onDeleteSelectedKeyframes(name) {
+	onDeleteSelectedKeyframes(name="") {
+		name = this._selectVTIcon(name);
 
 		var kfNotSelected = function(value) {
 			return !value.selected;
@@ -396,8 +460,9 @@ var vticonStore = Reflux.createStore({
 	/**
 	 * KF Guards
 	 */
-	 _isValidKeyframePosition(name, parameter, t, v) 
+	 _isValidKeyframePosition(parameter, t, v, name="") 
 	 {
+	 	name = this._selectVTIcon(name);
 	 	var valid = false;
 
 	 	if(t >= 0 && t <= this._data[name].duration)
