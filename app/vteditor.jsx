@@ -215,8 +215,8 @@ var VTEditor = React.createClass({
 	render : function() {
 
 		// TODO: sound of SELECTED icon
-		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime, "main");
-		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime, "main");
+		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime, this.state.playback.playingIcon);
+		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime, this.state.playback.playingIcon);
 		
 		var scaleXMain = this.state.scales.main.scaleTimeline;
 		var scaleXExample = this.state.scales.example.scaleTimeline;
