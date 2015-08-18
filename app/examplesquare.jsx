@@ -1,9 +1,12 @@
 import React from 'react';
 
+var ExampleStore = require('./stores/examplestore.js');
+
 
 var ExampleSquare = React.createClass({
 	
 	propTypes: {
+		exampleName : React.PropTypes.string.isRequired,
 		exampleicon : React.PropTypes.object.isRequired
 			},
 	
@@ -20,9 +23,18 @@ var ExampleSquare = React.createClass({
 	//     }
 	// },
 
+	_handleClick : function(e) {
+		ExampleStore.actions.selectExample(this.props.exampleName);
+	},
+
 	render() {
+
+		var className = "example-square";
+		if (this.props.exampleicon.selected) {
+			className += " selected";
+		}
 		return (
-			<div className="example-square" />
+			<div className={className} onClick={this._handleClick}/>
 			);
 	}
 

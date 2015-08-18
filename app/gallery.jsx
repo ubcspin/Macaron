@@ -35,8 +35,8 @@ var Gallery = React.createClass({
 
 		return (
 			<div className="example-gallery">
-				{Object.keys(examples).map( (exampleicon) => (
-						<ExampleSquare exampleicon={exampleicon} />
+				{Object.keys(examples).map( (exName) => (
+						<ExampleSquare exampleName={exName} exampleicon={examples[exName]} />
 					))}
 			</div>
 			)

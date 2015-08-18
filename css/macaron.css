@@ -63,11 +63,12 @@ a:active {
     width:50px;
     height:50px;
     border:solid;
+    border-width:1px;
     margin:10px;
 }
 
 .example-square.selected {
-    border-width:10px;
+    border-width:3px;
 }
 
 .example-galley {
