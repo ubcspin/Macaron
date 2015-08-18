@@ -1,5 +1,8 @@
 import Reflux from 'reflux';
 
+var VTIconStore = require('./vticonstore.js');
+var EXAMPLE_KEY = "example"; //TODO: More general?
+
 var examples = {
 	test1: {
 			selected:true,
@@ -37,8 +40,9 @@ var examples = {
 				frequency: {
 					valueScale:[50,500], //Hz
 					data : [
-						{ t: 0, value:250}, 
-						{ t: 1800, value:500}]
+						{ t: 200, value:300}, 
+						{ t: 1200, value:500}, 
+						{ t: 2400, value:100}]
 				}
 			}
 		},
@@ -52,14 +56,16 @@ var examples = {
 					valueScale:[0,1], //normalized
 					data : [
 						{ t: 600, value:0.5}, 
-						{ t: 1500, value:1 }]
+						{ t: 1500, value:0.75 },
+						{ t: 2100, value:0.5}, 
+						{ t: 2900, value:0.25 }]
 				},
 
 				frequency: {
 					valueScale:[50,500], //Hz
 					data : [
 						{ t: 0, value:250}, 
-						{ t: 1800, value:500}]
+						{ t: 1500, value:400}]
 				}
 			}
 		},
@@ -101,9 +107,8 @@ var exampleStore = Reflux.createStore({
 			for (var ex in this._data.examples) {
 				this._data.examples[ex].selected = (ex === foundName);
 			}
+			VTIconStore.actions.setVTIcon(this._data.examples[foundName], name=EXAMPLE_KEY);
 		}
-
-		//TODO: set example
 
 		this.trigger(this._data);
 	}

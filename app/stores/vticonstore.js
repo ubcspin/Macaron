@@ -4,6 +4,8 @@ var vticonActions = Reflux.createActions(
 	[
 		'selectVTIcon',
 
+		'setVTIcon',
+
 		'newKeyframe',
 		'newMultipleKeyframes',
 
@@ -135,6 +137,32 @@ var vticonStore = Reflux.createStore({
 		this.trigger(this._data);
 	},
 
+
+	/*
+	*
+	* Set VT Icon
+	*
+	*/
+
+	onSetVTIcon(vticon, name) {
+		if (name in this._data)
+		{
+			this._data[name].duration = vticon.duration;
+
+			for (var p in this._data[name].parameters) {
+				this._data[name].parameters[p].valueScale = vticon.parameters[p].valueScale;
+				this._data[name].parameters[p].data = [];
+				for (var i = 0; i < vticon.parameters[p].data.length; i++) {
+					var d = vticon.parameters[p].data[i];
+					this._addNewKeyframe(p, d.t, d.value, false, name=name);
+				}
+				// this._setAllKeyframes(false, name);
+			}
+
+		}
+		this.trigger(this._data);
+	
+	},
 
 	/*
 	*
