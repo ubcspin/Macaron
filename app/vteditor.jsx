@@ -10,6 +10,8 @@ var PlayHead = require('./playhead.jsx');
 var IconVis = require('./iconvis.jsx');
 var AnimationWindow = require('./animationwindow.jsx');
 var KeyframeEditor = require('./keyframeeditor.jsx');
+var Gallery = require('./gallery.jsx');
+
 var PlaybackStore = require('./stores/playbackstore.js');
 var VTIconStore = require('./stores/vticonstore.js');
 var DragStore = require('./stores/dragstore.js');
@@ -226,7 +228,7 @@ var VTEditor = React.createClass({
 
 
 		var editorStyle = {
-			width:"50%",
+			width:"45%",
 			display:"block",
 			float:"left"};
 
@@ -234,11 +236,11 @@ var VTEditor = React.createClass({
 			<div id="app" ref="appRef">
 				<EditorHeader />
 				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.playback.mute} />
-				<div name="main" id="maineditor" ref="mainEditorRef" style={editorStyle}>
-					<AnimationWindow
+				<AnimationWindow
 						name="main"
 						animation={this.state.animation.animation}
 						animationParameters={this.state.animation.animationParameters} />
+				<div name="main" id="maineditor" ref="mainEditorRef" style={editorStyle}>
 					<ControlBar
 						name="main"
 						playing={this.state.playback.playing}
@@ -271,10 +273,6 @@ var VTEditor = React.createClass({
 						))}
 				</div>
 				<div name="example" id="exampleeditor" ref="exampleEditorRef" style={editorStyle}>
-					<AnimationWindow
-						name="example"
-						animation={this.state.animation.animation}
-						animationParameters={this.state.animation.animationParameters} />
 					<ControlBar
 						name="example"
 						playing={this.state.playback.playing}
@@ -305,7 +303,8 @@ var VTEditor = React.createClass({
 								playheadFill={this.props.playheadFill} 
 								selection={this.state.selection}/>
 						))}
-				</div>		
+				</div>
+				<Gallery />		
 			</div>);
 		},
 
