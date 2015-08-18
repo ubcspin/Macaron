@@ -156,7 +156,7 @@ var vticonStore = Reflux.createStore({
 					var d = vticon.parameters[p].data[i];
 					this._addNewKeyframe(p, d.t, d.value, false, name=name);
 				}
-				// this._setAllKeyframes(false, name);
+				this._setAllKeyframes(false, name);
 			}
 
 		}
