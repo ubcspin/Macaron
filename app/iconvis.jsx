@@ -14,7 +14,8 @@ var IconVis = React.createClass({
 		currentTime: React.PropTypes.number.isRequired,
 		keyframeCircleRadius: React.PropTypes.number.isRequired,
 		playheadFill: React.PropTypes.string.isRequired,
-		interpolateParameters: React.PropTypes.func.isRequired
+		interpolateParameters: React.PropTypes.func.isRequired,
+		name : React.PropTypes.string.isRequired
 			},
 	
 	getDefaultProps: function() {
@@ -62,9 +63,9 @@ var IconVis = React.createClass({
 			var t_in_ms = i/this.props.resolution*this.props.vticon.duration;
 			var t_in_s = t_in_ms/1000;
 
-			//var paramValues = this.props.interpolateParameters(t_in_ms);
-			var amplitude = this.props.interpolateParameter("amplitude", t_in_ms);//paramValues.amplitude;
-			var frequency = this.props.interpolateParameter("frequency", t_in_ms); //paramValues.frequency;
+			//var paramValues = this.props.interpolateParameters(t_in_ms, name=this.props.name);
+			var amplitude = this.props.interpolateParameter("amplitude", t_in_ms, this.props.name);//paramValues.amplitude;
+			var frequency = this.props.interpolateParameter("frequency", t_in_ms, this.props.name); //paramValues.frequency;
 			if (this.props.limitFrequencies) {
 				frequency = Math.min(this.props.maxFrequencyRendered, frequency/2);
 			}
@@ -97,11 +98,16 @@ var IconVis = React.createClass({
 						[scaleX(this.props.currentTime), this.props.height]	
 				]);
 
+		var playheadLine = <path />;
+		if(this.props.vticon.selected) {
+			playheadLine = <path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />;
+		}
+
 		return (
 			<div ref="divWrapper" style={divStyle}>
 				<svg height="100%" width="100%">
 					<path stroke={this.props.visColor} strokeWidth="0.5" fill="none" d={visPath} />
-					<path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />
+					{playheadLine}
 				</svg>
 
 			</div>

@@ -2,6 +2,8 @@ import Reflux from 'reflux';
 
 var vticonActions = Reflux.createActions(
 	[
+		'selectVTIcon',
+
 		'newKeyframe',
 		'newMultipleKeyframes',
 
@@ -34,7 +36,11 @@ var vticonStore = Reflux.createStore({
 
 	init : function() {
 		this._data = {
+
+					main: {
 						duration: 3000, //ms
+
+						selected: true,
 
 						parameters: {
 							amplitude: {
@@ -53,18 +59,47 @@ var vticonStore = Reflux.createStore({
 									{ id: 5, t: 1800, value:500, selected:false}]
 							}
 						}
+					},
+
+					example: {
+						duration: 3000, //ms
+
+						selected: false,
+
+						parameters: {
+							amplitude: {
+								valueScale:[0,1], //normalized
+								data : [
+									{ id: 6, t: 600, value:0.5, selected:false}, 
+									{ id: 7, t: 1500, value:1, selected:false},
+									{ id: 8, t: 3000, value:0, selected:false}]
+							},
+
+							frequency: {
+								valueScale:[50,500], //Hz
+								data : [
+									{ id: 9, t: 0, value:250, selected:false}, 
+									{ id: 10, t: 1200, value:50, selected:false},
+									{ id: 11, t: 1800, value:500, selected:false}]
+							}
+						}
+					}
+						
 					};
 
 		this._previousStates = []; //for undo
 		this._nextStates = []; //for redo
 
 		this._kfuidCount = 0;
-		for (var p in this._data.parameters) {
-			for (var d in this._data.parameters[p].data)
-			{
-				this._kfuidCount += 1;
+		for (var n in this._data) {
+			for (var p in this._data[n].parameters) {
+				for (var d in this._data[n].parameters[p].data)
+				{
+					this._kfuidCount += 1;
+				}
 			}
 		}
+		
 	},
 
 	getInitialState : function() {
@@ -72,10 +107,46 @@ var vticonStore = Reflux.createStore({
 
 	},
 
-	onNewKeyframe(parameter, t, value, addToSelection=false) {
-		this._saveStateForUndo();
+	/**
+	*
+	* VTIcon Selection
+	* 
+	*/
 
-		var new_id = this._addNewKeyframe(parameter, t, value, addToSelection);
+	_selectVTIcon(name="") {
+		var rv = "";
+		if (name in this._data) {
+			rv = name;
+			for (var n in this._data) {
+				this._data[n].selected = (name === n);
+			}
+		} else {
+			for (var n in this._data) {
+				if (this._data[n].selected) {
+					rv = n;
+				}
+			}
+		}
+		return rv;
+	},
+
+	onSelectVTIcon(name) {
+		this._selectVTIcon(name);
+		this.trigger(this._data);
+	},
+
+
+	/*
+	*
+	* Keyframe creation
+	*
+	*/
+
+	onNewKeyframe(parameter, t, value, addToSelection=false, name="") {
+		this._saveStateForUndo();
+		name = this._selectVTIcon(name);
+
+		var new_id = this._addNewKeyframe(parameter, t, value, addToSelection, name=name);
 		if (new_id >= 0)
 		{
 			if (addToSelection)
@@ -87,9 +158,10 @@ var vticonStore = Reflux.createStore({
 		}
 	},
 
-	onNewMultipleKeyframes(parameter_keyframe_map, overwrite=true)
+	onNewMultipleKeyframes(parameter_keyframe_map, overwrite=true, name="")
 	{
 		this._saveStateForUndo();
+		name = this._selectVTIcon(name);
 
 		if (overwrite) {
 
@@ -119,46 +191,49 @@ var vticonStore = Reflux.createStore({
 
 			//delete keyframes in range
 			var ids_to_delete = [];
-			for (var p in this._data.parameters) {
-				for (var i = 0; i < this._data.parameters[p].data.length; i++)
+			for (var p in this._data[name].parameters) {
+				for (var i = 0; i < this._data[name].parameters[p].data.length; i++)
 				{
-					if (this._data.parameters[p].data[i].t >= min[p] &&
-						this._data.parameters[p].data[i].t <= max[p])
+					if (this._data[name].parameters[p].data[i].t >= min[p] &&
+						this._data[name].parameters[p].data[i].t <= max[p])
 					{
-						ids_to_delete.push(this._data.parameters[p].data[i].id);
+						ids_to_delete.push(this._data[name].parameters[p].data[i].id);
 					}
 				}
 			}
 
-			this._setSelectedKeyframes(ids_to_delete, true);
-			this.onDeleteSelectedKeyframes();
+			this._setSelectedKeyframes(ids_to_delete, true, name=name);
+			this.onDeleteSelectedKeyframes(name);
 		} 
 
 
-		this._setAllKeyframes(false);
+		this._setAllKeyframes(false, name=name);
 		for (var p in parameter_keyframe_map) {
 			for (var i = 0; i < parameter_keyframe_map[p].length; i++)
 			{
-				this._addNewKeyframe(p, parameter_keyframe_map[p][i].t, parameter_keyframe_map[p][i].value, true);
+				this._addNewKeyframe(p, parameter_keyframe_map[p][i].t, parameter_keyframe_map[p][i].value, true, name=name);
 			}
 		}
 		this.trigger(this._data);
 		
 	},
 
-	_addNewKeyframe(parameter, t, value, addToSelection=false) {
+	_addNewKeyframe(parameter, t, value, addToSelection=false, name="") {
+
+		name = this._selectVTIcon(name);
+
 		var new_id = -1;
-		if (this._isValidKeyframePosition(parameter, t, value))
+		if (this._isValidKeyframePosition(parameter, t, value, name=name))
 		{
 			new_id = this._getNewKFUID();
-			this._data.parameters[parameter].data.push({
+			this._data[name].parameters[parameter].data.push({
 				id:new_id,
 				t:t,
 				value:value,
 				selected:true
 			});
 
-			this._data.parameters[parameter].data.sort(this._keyframeCompare);
+			this._data[name].parameters[parameter].data.sort(this._keyframeCompare);
 		}
 		return new_id;
 
@@ -168,62 +243,74 @@ var vticonStore = Reflux.createStore({
 	* Selection
 	*/
 
-	onSelectKeyframe(id) {
-		this._setSelectedKeyframes([id], true);
+	onSelectKeyframe(id, name="") {
+		name = this._selectVTIcon(name);
+
+		this._setSelectedKeyframes([id], true, name=name);
 	},
 
-	onSelectKeyframes(ids) {
-		this._setSelectedKeyframes(ids, true);
+	onSelectKeyframes(ids, name="") {
+		name = this._selectVTIcon(name);
+		this._setSelectedKeyframes(ids, true, name=name);
 	},
 
-	onAddSelectedKeyframe(id) {
-		this._setSelectedKeyframes([id], false);
+	onAddSelectedKeyframe(id, name="") {
+		name = this._selectVTIcon(name);
+		this._setSelectedKeyframes([id], false, name=name);
 	},
 
-	onAddSelectedKeyframes(ids) {
-		this._setSelectedKeyframes(ids, true);
+	onAddSelectedKeyframes(ids, name="") {
+		name = this._selectVTIcon(name);
+		this._setSelectedKeyframes(ids, true, name=name);
 	},
 
-	onAddToggleSelectedKeyframe(id) {
-		for (var p in this._data.parameters) {
-			for (var i = 0; i < this._data.parameters[p].data.length; i++) {
-				if(this._data.parameters[p].data[i].id == id)
+	onAddToggleSelectedKeyframe(id, name="") {
+		name = this._selectVTIcon(name);
+		for (var p in this._data[name].parameters) {
+			for (var i = 0; i < this._data[name].parameters[p].data.length; i++) {
+				if(this._data[name].parameters[p].data[i].id == id)
 				{
-					this._data.parameters[p].data[i].selected = !this._data.parameters[p].data[i].selected;
+					this._data[name].parameters[p].data[i].selected = !this._data[name].parameters[p].data[i].selected;
 				}
 			}
 		}
 		this.trigger(this._data);
 	},
 
-	onUnselectKeyframe(id) {
-		this._setUnselectedKeyframes([id], false);
+	onUnselectKeyframe(id, name="") {
+		name = this._selectVTIcon(name);
+		this._setUnselectedKeyframes([id], false, name=name);
 	},
 
-	onUnselectKeyframes() {
-		this._setAllKeyframes(false);
+	onUnselectKeyframes(name="") {
+		name = this._selectVTIcon(name);
+		this._setAllKeyframes(false, name=name);
 	},
 
-	onSelectAllKeyframes() {
-		this._setAllKeyframes(true);
+	onSelectAllKeyframes(name="") {
+		name = this._selectVTIcon(name);
+		this._setAllKeyframes(true, name=name);
 	},
 
 	//Range select
-	onSelectKeyframesInRange(time1, time2, parameter_value_map) {
-		var ids = this._getKFIDSInRange(time1, time2, parameter_value_map);
-		this._setSelectedKeyframes(ids, true);
+	onSelectKeyframesInRange(time1, time2, parameter_value_map, name="") {
+		name = this._selectVTIcon(name);
+		var ids = this._getKFIDSInRange(time1, time2, parameter_value_map, name=name);
+		this._setSelectedKeyframes(ids, true, name=name);
 
 	},
 
-	onAddSelectedKeyframesInRange(time1, time2, parameter_value_map) {
-		var ids = this._getKFIDSInRange(time1, time2, parameter_value_map);
-		this._setSelectedKeyframes(ids, false);
+	onAddSelectedKeyframesInRange(time1, time2, parameter_value_map, name="") {
+		name = this._selectVTIcon(name);
+		var ids = this._getKFIDSInRange(time1, time2, parameter_value_map, name=name);
+		this._setSelectedKeyframes(ids, false, name=name);
 	},
 
 	//helpers
 	//need to refactor into one function at some point?
 
-	_getKFIDSInRange(time1, time2, parameter_value_map) {
+	_getKFIDSInRange(time1, time2, parameter_value_map, name="") {
+		name = this._selectVTIcon(name);
 		var tLeft = time1;
 		var tRight = time2;
 		if(tLeft > tRight)
@@ -243,13 +330,13 @@ var vticonStore = Reflux.createStore({
 				vBottom = parameter_value_map[p].value1;
 			}
 
-			for (var i = 0; i < this._data.parameters[p].data.length; i++) {
-					if(this._data.parameters[p].data[i].t >= tLeft
-						&& this._data.parameters[p].data[i].t <= tRight
-						&& this._data.parameters[p].data[i].value <= vTop
-						&& this._data.parameters[p].data[i].value >= vBottom)
+			for (var i = 0; i < this._data[name].parameters[p].data.length; i++) {
+					if(this._data[name].parameters[p].data[i].t >= tLeft
+						&& this._data[name].parameters[p].data[i].t <= tRight
+						&& this._data[name].parameters[p].data[i].value <= vTop
+						&& this._data[name].parameters[p].data[i].value >= vBottom)
 					{
-						rv.push(this._data.parameters[p].data[i].id);
+						rv.push(this._data[name].parameters[p].data[i].id);
 					}
 				}
 		}
@@ -257,35 +344,38 @@ var vticonStore = Reflux.createStore({
 		return rv;
 	},
 
-	_setAllKeyframes(bool) {
-		for (var p in this._data.parameters) {
-			for (var i = 0; i < this._data.parameters[p].data.length; i++) {
-					this._data.parameters[p].data[i].selected = bool;
+	_setAllKeyframes(bool, name="") {
+		name = this._selectVTIcon(name);
+		for (var p in this._data[name].parameters) {
+			for (var i = 0; i < this._data[name].parameters[p].data.length; i++) {
+					this._data[name].parameters[p].data[i].selected = bool;
 			}
 		}
 		this.trigger(this._data);
 	},
 
-	_setSelectedKeyframes(ids, setUnselected) {
-		for (var p in this._data.parameters) {
-			for (var i = 0; i < this._data.parameters[p].data.length; i++) {
-				if (ids.indexOf(this._data.parameters[p].data[i].id) >= 0 ) {
-					this._data.parameters[p].data[i].selected = true;
+	_setSelectedKeyframes(ids, setUnselected, name="") {
+		name = this._selectVTIcon(name);
+		for (var p in this._data[name].parameters) {
+			for (var i = 0; i < this._data[name].parameters[p].data.length; i++) {
+				if (ids.indexOf(this._data[name].parameters[p].data[i].id) >= 0 ) {
+					this._data[name].parameters[p].data[i].selected = true;
 				} else if (setUnselected) {
-					this._data.parameters[p].data[i].selected = false;
+					this._data[name].parameters[p].data[i].selected = false;
 				}
 			}
 		}
 		this.trigger(this._data);
 	},
 
-	_setUnselectedKeyframes(ids, setSelected) {
-		for (var p in this._data.parameters) {
-			for (var i = 0; i < this._data.parameters[p].data.length; i++) {
-				if (ids.indexOf(this._data.parameters[p].data[i].id) >= 0 ) {
-					this._data.parameters[p].data[i].selected = false;
+	_setUnselectedKeyframes(ids, setSelected, name="") {
+		name = this._selectVTIcon(name);
+		for (var p in this._data[name].parameters) {
+			for (var i = 0; i < this._data[name].parameters[p].data.length; i++) {
+				if (ids.indexOf(this._data[name].parameters[p].data[i].id) >= 0 ) {
+					this._data[name].parameters[p].data[i].selected = false;
 				} else if (setSelected) {
-					this._data.parameters[p].data[i].selected = true;
+					this._data[name].parameters[p].data[i].selected = true;
 				}
 			}
 		}
@@ -296,13 +386,14 @@ var vticonStore = Reflux.createStore({
 	* Move Keyframes
 	*/
 
-	onMoveSelectedKeyframes(dt, dv) {
+	onMoveSelectedKeyframes(dt, dv, name="") {
+		name = this._selectVTIcon(name);
 		//guard
 		var valid_move = true;
-		for (var p in this._data.parameters) {
-			for (var i = 0; i < this._data.parameters[p].data.length; i++) {
-				if (this._data.parameters[p].data[i].selected) {
-					if (!this._isValidKeyframePosition(p, this._data.parameters[p].data[i].t+dt, this._data.parameters[p].data[i].value+dv[p]))
+		for (var p in this._data[name].parameters) {
+			for (var i = 0; i < this._data[name].parameters[p].data.length; i++) {
+				if (this._data[name].parameters[p].data[i].selected) {
+					if (!this._isValidKeyframePosition(p, this._data[name].parameters[p].data[i].t+dt, this._data[name].parameters[p].data[i].value+dv[p], name=name))
 					{
 						valid_move = false;
 					}
@@ -313,21 +404,22 @@ var vticonStore = Reflux.createStore({
 		if (valid_move)
 		{
 			//move
-			for (var p in this._data.parameters) {
-				for (var i = 0; i < this._data.parameters[p].data.length; i++) {
-						if (this._data.parameters[p].data[i].selected) {
-							this._data.parameters[p].data[i].t += dt;
-							this._data.parameters[p].data[i].value += dv[p];
+			for (var p in this._data[name].parameters) {
+				for (var i = 0; i < this._data[name].parameters[p].data.length; i++) {
+						if (this._data[name].parameters[p].data[i].selected) {
+							this._data[name].parameters[p].data[i].t += dt;
+							this._data[name].parameters[p].data[i].value += dv[p];
 						}
 				}
-				this._data.parameters[p].data.sort(this._keyframeCompare);
+				this._data[name].parameters[p].data.sort(this._keyframeCompare);
 			}
 			this.trigger(this._data);
 		}
 
 	},
 
-	onStartMovingSelectedKeyframes() {
+	onStartMovingSelectedKeyframes(name="") {
+		name = this._selectVTIcon(name);
 		this._saveStateForUndo();
 	},
 
@@ -335,7 +427,8 @@ var vticonStore = Reflux.createStore({
 	* Delete Keyframes
 	*/
 
-	onDeleteSelectedKeyframes() {
+	onDeleteSelectedKeyframes(name="") {
+		name = this._selectVTIcon(name);
 
 		var kfNotSelected = function(value) {
 			return !value.selected;
@@ -343,16 +436,16 @@ var vticonStore = Reflux.createStore({
 
 		this._saveStateForUndo();
 
-		for (var p in this._data.parameters) {
-			this._data.parameters[p].data = this._data.parameters[p].data.filter(kfNotSelected);
-			if (this._data.parameters[p].data.length == 0) {
+		for (var p in this._data[name].parameters) {
+			this._data[name].parameters[p].data = this._data[name].parameters[p].data.filter(kfNotSelected);
+			if (this._data[name].parameters[p].data.length == 0) {
 				//can't have an empty keyframe track, create new keyframe
 				var new_id = this._getNewKFUID(p);
-				var new_t = this._data.duration/2;
+				var new_t = this._data[name].duration/2;
 				//assign a midway value
-				var new_value = (this._data.parameters[p].valueScale[0] + this._data.parameters[p].valueScale[1])/2; 
+				var new_value = (this._data[name].parameters[p].valueScale[0] + this._data[name].parameters[p].valueScale[1])/2; 
 
-				this._data.parameters[p].data.push({
+				this._data[name].parameters[p].data.push({
 					id:new_id,
 					t:new_t,
 					value:new_value,
@@ -367,14 +460,15 @@ var vticonStore = Reflux.createStore({
 	/**
 	 * KF Guards
 	 */
-	 _isValidKeyframePosition(parameter, t, v) 
+	 _isValidKeyframePosition(parameter, t, v, name="") 
 	 {
+	 	name = this._selectVTIcon(name);
 	 	var valid = false;
 
-	 	if(t >= 0 && t <= this._data.duration)
+	 	if(t >= 0 && t <= this._data[name].duration)
 	 	{
-	 		var min = Math.min(this._data.parameters[parameter].valueScale[0], this._data.parameters[parameter].valueScale[1]);
-	 		var max = Math.max(this._data.parameters[parameter].valueScale[0], this._data.parameters[parameter].valueScale[1]);
+	 		var min = Math.min(this._data[name].parameters[parameter].valueScale[0], this._data[name].parameters[parameter].valueScale[1]);
+	 		var max = Math.max(this._data[name].parameters[parameter].valueScale[0], this._data[name].parameters[parameter].valueScale[1]);
 
 	 		if (v >= min &&
 	 			v <= max)
@@ -393,24 +487,29 @@ var vticonStore = Reflux.createStore({
 	 _copyState() {
 	 	//TODO: Make this more general, right now it's very brittle
 	 	var state = {};
-	 	state.duration = this._data.duration;
-	 	state.parameters = {};
-	 	for (var p in this._data.parameters)
+	 	for (name in this._data)
 	 	{
-	 		state.parameters[p] = {};
-	 		state.parameters[p].valueScale = this._data.parameters[p].valueScale;
-	 		state.parameters[p].data = [];
-	 		for (var i = 0; i < this._data.parameters[p].data.length; i++)
-	 		{
-	 			var d = this._data.parameters[p].data[i];
-	 			state.parameters[p].data.push({
-	 				t:d.t,
-	 				value:d.value,
-	 				selected:d.selected,
-	 				id:d.id
-	 			});
-	 		}
+	 		state.duration = this._data[name].duration;
+		 	state.parameters = {};
+		 	for (var p in this._data[name].parameters)
+		 	{
+		 		state.parameters[p] = {};
+		 		state.parameters[p].valueScale = this._data[name].parameters[p].valueScale;
+		 		state.parameters[p].data = [];
+		 		for (var i = 0; i < this._data[name].parameters[p].data.length; i++)
+		 		{
+		 			var d = this._data[name].parameters[p].data[i];
+		 			state.parameters[p].data.push({
+		 				t:d.t,
+		 				value:d.value,
+		 				selected:d.selected,
+		 				id:d.id
+		 			});
+		 		}
+		 	}
+
 	 	}
+	 	
 
 	 	return state;
 	 },
@@ -422,33 +521,38 @@ var vticonStore = Reflux.createStore({
 	 		rv = false;
 	 		var pState = this._previousStates[this._previousStates.length-1];
 
-	 		if (this._data.duration != pState.duration)
+	 		for (var name in this._data)
 	 		{
-	 			rv = true;
+	 			if (this._data[name].duration != pState.duration)
+		 		{
+		 			rv = true;
+		 		}
+
+			 	for (var p in this._data[name].parameters)
+			 	{
+			 		if (this._data[name].parameters[p].valueScale != pState.parameters[p].valueScale)
+			 		{
+			 			rv = true;
+			 		}
+
+			 		if (this._data[name].parameters[p].data.length != pState.parameters[p].data.length)
+			 		{
+			 			rv = true;
+			 		} else {
+			 			for (var i = 0; i < this._data[name].parameters[p].data.length; i++)
+				 		{
+				 			var d = this._data[name].parameters[p].data[i];
+				 			var pd = pState.parameters[p].data[i];
+				 			if (d.t != pd.t || d.value != pd.value || d.id != pd.id)
+				 			{
+				 				rv = true;
+				 			}
+				 		}
+			 		}
+			 	}
+
 	 		}
 
-		 	for (var p in this._data.parameters)
-		 	{
-		 		if (this._data.parameters[p].valueScale != pState.parameters[p].valueScale)
-		 		{
-		 			rv = true;
-		 		}
-
-		 		if (this._data.parameters[p].data.length != pState.parameters[p].data.length)
-		 		{
-		 			rv = true;
-		 		} else {
-		 			for (var i = 0; i < this._data.parameters[p].data.length; i++)
-			 		{
-			 			var d = this._data.parameters[p].data[i];
-			 			var pd = pState.parameters[p].data[i];
-			 			if (d.t != pd.t || d.value != pd.value || d.id != pd.id)
-			 			{
-			 				rv = true;
-			 			}
-			 		}
-		 		}
-		 	}
 	 	}
 	 	return rv;
 	 },

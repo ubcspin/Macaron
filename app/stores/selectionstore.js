@@ -16,6 +16,7 @@ var selectStore = Reflux.createStore({
 		this._data = {
 			active:false,
 			adding:false,
+			targetName:"",
 			time1:0,
 			time2:0,
 			parameters: {
@@ -37,7 +38,8 @@ var selectStore = Reflux.createStore({
 	},
 
 
-	onStartSelecting(time, parameter_value_map, adding=false) {
+	onStartSelecting(targetName, time, parameter_value_map, adding=false) {
+		this._data.targetName = targetName;
 		this._data.active = true;
 		this._data.time1 = time;
 		this._data.time2 = time;
@@ -60,6 +62,7 @@ var selectStore = Reflux.createStore({
 	},
 
 	onStopSelecting() {
+		this._data.targetName="";
 		this._data.active = false;
 		this.trigger(this._data);
 	},

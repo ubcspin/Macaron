@@ -18,6 +18,7 @@ var KeyframeEditor = React.createClass({
 
 
 	propTypes: {
+		name : React.PropTypes.string.isRequired,
 		parameter : React.PropTypes.string.isRequired,
 		vticon : React.PropTypes.object.isRequired,
 		selection : React.PropTypes.object.isRequired,
@@ -47,8 +48,8 @@ var KeyframeEditor = React.createClass({
 
     	this._lastMouseDownTime = 0;
 
-    	ScaleStore.actions.setTrackrange(this.props.parameter, parameter_range); 
-    	ScaleStore.actions.setTopOffset(this.props.parameter, this.refs.divWrapper.getDOMNode().offsetTop) ;
+    	ScaleStore.actions.setTrackrange(this.props.name, this.props.parameter, parameter_range); 
+    	ScaleStore.actions.setTopOffset(this.props.name, this.props.parameter, this.refs.divWrapper.getDOMNode().offsetTop) ;
 	},
 
 
@@ -62,7 +63,7 @@ var KeyframeEditor = React.createClass({
 
 		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
-		var scaleY = this.state.scales.scaleParameter[this.props.parameter];
+		var scaleY = this.state.scales[this.props.name].scaleParameter[this.props.parameter];
 
         var scaleX = this.props.scaleX;
         var height = this.props.height;
@@ -121,7 +122,7 @@ var KeyframeEditor = React.createClass({
 
 		//selection square
 		var selectionSquare = <rect />;
-		if(this.props.selection.active) {
+		if(this.props.vticon.selected && this.props.selection.active) {
 			var tLeft = this.props.selection.time1;
 			var tRight = this.props.selection.time2;
 			if(tLeft > tRight) {
@@ -152,6 +153,11 @@ var KeyframeEditor = React.createClass({
 				height={height}
 				fill={this.props.selectionColor}
 				opacity={this.props.selectionOpacity} />
+		}
+
+		var playheadLine = <rect />;
+		if(this.props.vticon.selected) {
+			playheadLine = <path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />
 		}
 
 		return (
@@ -207,8 +213,9 @@ var KeyframeEditor = React.createClass({
 						}
 
 						{selectionSquare}
+
+						{playheadLine}
 						
-						<path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />
 
 					</svg>
 				</div>
@@ -223,6 +230,8 @@ var KeyframeEditor = React.createClass({
 
 		var t = Date.now();
 
+		VTIconStore.actions.selectVTIcon(this.props.name);
+
 		if ( (t - this._lastMouseDownTime) <= this.props.doubleClickTime)
 		{
 			//double click
@@ -230,16 +239,16 @@ var KeyframeEditor = React.createClass({
 
 			var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
-	        var scaleY = this.state.scales.scaleParameter[this.props.parameter];
+	        var scaleY = this.state.scales[this.props.name].scaleParameter[this.props.parameter];
 
-	        var x = e.clientX;// - this.state.offsetLeft;
+	        var x = e.clientX - this.state.offsetLeft;
 	        var y = e.clientY - this.state.offsetTop;
 
-	        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey);
-	        DragStore.actions.startKeyframeDrag();
+	        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey, name=this.props.name);
+	        DragStore.actions.startKeyframeDrag(this.props.name);
 
 		} else {
-  			DragStore.actions.startSelectDrag(e.shiftKey);
+  			DragStore.actions.startSelectDrag(this.props.name, this.props.name.shiftKey);
 		}
 
 		this._lastMouseDownTime = t;
@@ -254,12 +263,12 @@ var KeyframeEditor = React.createClass({
 		if (!selected)
 		{
 			if(e.shiftKey) {
-				VTIconStore.actions.addToggleSelectedKeyframe(id);
+				VTIconStore.actions.addToggleSelectedKeyframe(id, name=this.props.name);
 			} else {
-				VTIconStore.actions.selectKeyframe(id);
+				VTIconStore.actions.selectKeyframe(id, name=this.props.name);
 			}
 		}
-		DragStore.actions.startKeyframeDrag();
+		DragStore.actions.startKeyframeDrag(this.props.name);
 
 		return false;
 	}

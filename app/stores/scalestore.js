@@ -8,6 +8,7 @@ var scaleActions = Reflux.createActions([
 			'setTimelineRange',
 			'setTrackrange',
 			'setTrackrangeMultiple',
+			'setLeftOffset',
 			'setTopOffset',
 			'setTopOffsetMultiple'
 		]);
@@ -18,25 +19,36 @@ var scaleStore = Reflux.createStore({
 
 	init() {
 		var stub_fn = d3.scale.identity();
-		this._data = {
-			scaleTimeline:stub_fn,
-			scaleParameter:{
-				amplitude:stub_fn,
-				frequency:stub_fn
-			},
-			topOffsetParameter:{
-				amplitude:0,
-				frequency:0
-			}
-		};
+		this._names = ["main", "example"];
 
-		this._parameterValues = {}
-		this._duration = 0;
+		this._parameterValues = {};
+		this._duration = {};
+		this._trackrange = {};
+		this._timelinerange = {};
+
+		this._data = {};
+		for (var i = 0; i < this._names.length; i++) {
+			this._data[this._names[i]] = {
+				scaleTimeline:stub_fn,
+				scaleParameter:{
+					amplitude:stub_fn,
+					frequency:stub_fn
+				},
+				leftOffset:0,
+				topOffsetParameter:{
+					amplitude:0,
+					frequency:0
+				}			
+			};
+
+		this._parameterValues[this._names[i]] = {};
+		this._duration[this._names[i]] = 0;
+		this._trackrange[this._names[i]] = {}
+		this._timelinerange[this._names[i]] = [];
+
+		}
+		
 		this.listenTo(VTIconStore.store, this._VTIconUpdate);
-
-		this._trackrange = {}
-		this._timelinerange = [];
-
 	},
 
 	getInitialState : function() {
@@ -45,23 +57,30 @@ var scaleStore = Reflux.createStore({
 	},
 
 	_update() {
-		this._data.scaleTimeline = d3.scale.linear()
-                .domain([0, this._duration])
-                .range(this._timelinerange);
-        for (var p in this._trackrange) {
-        	this._data.scaleParameter[p] = d3.scale.linear()
-                .domain(this._parameterValues[p])
-                .range(this._trackrange[p]);
-        }
+		for (var i = 0; i < this._names.length; i++) {
+			this._data[this._names[i]].scaleTimeline = d3.scale.linear()
+                .domain([0, this._duration[this._names[i]]])
+                .range(this._timelinerange[this._names[i]]);
+        	for (var p in this._trackrange[this._names[i]]) {
+	        	this._data[this._names[i]].scaleParameter[p] = d3.scale.linear()
+	                .domain(this._parameterValues[this._names[i]][p])
+	                .range(this._trackrange[this._names[i]][p]);
+	        }
+		}
+		
 		this.trigger(this._data);
 	},
 
-	_CalculateScales(vticon) {
-		this._duration = vticon.duration;
-		for (var p in vticon.parameters)
+	_CalculateScales(vticons) {
+		for (var n in vticons)
 		{
-			this._parameterValues[p] = vticon.parameters[p].valueScale;
+			this._duration[n] = vticons[n].duration;
+			for (var p in vticons[n].parameters)
+			{
+				this._parameterValues[n][p] = vticons[n].parameters[p].valueScale;
+			}
 		}
+		
 	},
 
 	_VTIconUpdate(vticon) {
@@ -69,36 +88,41 @@ var scaleStore = Reflux.createStore({
 		this._update();
 	},
 
-	onSetTimelineRange(range) {
-		this._timelinerange = range;
+	onSetTimelineRange(name, range) {
+		this._timelinerange[name] = range;
 		this._update();
 	},
 
-	onSetTrackrange(parameter, range) {
-		this._trackrange[parameter] = range;
+	onSetTrackrange(name, parameter, range) {
+		this._trackrange[name][parameter] = range;
 
 		this._update();
 	},
 
-	onSetTrackrangeMultiple(parameter_range_map) {
+	onSetTrackrangeMultiple(name, parameter_range_map) {
 		for (var p in parameter_range_map)
 		{
-			this._trackrange[p] = parameter_range_map[p];
+			this._trackrange[name][p] = parameter_range_map[p];
 		}
 
 		this._update();
 	},
 
-	onSetTopOffset(parameter, offset) {
-		this._data.topOffsetParameter[parameter] = offset;
+	onSetLeftOffset(name, offset) {
+		this._data[name].leftOffset = offset;
+		this._update();
+	},
+
+	onSetTopOffset(name, parameter, offset) {
+		this._data[name].topOffsetParameter[parameter] = offset;
 
 		this._update();
 	},
 
-	onSetTopOffsetMultiple(parameter_offset_map) {
+	onSetTopOffsetMultiple(name, parameter_offset_map) {
 		for (var p in parameter_offset_map)
 		{
-			this._data.topOffsetParameter[p] = parameter_offset_map[p];
+			this._data[name].topOffsetParameter[p] = parameter_offset_map[p];
 		}
 
 		this._update();

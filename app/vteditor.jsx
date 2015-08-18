@@ -22,7 +22,7 @@ var AnimationStore = require('./stores/animationstore.js');
 var VTEditor = React.createClass({
 	mixins : [
 				Reflux.connect(PlaybackStore.store, 'playback'), //emitted updates go to 'playback' key
-				Reflux.connect(VTIconStore.store, 'vticon'), //emitted updates go to 'vticon' key			
+				Reflux.connect(VTIconStore.store, 'vticons'), //emitted updates go to 'vticon' key			
 				Reflux.connect(ScaleStore.store, 'scales'), //emitted updates go to 'scales' key			
 				Reflux.connect(SelectionStore.store, 'selection'), //emitted updates go to 'selection' key			
 				Reflux.connect(AnimationStore.store, 'animation') //emitted updates go to 'animation' key						
@@ -38,8 +38,8 @@ var VTEditor = React.createClass({
 
 
 	//returns parameter value for a given time
-	interpolateParameter: function(p, t) {
-		var param = this.state.vticon.parameters[p];
+	interpolateParameter: function(p, t, name) {
+		var param = this.state.vticons[name].parameters[p];
 		var data = param.data;
 		var prev = null;
 		var next = null;
@@ -111,12 +111,12 @@ var VTEditor = React.createClass({
 	} ,
 
 	//returns parameter values as a dictionary for a given time
-	interpolateParameters: function(t) {
+	interpolateParameters: function(t, name) {
 		var interpolateParameter = this.interpolateParameter;
 		//map _interpolateParameter to vticon keys
-		return Object.keys(this.state.vticon.parameters).reduce( function(obj, p) 
+		return Object.keys(this.state.vticons[name].parameters).reduce( function(obj, p) 
 			{
-				obj[p] = interpolateParameter(p, t);
+				obj[p] = interpolateParameter(p, t, name);
 				return obj;
 			}, {});
 	} ,
@@ -214,21 +214,98 @@ var VTEditor = React.createClass({
 	*/
 	render : function() {
 
-		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime);
-		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime);
-		var scaleX = this.state.scales.scaleTimeline;
+		// TODO: sound of SELECTED icon
+		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime, this.state.playback.playingIcon);
+		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime, this.state.playback.playingIcon);
+		
+		var scaleXMain = this.state.scales.main.scaleTimeline;
+		var scaleXExample = this.state.scales.example.scaleTimeline;
+
+		var design_icon = this.state.vticons["main"];
+		var example_icon = this.state.vticons["example"];
+
+
+		var editorStyle = {
+			width:"50%",
+			display:"block",
+			float:"left"};
 
 		return (
 			<div id="app" ref="appRef">
 				<EditorHeader />
-				<AnimationWindow animation={this.state.animation.animation} animationParameters={this.state.animation.animationParameters} />
-				<ControlBar playing={this.state.playback.playing} mute={this.state.playback.mute}/>
 				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.playback.mute} />
-				<PlayHead scaleX={scaleX} currentTime={this.state.playback.currentTime} duration={this.state.vticon.duration} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill}/>
-				<IconVis scaleX={scaleX} vticon={this.state.vticon} currentTime={this.state.playback.currentTime} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} interpolateParameters={this.interpolateParameters} interpolateParameter={this.interpolateParameter}/>
-				{Object.keys(this.state.vticon.parameters).map( (p) => (
-						<KeyframeEditor scaleX={scaleX} currentTime={this.state.playback.currentTime} parameter={p} vticon={this.state.vticon} keyframeCircleRadius={this.props.keyframeCircleRadius} playheadFill={this.props.playheadFill} selection={this.state.selection}/>
-					))}
+				<div name="main" id="maineditor" ref="mainEditorRef" style={editorStyle}>
+					<AnimationWindow
+						name="main"
+						animation={this.state.animation.animation}
+						animationParameters={this.state.animation.animationParameters} />
+					<ControlBar
+						name="main"
+						playing={this.state.playback.playing}
+						mute={this.state.playback.mute}/>
+					<PlayHead name="main"
+						displayPlayhead={this.state.vticons["main"].selected}
+						scaleX={scaleXMain} 
+						currentTime={this.state.playback.currentTime} 
+						duration={design_icon.duration} 
+						keyframeCircleRadius={this.props.keyframeCircleRadius} 
+						playheadFill={this.props.playheadFill}/>
+					<IconVis name="main"
+						scaleX={scaleXMain} 
+						vticon={design_icon} 
+						currentTime={this.state.playback.currentTime} 
+						keyframeCircleRadius={this.props.keyframeCircleRadius} 
+						playheadFill={this.props.playheadFill} 
+						interpolateParameters={this.interpolateParameters} 
+						interpolateParameter={this.interpolateParameter}/>
+					{Object.keys(design_icon.parameters).map( (p) => (
+							<KeyframeEditor 
+								name="main" 
+								scaleX={scaleXMain} 
+								currentTime={this.state.playback.currentTime} 
+								parameter={p} 
+								vticon={design_icon} 
+								keyframeCircleRadius={this.props.keyframeCircleRadius} 
+								playheadFill={this.props.playheadFill} 
+								selection={this.state.selection}/>
+						))}
+				</div>
+				<div name="example" id="exampleeditor" ref="exampleEditorRef" style={editorStyle}>
+					<AnimationWindow
+						name="example"
+						animation={this.state.animation.animation}
+						animationParameters={this.state.animation.animationParameters} />
+					<ControlBar
+						name="example"
+						playing={this.state.playback.playing}
+						mute={this.state.playback.mute}/>
+					<PlayHead name="example"
+						displayPlayhead={this.state.vticons["example"].selected}
+						scaleX={scaleXExample} 
+						currentTime={this.state.playback.currentTime} 
+						duration={example_icon.duration} 
+						keyframeCircleRadius={this.props.keyframeCircleRadius} 
+						playheadFill={this.props.playheadFill}/>
+					<IconVis name="example"
+						scaleX={scaleXExample} 
+						vticon={example_icon} 
+						currentTime={this.state.playback.currentTime} 
+						keyframeCircleRadius={this.props.keyframeCircleRadius} 
+						playheadFill={this.props.playheadFill} 
+						interpolateParameters={this.interpolateParameters} 
+						interpolateParameter={this.interpolateParameter}/>
+					{Object.keys(example_icon.parameters).map( (p) => (
+							<KeyframeEditor 
+								name="example" 
+								scaleX={scaleXExample} 
+								currentTime={this.state.playback.currentTime} 
+								parameter={p} 
+								vticon={example_icon} 
+								keyframeCircleRadius={this.props.keyframeCircleRadius} 
+								playheadFill={this.props.playheadFill} 
+								selection={this.state.selection}/>
+						))}
+				</div>		
 			</div>);
 		},
 
@@ -244,18 +321,30 @@ var VTEditor = React.createClass({
 		window.addEventListener('mouseup', this._handleMouseUp);
 		window.addEventListener('keydown', this._handleKeyboard);
 
-    	ScaleStore.actions.setTimelineRange(this._calculateTimelineRange());
+		this._updateScales();
 
    	},
 
 
    	handleResize: function(e) {
-    	ScaleStore.actions.setTimelineRange(this._calculateTimelineRange());
+		this._updateScales();
 	},
 
-	_calculateTimelineRange() {
-	    var actualWidth = this.refs.appRef.getDOMNode().clientWidth;
-    	var actualHeight = this.refs.appRef.getDOMNode().clientHeight;
+	_updateScales : function() {
+		for (var n in this.state.scales)
+		{
+    		ScaleStore.actions.setTimelineRange(n, this._calculateTimelineRange(n));	
+
+			var actualLeft = this.refs[n+"EditorRef"].getDOMNode().offsetLeft;
+	    	// var actualTop = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
+			ScaleStore.actions.setLeftOffset(n, actualLeft);
+		}
+	},
+
+	_calculateTimelineRange(name) {
+	    var actualWidth = this.refs[name+"EditorRef"].getDOMNode().clientWidth;
+    	// var actualHeight = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
+		
 		return [this.props.timelineLeftOffset+this.props.keyframeCircleRadius, actualWidth-this.props.keyframeCircleRadius-this.props.timelineRightOffset];
 
 	}

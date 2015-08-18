@@ -22,7 +22,7 @@ var clipboardStore = Reflux.createStore({
 		this._lowest_time = 0;
 
 		//setup vticon observation
-		this._vticon = {};
+		this._vticons = {};
 		this.listenTo(VTIconStore.store, this._VTIconUpdate);
 
 		//setup playback observation
@@ -30,8 +30,8 @@ var clipboardStore = Reflux.createStore({
 		this.listenTo(PlaybackStore.store, this._playbackUpdate);
 	},
 
-	_VTIconUpdate(vticon) {
-		this._vticon = vticon;
+	_VTIconUpdate(vticons) {
+		this._vticons = vticons;
 	},
 
 	_playbackUpdate(playback) {
@@ -40,30 +40,39 @@ var clipboardStore = Reflux.createStore({
 
 	onCopy() {
 		this._clipboard = {};
-		this._lowest_time = this._vticon.duration;
-		for (var p in this._vticon.parameters)
+		for (var n in this._vticons)
 		{
-			var keyframes_to_add = [];
-			for (var i = 0; i < this._vticon.parameters[p].data.length; i++) {
-				var d = this._vticon.parameters[p].data[i];
-				if (d.selected) {
-					this._lowest_time = Math.min(this._lowest_time, d.t);
-					keyframes_to_add.push(
-					{
-						t:d.t,
-						value:d.value,
-						selected:true
-					}
-						);
-				}
-			}
-
-			if (keyframes_to_add.length > 0)
+			if (this._vticons[n].selected)
 			{
-				this._clipboard[p] = keyframes_to_add;
+				this._lowest_time = this._vticons[n].duration;
+
+				for (var p in this._vticons[n].parameters)
+				{
+					var keyframes_to_add = [];
+					for (var i = 0; i < this._vticons[n].parameters[p].data.length; i++) {
+						var d = this._vticons[n].parameters[p].data[i];
+						if (d.selected) {
+							this._lowest_time = Math.min(this._lowest_time, d.t);
+							keyframes_to_add.push(
+							{
+								t:d.t,
+								value:d.value,
+								selected:true
+							}
+								);
+						}
+					}
+
+					if (keyframes_to_add.length > 0)
+					{
+						this._clipboard[p] = keyframes_to_add;
+					}
+				}
+				this.trigger(this._clipboard);
+
 			}
 		}
-		this.trigger(this._clipboard);
+		
 	},
 
 	onCut() {
