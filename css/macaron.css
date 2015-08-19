@@ -3,6 +3,16 @@ body {
     font-family:"Helvetica Nueue", sans-serif;
 }
 
+* {
+    -webkit-user-select: none; /* Chrome/Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+ */
+
+    /* Rules below not implemented in browsers yet */
+    -o-user-select: none;
+    user-select: none;
+}
+
 /* Control bar Styles */
 .controlbutton {
 	padding:5px;
@@ -56,6 +66,23 @@ a:active {
     background: -ms-linear-gradient(top,  #ffc170 0%,#ffcc8e 100%); /* IE10+ */
     background: linear-gradient(to bottom,  #ffc170 0%,#ffcc8e 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffc170', endColorstr='#ffcc8e',GradientType=0 ); /* IE6-9 */
+}
+
+.example-square {
+    float:left;
+    border:solid;
+    border-width:1px;
+    margin:10px;
+}
+
+.example-square.selected {
+    border-width:3px;
+}
+
+.example-galley {
+    width:10%;
+    height:100%;
+    float:left;
 }
 
 .animationoptions {
