@@ -24,8 +24,8 @@ var ExampleSquare = React.createClass({
 	       height:50,
 	      visColor:'#FFDDAD',
 	      // background:"#FAFAFA",
-	      resolution:3000,
-	      maxFrequencyRendered:125,
+	      resolution:2000,
+	      maxFrequencyRendered:25,
 	      limitFrequencies:true
 	    }
 	},
