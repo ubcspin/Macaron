@@ -136,9 +136,35 @@ var WaveformPathMixin = {
 	} ,
 
 
+	_copyIcon: function(vticon) {
+		//TODO: also put this into a vticon object when refactoring
+		var state = {};
+		state.duration = vticon.duration;
+	 	state.parameters = {};
+	 	for (var p in vticon.parameters)
+	 	{
+	 		state.parameters[p] = {};
+	 		state.parameters[p].valueScale = vticon.parameters[p].valueScale;
+	 		state.parameters[p].data = [];
+	 		for (var i = 0; i < vticon.parameters[p].data.length; i++)
+	 		{
+	 			var d = vticon.parameters[p].data[i];
+	 			state.parameters[p].data.push({
+	 				t:d.t,
+	 				value:d.value,
+	 				id:d.id
+	 			});
+	 		}
+	 	}
+
+	 	return state;
+
+	},
+
+
 	computeWaveformPath(vticon, scaleX, scaleY, resolution) {
-		// if (this._iconChanged(vticon))
-		// {
+		if (this._iconChanged(vticon))
+		{
 
 			var vticonline = d3.svg.line()
 								.x(function(d) {
@@ -176,9 +202,9 @@ var WaveformPathMixin = {
 				lastFrequency = frequency;
 			}
 
-			this._last_updated_vticon = vticon;
+			this._last_updated_vticon = this._copyIcon(vticon);
 			this._waveformpath =  vticonline(visPoints);
-		// }
+		}
 
 		return this._waveformpath;
 	}
