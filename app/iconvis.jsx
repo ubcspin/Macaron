@@ -3,11 +3,14 @@ import React from 'react';
 import d3 from 'd3';
 
 var TimelineMixin = require('./util/timelinemixin.js');
+var WaveformPathMixin = require('./util/waveformpathmixin.js');
 
 
 var IconVis = React.createClass({
 
-	mixins : [TimelineMixin("divWrapper")],
+	mixins : [
+		TimelineMixin("divWrapper"),
+		WaveformPathMixin],
 
 	propTypes: {
 		vticon : React.PropTypes.object.isRequired,
@@ -45,44 +48,8 @@ var IconVis = React.createClass({
 
         var scaleX = this.props.scaleX;
 
-        var vticonline = d3.svg.line()
-								.x(function(d) {
-									return scaleX(d[0])
-								})
-								.y(function(d) {
-									return scaleY(d[1])
-								});
+        var visPath = this.computeWaveformPath(this.props.vticon, scaleX, scaleY, this.props.resolution);
 
-
-		//do icon visualization
-		var visPoints = [];
-		var lastFrequency = 0;
-		var dt_in_s = this.props.vticon.duration/1000/this.props.resolution;
-		var phaseIntegral = 0;
-		for (var i = 0; i < this.props.resolution; i++) {
-			var t_in_ms = i/this.props.resolution*this.props.vticon.duration;
-			var t_in_s = t_in_ms/1000;
-
-			//var paramValues = this.props.interpolateParameters(t_in_ms, name=this.props.name);
-			var amplitude = this.props.interpolateParameter("amplitude", t_in_ms, this.props.name);//paramValues.amplitude;
-			var frequency = this.props.interpolateParameter("frequency", t_in_ms, this.props.name); //paramValues.frequency;
-			if (this.props.limitFrequencies) {
-				frequency = Math.min(this.props.maxFrequencyRendered, frequency/2);
-			}
-			//console.log("Frequency for ", i, " at time", t_in_ms, "is", frequency);
-			//var frequency = this.props.interpolateParameter("frequency", t_in_ms);
-
-			if (i == 0) {
-				// phaseIntegral = frequency;
-			} else { 
-				phaseIntegral += (frequency)*dt_in_s;
-			};
-			var v = amplitude * Math.sin(2*Math.PI*phaseIntegral);
-			visPoints.push ( [t_in_ms, v]);
-			lastFrequency = frequency;
-		}
-
-		var visPath = vticonline(visPoints);
 
 		//current time vis
 		//TODO: put this in a seperate location
