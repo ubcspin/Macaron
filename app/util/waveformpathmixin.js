@@ -162,7 +162,7 @@ var WaveformPathMixin = {
 	},
 
 
-	computeWaveformPath(vticon, scaleX, scaleY, resolution) {
+	computeWaveformPath(vticon, scaleX, scaleY, resolution, maxFrequencyRendered, limitFrequencies) {
 		if (this._iconChanged(vticon))
 		{
 
@@ -180,17 +180,18 @@ var WaveformPathMixin = {
 			var lastFrequency = 0;
 			var dt_in_s = vticon.duration/1000/resolution;
 			var phaseIntegral = 0;
+			var frequencyScaleFactor = Math.max(vticon.parameters.frequency.valueScale[0], vticon.parameters.frequency.valueScale[1])/maxFrequencyRendered;
 			for (var i = 0; i < resolution; i++) {
 				var t_in_ms = i/resolution*vticon.duration;
 				var t_in_s = t_in_ms/1000;
 
 				var amplitude = this.interpolateParameter("amplitude", t_in_ms, vticon);//paramValues.amplitude;
 				var frequency = this.interpolateParameter("frequency", t_in_ms, vticon); //paramValues.frequency;
-				if (this.props.limitFrequencies) {
-					frequency = Math.min(this.props.maxFrequencyRendered, frequency/2);
+				if (limitFrequencies) {
+					frequency = Math.min(maxFrequencyRendered, frequency/frequencyScaleFactor);
 				}
 				//console.log("Frequency for ", i, " at time", t_in_ms, "is", frequency);
-				//var frequency = this.props.interpolateParameter("frequency", t_in_ms);
+				//var frequency = interpolateParameter("frequency", t_in_ms);
 
 				if (i == 0) {
 					// phaseIntegral = frequency;

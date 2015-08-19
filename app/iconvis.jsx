@@ -31,7 +31,7 @@ var IconVis = React.createClass({
 	      visColor:'#FFDDAD',
 	      background:"#FAFAFA",
 	      resolution:4000,
-	      maxFrequencyRendered:250,
+	      maxFrequencyRendered:125,
 	      limitFrequencies:true
 	    }
 	},
@@ -43,7 +43,9 @@ var IconVis = React.createClass({
 
         var scaleX = this.props.scaleX;
 
-		this._visPath = this.computeWaveformPath(this.props.vticon, scaleX, scaleY, this.props.resolution);
+		this._visPath = this.computeWaveformPath(this.props.vticon,
+			scaleX, scaleY,
+			this.props.resolution, this.props.maxFrequencyRendered, this.props.limitFrequencies);
 	},
 
 	render : function() {
