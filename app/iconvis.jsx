@@ -30,77 +30,6 @@ var IconVis = React.createClass({
 	    }
 	},
 
-	_iconChanged : function () {
-		//TODO: this was copied and changed from VTEditor
-		//need to move this comparator to a VTIcon @ next refactoring
-		var vticon = this.props.vticon;
-		var prev = this._last_updated_vticon;
-
-		if (prev == undefined)
-		{
-			return true;
-		}
-
-		var rv = false;
-
-		if (vticon.duration != prev.duration)
- 		{
- 			rv = true;
- 		}
-
-	 	for (var p in vticon.parameters)
-	 	{
-	 		if (vticon.parameters[p].valueScale != prev.parameters[p].valueScale)
-	 		{
-	 			rv = true;
-	 		}
-
-	 		if (vticon.parameters[p].data.length != prev.parameters[p].data.length)
-	 		{
-	 			rv = true;
-	 		} else {
-	 			for (var i = 0; i < vticon.parameters[p].data.length; i++)
-		 		{
-		 			var d = vticon.parameters[p].data[i];
-		 			var pd = prev.parameters[p].data[i];
-		 			if (d.t != pd.t || d.value != pd.value || d.id != pd.id)
-		 			{
-		 				rv = true;
-		 			}
-		 		}
-	 		}
-	 	}
-
-	 	return rv;
-
-	},
-
-
-	_copyIcon: function(vticon) {
-		//TODO: also put this into a vticon object when refactoring
-		var state = {};
-		state.duration = vticon.duration;
-	 	state.parameters = {};
-	 	for (var p in vticon.parameters)
-	 	{
-	 		state.parameters[p] = {};
-	 		state.parameters[p].valueScale = vticon.parameters[p].valueScale;
-	 		state.parameters[p].data = [];
-	 		for (var i = 0; i < vticon.parameters[p].data.length; i++)
-	 		{
-	 			var d = vticon.parameters[p].data[i];
-	 			state.parameters[p].data.push({
-	 				t:d.t,
-	 				value:d.value,
-	 				id:d.id
-	 			});
-	 		}
-	 	}
-
-	 	return state;
-
-	},
-
 	render : function() {
 
 
@@ -130,41 +59,30 @@ var IconVis = React.createClass({
 		var lastFrequency = 0;
 		var dt_in_s = this.props.vticon.duration/1000/this.props.resolution;
 		var phaseIntegral = 0;
+		for (var i = 0; i < this.props.resolution; i++) {
+			var t_in_ms = i/this.props.resolution*this.props.vticon.duration;
+			var t_in_s = t_in_ms/1000;
 
-		//only update if the icon has changed
-		if (this._iconChanged())
-		{
-			for (var i = 0; i < this.props.resolution; i++) {
-				var t_in_ms = i/this.props.resolution*this.props.vticon.duration;
-				var t_in_s = t_in_ms/1000;
-
-				//var paramValues = this.props.interpolateParameters(t_in_ms, name=this.props.name);
-				var amplitude = this.props.interpolateParameter("amplitude", t_in_ms, this.props.name);//paramValues.amplitude;
-				var frequency = this.props.interpolateParameter("frequency", t_in_ms, this.props.name); //paramValues.frequency;
-				if (this.props.limitFrequencies) {
-					frequency = Math.min(this.props.maxFrequencyRendered, frequency/2);
-				}
-				//console.log("Frequency for ", i, " at time", t_in_ms, "is", frequency);
-				//var frequency = this.props.interpolateParameter("frequency", t_in_ms);
-
-				if (i == 0) {
-					// phaseIntegral = frequency;
-				} else { 
-					phaseIntegral += (frequency)*dt_in_s;
-				};
-				var v = amplitude * Math.sin(2*Math.PI*phaseIntegral);
-				visPoints.push ( [t_in_ms, v]);
-				lastFrequency = frequency;
-
+			//var paramValues = this.props.interpolateParameters(t_in_ms, name=this.props.name);
+			var amplitude = this.props.interpolateParameter("amplitude", t_in_ms, this.props.name);//paramValues.amplitude;
+			var frequency = this.props.interpolateParameter("frequency", t_in_ms, this.props.name); //paramValues.frequency;
+			if (this.props.limitFrequencies) {
+				frequency = Math.min(this.props.maxFrequencyRendered, frequency/2);
 			}
+			//console.log("Frequency for ", i, " at time", t_in_ms, "is", frequency);
+			//var frequency = this.props.interpolateParameter("frequency", t_in_ms);
 
-			this._last_updated_vticon = this._copyIcon(this.props.vticon);
-		
-		
-			var visPath = vticonline(visPoints);
-
-			this._rendered_path = (<path stroke={this.props.visColor} strokeWidth="0.5" fill="none" d={visPath} />);
+			if (i == 0) {
+				// phaseIntegral = frequency;
+			} else { 
+				phaseIntegral += (frequency)*dt_in_s;
+			};
+			var v = amplitude * Math.sin(2*Math.PI*phaseIntegral);
+			visPoints.push ( [t_in_ms, v]);
+			lastFrequency = frequency;
 		}
+
+		var visPath = vticonline(visPoints);
 
 		//current time vis
 		//TODO: put this in a seperate location
@@ -188,7 +106,7 @@ var IconVis = React.createClass({
 		return (
 			<div ref="divWrapper" style={divStyle}>
 				<svg height="100%" width="100%">
-					{this._rendered_path}
+					<path stroke={this.props.visColor} strokeWidth="0.5" fill="none" d={visPath} />
 					{playheadLine}
 				</svg>
 
