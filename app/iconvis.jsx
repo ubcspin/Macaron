@@ -30,7 +30,7 @@ var IconVis = React.createClass({
 	      width:'100%',
 	      visColor:'#FFDDAD',
 	      background:"#FAFAFA",
-	      resolution:4000,
+	      resolution:3000,
 	      maxFrequencyRendered:125,
 	      limitFrequencies:true
 	    }
