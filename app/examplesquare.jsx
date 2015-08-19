@@ -10,18 +10,19 @@ var ExampleSquare = React.createClass({
 		exampleicon : React.PropTypes.object.isRequired
 			},
 	
-	// getDefaultProps: function() {
-	//     return {
+	getDefaultProps: function() {
+	    return {
 	//       border:2,
 	//       selectedBorder:10
-	//       // width:'100%',
+	       width:100,
+	       height:50,
 	//       // visColor:'#FFDDAD',
 	//       // background:"#FAFAFA",
 	//       // resolution:4000,
 	//       // maxFrequencyRendered:250,
 	//       // limitFrequencies:true
-	//     }
-	// },
+	    }
+	},
 
 	_handleClick : function(e) {
 		ExampleStore.actions.selectExample(this.props.exampleName);
@@ -33,8 +34,14 @@ var ExampleSquare = React.createClass({
 		if (this.props.exampleicon.selected) {
 			className += " selected";
 		}
+
+		var styles = {
+			width:this.props.width,
+			height:this.props.height,
+		};
+
 		return (
-			<div className={className} onClick={this._handleClick}/>
+			<div className={className} onClick={this._handleClick} style={styles}/>
 			);
 	}
 
