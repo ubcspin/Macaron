@@ -1,16 +1,19 @@
 
 import React from 'react';
+import Reflux from 'reflux';
 import d3 from 'd3';
 
 var TimelineMixin = require('./util/timelinemixin.js');
 var WaveformPathMixin = require('./util/waveformpathmixin.js');
 
+var VTIconStore = require('./stores/vticonstore.js');
 
 var IconVis = React.createClass({
 
 	mixins : [
 		TimelineMixin("divWrapper"),
-		WaveformPathMixin],
+		WaveformPathMixin,
+		Reflux.listenTo(VTIconStore.store,"onVTIconChange")],
 
 	propTypes: {
 		vticon : React.PropTypes.object.isRequired,
@@ -33,6 +36,16 @@ var IconVis = React.createClass({
 	    }
 	},
 
+	onVTIconChange: function(vticon) {
+	 	var scaleY = d3.scale.linear()
+                    .domain( [-1, 1]) // return value from sine
+                    .range([0, this.props.height]);
+
+        var scaleX = this.props.scaleX;
+
+		this._visPath = this.computeWaveformPath(this.props.vticon, scaleX, scaleY, this.props.resolution);
+	},
+
 	render : function() {
 
 
@@ -47,9 +60,6 @@ var IconVis = React.createClass({
                     .range([0, this.props.height]);
 
         var scaleX = this.props.scaleX;
-
-        var visPath = this.computeWaveformPath(this.props.vticon, scaleX, scaleY, this.props.resolution);
-
 
 		//current time vis
 		//TODO: put this in a seperate location
@@ -73,7 +83,7 @@ var IconVis = React.createClass({
 		return (
 			<div ref="divWrapper" style={divStyle}>
 				<svg height="100%" width="100%">
-					<path stroke={this.props.visColor} strokeWidth="0.5" fill="none" d={visPath} />
+					<path stroke={this.props.visColor} strokeWidth="0.5" fill="none" d={this._visPath} />
 					{playheadLine}
 				</svg>
 
