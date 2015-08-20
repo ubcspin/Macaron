@@ -3,7 +3,7 @@ import Reflux from 'reflux';
 var DisplayModes = {
 	NO_EXAMPLES:0,
 	// LOWVIS_LOWSELECT:1,
-	// HIGHVIS_LOWSELECT:2,
+	 HIGHVIS_LOWSELECT:2,
 	// LOWVIS_HIGHSELECT:3
 	HIGHVIS_HIGHSELECT:4
 };
@@ -20,7 +20,7 @@ var studyStore = Reflux.createStore({
 
 	init: function() {
 		this._data = {
-			currentMode:DisplayModes.NO_EXAMPLES,
+			currentMode:DisplayModes.HIGHVIS_HIGHSELECT,
 			modes:DisplayModes
 		};
 	},
