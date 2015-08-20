@@ -35,7 +35,7 @@ var IconVis = React.createClass({
 	      limitFrequencies:true,
   	      selectionColor:'#676767',
 	      selectionOpacity:0.2,
-  	      selectable:true
+  	      selectable:false
 	    }
 	},
 
