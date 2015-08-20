@@ -2,7 +2,7 @@ import Reflux from 'reflux';
 
 var DisplayModes = {
 	NO_EXAMPLES:0,
-	// LOWVIS_LOWSELECT:1,
+	 LOWVIS_LOWSELECT:1,
 	 HIGHVIS_LOWSELECT:2,
 	// LOWVIS_HIGHSELECT:3
 	HIGHVIS_HIGHSELECT:4

@@ -40,6 +40,7 @@ var KeyframeEditor = React.createClass({
 	      axisNameWidth:18,
 	      axisTickLeft:30,
 	      selectable:true,
+	      visualization:true,
 	      modifiable:true
 	    }
 	},
@@ -163,19 +164,23 @@ var KeyframeEditor = React.createClass({
 			playheadLine = <path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />
 		}
 
-		return (
-				<div ref="divWrapper" style={divStyle}>
-					<svg  width="100%" height="100%" onMouseDown={this._onMouseDown} >
-						<path
+
+		var visualization = this.props.visualization;
+		var visPath = <path />;
+		if (visualization) {
+			visPath = (<path
 							d={fillPath}
 							fill="#FFDDAD"
 							stroke="#FFDDAD"
 							onMouseDown={this._onMouseDown}>
-						</path>
+						</path>);
+		}
 
-						<text x="0" y="0" transform={"translate("+this.props.axisNameWidth+","+this.props.height/2+") rotate(-90)"}>{this.props.parameter.charAt(0).toUpperCase() + this.props.parameter.slice(1)}</text>
-
-						{scaleY.ticks(5).map(function(tick, idx) {
+		var paramLabels = <text />;
+		var paramTicks = <rect />;
+		if (visualization) {
+			paramTicks = <text x="0" y="0" transform={"translate("+this.props.axisNameWidth+","+this.props.height/2+") rotate(-90)"}>{this.props.parameter.charAt(0).toUpperCase() + this.props.parameter.slice(1)}</text>;
+			paramTicks = scaleY.ticks(5).map(function(tick, idx) {
 
 								//tick line
 								var lineProps = {
@@ -202,13 +207,22 @@ var KeyframeEditor = React.createClass({
 										</g>);
 
 
-						})
-						}
+						});
+		}
+
+		return (
+				<div ref="divWrapper" style={divStyle}>
+					<svg  width="100%" height="100%" onMouseDown={this._onMouseDown} >
+						
+						{visPath}
+						{paramLabels}
+
+						{paramTicks}
 
 						{data.map(function(d)
 							{
 								var rv = <rect />;
-								if (selectable) {
+								if (visualization && selectable) {
 									rv = (<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={keyframeCircleRadius} onMouseDown={keyframeCallback} data-id={d.id} data-selected={d.selected} fill={d.selected ? selectedCircleColor : circleColor}>
 									</circle>);
 								}

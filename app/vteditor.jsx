@@ -240,7 +240,10 @@ var VTEditor = React.createClass({
 
 		if(this.state.study.currentMode != this.state.study.modes.NO_EXAMPLES) {
 			editorStyle.float="left";
-			var selectable = (this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT);
+			var selectable = ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT)
+								|| ((this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT) ));
+			var visualization = ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT)
+								|| ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_LOWSELECT) ));
 			exampleEditor = (
 			<div name="example" id="exampleeditor" ref="exampleEditorRef" style={editorStyle}>
 					<ControlBar
@@ -273,6 +276,7 @@ var VTEditor = React.createClass({
 								playheadFill={this.props.playheadFill} 
 								selection={this.state.selection}
 								selectable={selectable}
+								visualization={visualization}
 								modifiable={false} />
 						))}
 				</div>);
