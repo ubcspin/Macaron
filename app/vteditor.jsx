@@ -230,8 +230,9 @@ var VTEditor = React.createClass({
 
 		var editorStyle = {
 			width:"45%",
-			display:"block",
-			float:"left"};
+			marginLeft:'auto',
+			marginRight:'auto',
+			display:"block"};
 
 
 		var exampleEditor = <div />;
@@ -240,6 +241,7 @@ var VTEditor = React.createClass({
 		// console.log("study", this.state.study);
 
 		if(this.state.study.currentMode != this.state.study.modes.NO_EXAMPLES) {
+			editorStyle.float="left";
 			exampleEditor = (
 			<div name="example" id="exampleeditor" ref="exampleEditorRef" style={editorStyle}>
 					<ControlBar
