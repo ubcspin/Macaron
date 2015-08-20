@@ -130,7 +130,8 @@ var VTEditor = React.createClass({
 			keyframeCircleRadius:5,
 			playheadFill:"red",
 			timelineLeftOffset:60,
-			timelineRightOffset:20
+			timelineRightOffset:20,
+			examplesModifiable:false
 		}
 
 	},
@@ -159,7 +160,12 @@ var VTEditor = React.createClass({
    				break;
    			case 8: //backspace
    			case 46: //delete
-   				VTIconStore.actions.deleteSelectedKeyframes();
+   				//only delete in main editor
+   				//TODO: should this check be somewhere else?
+   				if (this.props.examplesModifiable || !this.state.vticons["example"].selected)
+   				{
+   					VTIconStore.actions.deleteSelectedKeyframes();
+   				}
    				break;
    			case 37: //left arrow
    				PlaybackStore.actions.stepBackward();
@@ -180,13 +186,23 @@ var VTEditor = React.createClass({
    			// case 80: //p
    			case 86: //v
 				if (e.ctrlKey || e.metaKey) {
-   					ClipboardStore.actions.paste();
+					//only delete in main editor
+   					//TODO: should this check be somewhere else?
+   					if (this.props.examplesModifiable || !this.state.vticons["example"].selected)
+   					{
+	   					ClipboardStore.actions.paste();
+   					}
    				}
    				break;
    			case 88: //x	
    				if (e.ctrlKey || e.metaKey) {
-   					ClipboardStore.actions.copy();
-   					VTIconStore.actions.deleteSelectedKeyframes();
+					//only delete in main editor
+   					//TODO: should this check be somewhere else?
+   					if (this.props.examplesModifiable || !this.state.vticons["example"].selected)
+   					{
+   						ClipboardStore.actions.copy();
+   						VTIconStore.actions.deleteSelectedKeyframes();
+   					}
    				}
    			case 82: //r
    				if (e.ctrlKey || e.metaKey) {
@@ -244,6 +260,7 @@ var VTEditor = React.createClass({
 								|| ((this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT) ));
 			var visualization = ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT)
 								|| ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_LOWSELECT) ));
+			var modifiable = this.props.examplesModifiable;
 			exampleEditor = (
 			<div name="example" id="exampleeditor" ref="exampleEditorRef" style={editorStyle}>
 					<ControlBar
@@ -277,7 +294,7 @@ var VTEditor = React.createClass({
 								selection={this.state.selection}
 								selectable={selectable}
 								visualization={visualization}
-								modifiable={false} />
+								modifiable={modifiable} />
 						))}
 				</div>);
 				exampleGallery =  <Gallery />;
