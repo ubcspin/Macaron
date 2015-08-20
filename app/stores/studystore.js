@@ -1,7 +1,7 @@
 import Reflux from 'reflux';
 
 var DisplayModes = {
-	NO_EXAMPLES :0,
+	NO_EXAMPLES:0,
 	// LOWVIS_LOWSELECT:1,
 	// HIGHVIS_LOWSELECT:2,
 	// LOWVIS_HIGHSELECT:3
@@ -14,7 +14,9 @@ var studyActions = Reflux.createActions(
 	]
 );
 
-var animationStore = Reflux.createStore({
+var studyStore = Reflux.createStore({
+
+	listenables:[studyActions],
 
 	init: function() {
 		this._data = {
@@ -28,6 +30,7 @@ var animationStore = Reflux.createStore({
 	},
 
 	onSetDisplayMode(displayMode) {
+		// console.log("displayMode", displayMode);
 		if (displayMode in DisplayModes)
 		{
 			this._data.currentMode = displayMode;
@@ -39,6 +42,6 @@ var animationStore = Reflux.createStore({
 
 
 module.exports = {
-	store: animationStore,
+	store: studyStore,
 	actions:studyActions
 };

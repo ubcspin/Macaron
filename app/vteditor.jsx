@@ -238,8 +238,6 @@ var VTEditor = React.createClass({
 		var exampleEditor = <div />;
 		var exampleGallery = <div />;
 
-		// console.log("study", this.state.study);
-
 		if(this.state.study.currentMode != this.state.study.modes.NO_EXAMPLES) {
 			editorStyle.float="left";
 			exampleEditor = (
