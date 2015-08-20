@@ -21,8 +21,8 @@ var IconVis = React.createClass({
 		keyframeCircleRadius: React.PropTypes.number.isRequired,
 		playheadFill: React.PropTypes.string.isRequired,
 		interpolateParameters: React.PropTypes.func.isRequired,
-		name : React.PropTypes.string.isRequired
-			},
+		name : React.PropTypes.string.isRequired,
+		selection : React.PropTypes.object.isRequired			},
 	
 	getDefaultProps: function() {
 	    return {
@@ -32,7 +32,10 @@ var IconVis = React.createClass({
 	      background:"#FAFAFA",
 	      resolution:3000,
 	      maxFrequencyRendered:125,
-	      limitFrequencies:true
+	      limitFrequencies:true,
+  	      selectionColor:'#676767',
+	      selectionOpacity:0.2,
+  	      selectable:true
 	    }
 	},
 
@@ -82,11 +85,38 @@ var IconVis = React.createClass({
 			playheadLine = <path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />;
 		}
 
+
+		var selectable = this.props.selectable;
+		//selection square
+		var selectionSquare = <rect />;
+		if(selectable && this.props.vticon.selected && this.props.selection.active) {
+			var tLeft = this.props.selection.time1;
+			var tRight = this.props.selection.time2;
+			if(tLeft > tRight) {
+				tLeft = this.props.selection.time2;
+				tRight = this.props.selection.time1;
+			}
+			
+			var x = scaleX(tLeft);
+			var y = 0;
+			var width = scaleX(tRight) - x;
+			var height = this.props.height;
+
+			selectionSquare = <rect
+				x={x}
+				y={y} 
+				width={width}
+				height={height}
+				fill={this.props.selectionColor}
+				opacity={this.props.selectionOpacity} />
+		}
+
 		return (
 			<div ref="divWrapper" style={divStyle}>
 				<svg height="100%" width="100%">
 					<path stroke={this.props.visColor} strokeWidth="0.5" fill="none" d={this._visPath} />
 					{playheadLine}
+					{selectionSquare}
 				</svg>
 
 			</div>

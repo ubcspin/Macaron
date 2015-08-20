@@ -281,7 +281,8 @@ var VTEditor = React.createClass({
 						keyframeCircleRadius={this.props.keyframeCircleRadius} 
 						playheadFill={this.props.playheadFill} 
 						interpolateParameters={this.interpolateParameters} 
-						interpolateParameter={this.interpolateParameter}/>
+						interpolateParameter={this.interpolateParameter}
+						selection={this.state.selection}/>
 					{Object.keys(example_icon.parameters).map( (p) => (
 							<KeyframeEditor 
 								name="example" 
@@ -327,7 +328,8 @@ var VTEditor = React.createClass({
 						keyframeCircleRadius={this.props.keyframeCircleRadius} 
 						playheadFill={this.props.playheadFill} 
 						interpolateParameters={this.interpolateParameters} 
-						interpolateParameter={this.interpolateParameter}/>
+						interpolateParameter={this.interpolateParameter}
+						selection={this.state.selection}/>
 					{Object.keys(design_icon.parameters).map( (p) => (
 							<KeyframeEditor 
 								name="main" 
