@@ -53,6 +53,7 @@ var IconVis = React.createClass({
 	},
 
 	onMouseDown: function(e) {
+		VTIconStore.actions.selectVTIcon(this.props.name);
 		if(this.props.selectable) {
 			DragStore.actions.startTimeSelectDrag(this.props.name);
 		}
