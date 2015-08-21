@@ -6,6 +6,7 @@ var PlaybackStore = require('./playbackstore.js');
 var clipboardActions = Reflux.createActions(
 	[
 		'copy',
+		'copyTimeRange',
 		'cut',
 		'paste'
 	]
@@ -73,6 +74,45 @@ var clipboardStore = Reflux.createStore({
 			}
 		}
 		
+	},
+
+	onCopyTimeRange(addEndPoints=false) {
+		this._clipboard = {};
+		for (var n in this._vticons)
+		{
+			if (this._vticons[n].selected && this._vticons[n].selectedTimeRange.active)
+			{
+				this._lowest_time = Math.min(this._vticons[n].selectedTimeRange.time1,
+											this._vticons[n].selectedTimeRange.time2);
+				this._highest_time = Math.max(this._vticons[n].selectedTimeRange.time1,
+											this._vticons[n].selectedTimeRange.time2);
+
+				for (var p in this._vticons[n].parameters)
+				{
+					var keyframes_to_add = [];
+					for (var i = 0; i < this._vticons[n].parameters[p].data.length; i++) {
+						var d = this._vticons[n].parameters[p].data[i];
+						if (d.t >= this._lowest_time && d.t <= this._highest_time) {
+							keyframes_to_add.push(
+							{
+								t:d.t,
+								value:d.value,
+								selected:true
+							}
+								);
+						}
+					}
+
+					if (keyframes_to_add.length > 0)
+					{
+						this._clipboard[p] = keyframes_to_add;
+					}
+				}
+				this.trigger(this._clipboard);
+
+			}
+		}
+
 	},
 
 	onCut() {

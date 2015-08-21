@@ -180,7 +180,12 @@ var VTEditor = React.createClass({
    				break;
    			case 67: //c
    				if (e.ctrlKey || e.metaKey) {
-   					ClipboardStore.actions.copy();
+   					if (this.state.vticons["example"].selected && (this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT))
+   					{
+   						ClipboardStore.actions.copyTimeRange();
+   					} else {
+   						ClipboardStore.actions.copy();
+   					}
    				}
    				break;
    			// case 80: //p
