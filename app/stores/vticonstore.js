@@ -164,6 +164,8 @@ var vticonStore = Reflux.createStore({
 		{
 			this._data[name].duration = vticon.duration;
 
+			this._data[name].selectedTimeRange.active=false;
+
 			for (var p in this._data[name].parameters) {
 				this._data[name].parameters[p].valueScale = vticon.parameters[p].valueScale;
 				this._data[name].parameters[p].data = [];
