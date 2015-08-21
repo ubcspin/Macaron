@@ -20,6 +20,9 @@ var vticonActions = Reflux.createActions(
 		'unselectKeyframes',
 		'selectAllKeyframes',
 
+		'selectTimeRange',
+		'unselectTimeRange',
+
 		'moveSelectedKeyframes',
 		'startMovingSelectedKeyframes',
 
@@ -44,6 +47,12 @@ var vticonStore = Reflux.createStore({
 
 						selected: true,
 
+						selectedTimeRange: {
+							active:false,
+							time1:0,
+							time2:0
+						},
+
 						parameters: {
 							amplitude: {
 								valueScale:[0,1], //normalized
@@ -67,6 +76,12 @@ var vticonStore = Reflux.createStore({
 						duration: 3000, //ms
 
 						selected: false,
+
+						selectedTimeRange: {
+							active:false,
+							time1:0,
+							time2:0
+						},
 
 						parameters: {
 							amplitude: {
@@ -148,6 +163,8 @@ var vticonStore = Reflux.createStore({
 		if (name in this._data)
 		{
 			this._data[name].duration = vticon.duration;
+
+			this._data[name].selectedTimeRange.active=false;
 
 			for (var p in this._data[name].parameters) {
 				this._data[name].parameters[p].valueScale = vticon.parameters[p].valueScale;
@@ -407,6 +424,33 @@ var vticonStore = Reflux.createStore({
 				}
 			}
 		}
+		this.trigger(this._data);
+	},
+
+
+	/**
+	* Set selection range
+	*/
+
+	onSelectTimeRange(time1, time2, name="")
+	{
+		name = this._selectVTIcon(name);
+		//TODO: Select keyframes in here?
+
+		this._data[name].selectedTimeRange.active = true;
+		this._data[name].selectedTimeRange.time1 = Math.max(0, Math.min(this._data[name].duration, time1));
+		this._data[name].selectedTimeRange.time2 = Math.max(0, Math.min(this._data[name].duration, time2));
+
+		this.trigger(this._data);
+	},
+
+	onUnselectTimeRange(name="")
+	{
+		name = this._selectVTIcon(name);
+		//TODO: Unselect keyframes in here?
+
+		this._data[name].selectedTimeRange.active = false;
+
 		this.trigger(this._data);
 	},
 
