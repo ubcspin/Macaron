@@ -8,6 +8,12 @@ var examples = {
 			selected:true,
 			duration: 3000, //ms
 
+			selectedTimeRange: {
+						active:false,
+						time1:0,
+						time2:0
+					},
+
 			parameters: {
 				amplitude: {
 					valueScale:[0,1], //normalized
@@ -28,6 +34,12 @@ var examples = {
 	test2: {
 			selected:false,
 			duration: 3000, //ms
+
+			selectedTimeRange: {
+						active:false,
+						time1:0,
+						time2:0
+					},
 
 			parameters: {
 				amplitude: {
@@ -50,6 +62,12 @@ var examples = {
 	test3: {
 			selected:false,
 			duration: 3000, //ms
+
+			selectedTimeRange: {
+						active:false,
+						time1:0,
+						time2:0
+					},
 
 			parameters: {
 				amplitude: {

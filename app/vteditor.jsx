@@ -180,7 +180,12 @@ var VTEditor = React.createClass({
    				break;
    			case 67: //c
    				if (e.ctrlKey || e.metaKey) {
-   					ClipboardStore.actions.copy();
+   					if (this.state.vticons["example"].selected && (this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT))
+   					{
+   						ClipboardStore.actions.copyTimeRange();
+   					} else {
+   						ClipboardStore.actions.copy();
+   					}
    				}
    				break;
    			// case 80: //p
@@ -256,8 +261,8 @@ var VTEditor = React.createClass({
 
 		if(this.state.study.currentMode != this.state.study.modes.NO_EXAMPLES) {
 			editorStyle.float="left";
-			var selectable = ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT)
-								|| ((this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT) ));
+			var iconVisSelectable = (this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT);
+			var keyframeSelectable = (this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT);
 			var visualization = ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT)
 								|| ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_LOWSELECT) ));
 			var modifiable = this.props.examplesModifiable;
@@ -282,7 +287,8 @@ var VTEditor = React.createClass({
 						playheadFill={this.props.playheadFill} 
 						interpolateParameters={this.interpolateParameters} 
 						interpolateParameter={this.interpolateParameter}
-						selection={this.state.selection}/>
+						selection={this.state.selection}
+						selectable={iconVisSelectable} />
 					{Object.keys(example_icon.parameters).map( (p) => (
 							<KeyframeEditor 
 								name="example" 
@@ -293,7 +299,7 @@ var VTEditor = React.createClass({
 								keyframeCircleRadius={this.props.keyframeCircleRadius} 
 								playheadFill={this.props.playheadFill} 
 								selection={this.state.selection}
-								selectable={selectable}
+								selectable={keyframeSelectable}
 								visualization={visualization}
 								modifiable={modifiable} />
 						))}
