@@ -40,6 +40,48 @@ var sineExample = function(frequency, duration, dt) {
 	return rv;
 };
 
+
+var randomNoiseExample = function(duration, dt) {
+	var rv = {};
+	rv.duration = duration;
+	rv.selected=false;
+	rv.selectedTimeRange={
+						active:false,
+						time1:0,
+						time2:0
+					};
+
+	rv.parameters = {
+				amplitude: {
+					valueScale:[0,1], //normalized
+					data : []
+				},
+
+				frequency: {
+					valueScale:[50,500], //Hz
+					data : []
+				}
+			};
+
+	for (var t = 0; t < duration; t+=dt)
+	{
+		//TODO: Make this use "seedrandom" package
+			rv.parameters.frequency.data.push(
+			{
+				t:t,
+				value:Math.random()*(rv.parameters.frequency.valueScale[1]-rv.parameters.frequency.valueScale[0])+rv.parameters.frequency.valueScale[0]
+			});
+
+		rv.parameters.amplitude.data.push(
+			{
+				t:t,
+				value:Math.random()
+			});
+	}
+
+	return rv;
+};
+
 var examples = {
 	v4: {
   "duration": 3000,
@@ -386,6 +428,8 @@ var examples = {
 },
 
 sineExample: sineExample(1, 3000, 25),
+
+randomExample: randomNoiseExample(3000, 100),
 
 	test3: {
 			selected:false,
