@@ -188,33 +188,165 @@ var examples = {
   }
 },
 
-	test2: {
-			selected:false,
-			duration: 3000, //ms
-
-			selectedTimeRange: {
-						active:false,
-						time1:0,
-						time2:0
-					},
-
-			parameters: {
-				amplitude: {
-					valueScale:[0,1], //normalized
-					data : [
-						{ t: 600, value:0.5}, 
-						{ t: 1500, value:1 }]
-				},
-
-				frequency: {
-					valueScale:[50,500], //Hz
-					data : [
-						{ t: 200, value:300}, 
-						{ t: 1200, value:500}, 
-						{ t: 2400, value:100}]
-				}
-			}
-		},
+	v3: {
+  "duration": 3000,
+  "selectedTimeRange": {
+    "active": false,
+    "time1": 0,
+    "time2": 0
+  },
+  "selected": true,
+  "parameters": {
+    "amplitude": {
+      "valueScale": [
+        0,
+        1
+      ],
+      "data": [
+        {
+          "t": 81.76100628930817,
+          "value": 1.8041124150158794e-16,
+          "selected": false,
+          "id": 49
+        },
+        {
+          "t": 88.0503144654088,
+          "value": 0.20000000000000007,
+          "selected": false,
+          "id": 50
+        },
+        {
+          "t": 182.38993710691824,
+          "value": 0.20000000000000007,
+          "selected": false,
+          "id": 52
+        },
+        {
+          "t": 226.41509433962273,
+          "value": 0.8111111111111111,
+          "selected": false,
+          "id": 53
+        },
+        {
+          "t": 339.62264150943395,
+          "value": 0.8111111111111111,
+          "selected": false,
+          "id": 66
+        },
+        {
+          "t": 352.20125786163516,
+          "value": 0.20000000000000007,
+          "selected": false,
+          "id": 68
+        },
+        {
+          "t": 452.83018867924517,
+          "value": 0.20000000000000007,
+          "selected": false,
+          "id": 69
+        },
+        {
+          "t": 496.8553459119499,
+          "value": 0.8111111111111111,
+          "selected": false,
+          "id": 70
+        },
+        {
+          "t": 672.9559748427675,
+          "value": 0.8111111111111111,
+          "selected": false,
+          "id": 71
+        },
+        {
+          "t": 1433.9622641509425,
+          "value": 2.7755575615628914e-16,
+          "selected": false,
+          "id": 60
+        },
+        {
+          "id": 156,
+          "t": 1578.6163522012578,
+          "value": 1.8041124150158794e-16,
+          "selected": true
+        },
+        {
+          "id": 157,
+          "t": 1584.9056603773583,
+          "value": 0.20000000000000007,
+          "selected": true
+        },
+        {
+          "id": 158,
+          "t": 1679.245283018868,
+          "value": 0.20000000000000007,
+          "selected": true
+        },
+        {
+          "id": 159,
+          "t": 1723.2704402515724,
+          "value": 0.8111111111111111,
+          "selected": true
+        },
+        {
+          "id": 160,
+          "t": 1836.4779874213837,
+          "value": 0.8111111111111111,
+          "selected": true
+        },
+        {
+          "id": 161,
+          "t": 1849.0566037735848,
+          "value": 0.20000000000000007,
+          "selected": true
+        },
+        {
+          "id": 162,
+          "t": 1949.6855345911947,
+          "value": 0.20000000000000007,
+          "selected": true
+        },
+        {
+          "id": 163,
+          "t": 1993.7106918238994,
+          "value": 0.8111111111111111,
+          "selected": true
+        },
+        {
+          "id": 164,
+          "t": 2169.811320754717,
+          "value": 0.8111111111111111,
+          "selected": true
+        },
+        {
+          "id": 165,
+          "t": 2930.817610062892,
+          "value": 2.7755575615628914e-16,
+          "selected": true
+        }
+      ]
+    },
+    "frequency": {
+      "valueScale": [
+        50,
+        500
+      ],
+      "data": [
+        {
+          "t": 0,
+          "value": 57.5,
+          "selected": false,
+          "id": 3
+        },
+        {
+          "t": 1500,
+          "value": 57.5,
+          "selected": false,
+          "id": 200
+        }
+      ]
+    }
+  }
+},
 
 	test3: {
 			selected:false,
