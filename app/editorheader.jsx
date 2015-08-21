@@ -4,6 +4,7 @@ import Reflux from 'reflux';
 
 var AnimationStore = require('./stores/animationstore.js');
 var StudyStore = require('./stores/studystore.js');
+var SaveLoadStore = require('./stores/saveloadstore.js');
 
 
 var EditorHeader = React.createClass({
@@ -30,6 +31,9 @@ var EditorHeader = React.createClass({
 		StudyStore.actions.setDisplayMode(val.target.value);
 	},
 
+	_onSaveClick : function(e) {
+		SaveLoadStore.actions.save({test:1});
+	},
 
 	/**
 	* Rendering
@@ -61,6 +65,7 @@ var EditorHeader = React.createClass({
 						<option value={displayOption} selected={displayOption==selectedDisplayMode}>{displayOption}</option>
 						))}
 				</select>
+				<button onClick={this._onSaveClick}>Save</button>
 			</div>
 			);
 	}
