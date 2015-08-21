@@ -3,6 +3,43 @@ import Reflux from 'reflux';
 var VTIconStore = require('./vticonstore.js');
 var EXAMPLE_KEY = "example"; //TODO: More general?
 
+
+var sineExample = function(frequency, duration, dt) {
+	var rv = {};
+	rv.duration = duration;
+	rv.selected=false;
+	rv.selectedTimeRange={
+						active:false,
+						time1:0,
+						time2:0
+					};
+
+	rv.parameters = {
+				amplitude: {
+					valueScale:[0,1], //normalized
+					data : []
+				},
+
+				frequency: {
+					valueScale:[50,500], //Hz
+					data : [
+						{ t: 0, value:250}, 
+						{ t: 1500, value:400}]
+				}
+			};
+
+	for (var t = 0; t < duration; t+=dt)
+	{
+		rv.parameters.amplitude.data.push(
+			{
+				t:t,
+				value:Math.sin(2*Math.PI*frequency*t/1000)/2.0+0.5
+			});
+	}
+
+	return rv;
+};
+
 var examples = {
 	v4: {
   "duration": 3000,
@@ -347,6 +384,8 @@ var examples = {
     }
   }
 },
+
+sineExample: sineExample(1, 3000, 25),
 
 	test3: {
 			selected:false,
