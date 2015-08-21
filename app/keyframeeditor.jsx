@@ -263,10 +263,10 @@ var KeyframeEditor = React.createClass({
 	        var y = e.clientY - this.state.offsetTop;
 
 	        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey, name=this.props.name);
-	        DragStore.actions.startKeyframeDrag(this.props.name);
+	        DragStore.actions.startKeyframeDrag(this.props.name, e.shiftKey);
 
 		} else if (this.props.selectable) {
-  			DragStore.actions.startSelectDrag(this.props.name, this.props.name.shiftKey);
+  			DragStore.actions.startSelectDrag(this.props.name, e.shiftKey);
 		} else {
 		VTIconStore.actions.unselectKeyframes();
 		}
@@ -279,6 +279,9 @@ var KeyframeEditor = React.createClass({
 	},
 
 	_onMouseDownKeyframe(e) {
+
+		VTIconStore.actions.selectVTIcon(this.props.name);
+
 		var id = parseInt(e.target.getAttribute("data-id"));
 		var selected = (e.target.getAttribute("data-selected") === 'true');
 
