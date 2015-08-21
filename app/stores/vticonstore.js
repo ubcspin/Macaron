@@ -438,8 +438,8 @@ var vticonStore = Reflux.createStore({
 		//TODO: Select keyframes in here?
 
 		this._data[name].selectedTimeRange.active = true;
-		this._data[name].selectedTimeRange.time1 = time1;
-		this._data[name].selectedTimeRange.time2 = time2;
+		this._data[name].selectedTimeRange.time1 = Math.max(0, Math.min(this._data[name].duration, time1));
+		this._data[name].selectedTimeRange.time2 = Math.max(0, Math.min(this._data[name].duration, time2));
 
 		this.trigger(this._data);
 	},
