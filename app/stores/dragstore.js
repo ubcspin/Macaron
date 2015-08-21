@@ -11,7 +11,8 @@ var Draggable = {
 	NONE :0,
 	PLAYHEAD:1,
 	KEYFRAME:2,
-	SELECT:3
+	SELECT:3,
+	TIMESELECT:4
 };
 
 
@@ -20,6 +21,7 @@ var dragActions = Reflux.createActions(
 		'startPlayheadDrag',
 		'startKeyframeDrag',
 		'startSelectDrag',
+		'startTimeSelectDrag',
 
 		'handleMouseMove',
 
@@ -66,6 +68,14 @@ var dragStore = Reflux.createStore({
 		SelectionStore.actions.startSelecting(name, this._scales[this._targetName].scaleTimeline.invert(unoffsetX), this._calculateSelectionParameterMap(this._lastY), addmode); 
 	},
 
+	//selects everything in a time frame
+	onStartTimeSelectDrag(name, addmode=false) {
+		this._targetName = name;
+		this._dragging = Draggable.TIMESELECT;
+		var unoffsetX = this._lastX - this._scales[this._targetName].leftOffset;
+		SelectionStore.actions.startSelectingTimeRange(name, this._scales[this._targetName].scaleTimeline.invert(unoffsetX));
+	},
+
 	onHandleMouseMove(x, y) {
 	 	if (this._targetName in this._scales) {
 
@@ -84,7 +94,8 @@ var dragStore = Reflux.createStore({
 				VTIconStore.actions.moveSelectedKeyframes(dt, dv, name=this._targetName);
 			} else if (this._dragging == Draggable.SELECT) {
 					SelectionStore.actions.changeSelecting(this._scales[this._targetName].scaleTimeline.invert(unoffsetX), this._calculateSelectionParameterMap(y)); 
-
+			} else if (this._dragging == Draggable.TIMESELECT) {
+					SelectionStore.actions.changeSelectingTimeRange(this._scales[this._targetName].scaleTimeline.invert(unoffsetX)); 
 			}
 
 	 	}	
@@ -106,6 +117,7 @@ var dragStore = Reflux.createStore({
 	/**
 	 * Helper Functions
 	 */
+
 	 _calculateSelectionParameterMap(y) {
 	 	var pmap = {};
 

@@ -7,6 +7,7 @@ var TimelineMixin = require('./util/timelinemixin.js');
 var WaveformPathMixin = require('./util/waveformpathmixin.js');
 
 var VTIconStore = require('./stores/vticonstore.js');
+var DragStore = require('./stores/dragstore.js');
 
 var IconVis = React.createClass({
 
@@ -51,6 +52,12 @@ var IconVis = React.createClass({
 			this.props.resolution, this.props.maxFrequencyRendered, this.props.limitFrequencies);
 	},
 
+	onMouseDown: function(e) {
+		if(this.props.selectable) {
+			DragStore.actions.startTimeSelectDrag(this.props.name);
+		}
+	},
+
 	render : function() {
 
 
@@ -89,12 +96,12 @@ var IconVis = React.createClass({
 		var selectable = this.props.selectable;
 		//selection square
 		var selectionSquare = <rect />;
-		if(selectable && this.props.vticon.selected && this.props.selection.active) {
-			var tLeft = this.props.selection.time1;
-			var tRight = this.props.selection.time2;
+		if(selectable && this.props.vticon.selectedTimeRange.active) {
+			var tLeft = this.props.vticon.selectedTimeRange.time1;
+			var tRight = this.props.vticon.selectedTimeRange.time2;
 			if(tLeft > tRight) {
-				tLeft = this.props.selection.time2;
-				tRight = this.props.selection.time1;
+				tLeft = this.props.vticon.selectedTimeRange.time2;
+				tRight = this.props.vticon.selectedTimeRange.time1;
 			}
 			
 			var x = scaleX(tLeft);
@@ -112,7 +119,7 @@ var IconVis = React.createClass({
 		}
 
 		return (
-			<div ref="divWrapper" style={divStyle}>
+			<div ref="divWrapper" style={divStyle} onMouseDown={this.onMouseDown}>
 				<svg height="100%" width="100%">
 					<path stroke={this.props.visColor} strokeWidth="0.5" fill="none" d={this._visPath} />
 					{playheadLine}
