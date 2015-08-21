@@ -561,17 +561,20 @@ var vticonStore = Reflux.createStore({
 	 	var state = {};
 	 	for (name in this._data)
 	 	{
-	 		state.duration = this._data[name].duration;
-		 	state.parameters = {};
+	 		state[name] = {};
+	 		state[name].duration = this._data[name].duration;
+	 		state[name].selectedTimeRange = this._data[name].selectedTimeRange;
+	 		state[name].selected = this._data[name].selected;
+		 	state[name].parameters = {};
 		 	for (var p in this._data[name].parameters)
 		 	{
-		 		state.parameters[p] = {};
-		 		state.parameters[p].valueScale = this._data[name].parameters[p].valueScale;
-		 		state.parameters[p].data = [];
+		 		state[name].parameters[p] = {};
+		 		state[name].parameters[p].valueScale = this._data[name].parameters[p].valueScale;
+		 		state[name].parameters[p].data = [];
 		 		for (var i = 0; i < this._data[name].parameters[p].data.length; i++)
 		 		{
 		 			var d = this._data[name].parameters[p].data[i];
-		 			state.parameters[p].data.push({
+		 			state[name].parameters[p].data.push({
 		 				t:d.t,
 		 				value:d.value,
 		 				selected:d.selected,
@@ -602,19 +605,19 @@ var vticonStore = Reflux.createStore({
 
 			 	for (var p in this._data[name].parameters)
 			 	{
-			 		if (this._data[name].parameters[p].valueScale != pState.parameters[p].valueScale)
+			 		if (this._data[name].parameters[p].valueScale != pState[name].parameters[p].valueScale)
 			 		{
 			 			rv = true;
 			 		}
 
-			 		if (this._data[name].parameters[p].data.length != pState.parameters[p].data.length)
+			 		if (this._data[name].parameters[p].data.length != pState[name].parameters[p].data.length)
 			 		{
 			 			rv = true;
 			 		} else {
 			 			for (var i = 0; i < this._data[name].parameters[p].data.length; i++)
 				 		{
 				 			var d = this._data[name].parameters[p].data[i];
-				 			var pd = pState.parameters[p].data[i];
+				 			var pd = pState[name].parameters[p].data[i];
 				 			if (d.t != pd.t || d.value != pd.value || d.id != pd.id)
 				 			{
 				 				rv = true;
