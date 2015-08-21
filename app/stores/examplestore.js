@@ -4,32 +4,189 @@ var VTIconStore = require('./vticonstore.js');
 var EXAMPLE_KEY = "example"; //TODO: More general?
 
 var examples = {
-	test1: {
-			selected:true,
-			duration: 3000, //ms
-
-			selectedTimeRange: {
-						active:false,
-						time1:0,
-						time2:0
-					},
-
-			parameters: {
-				amplitude: {
-					valueScale:[0,1], //normalized
-					data : [
-						{ t: 600, value:0.5}, 
-						{ t: 1500, value:1 }]
-				},
-
-				frequency: {
-					valueScale:[50,500], //Hz
-					data : [
-						{ t: 0, value:250}, 
-						{ t: 1800, value:500}]
-				}
-			}
-		},
+	v4: {
+  "duration": 3000,
+  "selected": true,
+  "selectedTimeRange": {
+    "active": false,
+    "time1": 0,
+    "time2": 0
+  },
+  "parameters": {
+    "amplitude": {
+      "valueScale": [
+        0,
+        1
+      ],
+      "data": [
+        {
+          "id": 36,
+          "t": 0,
+          "value": 2.220446049250313e-16,
+          "selected": true
+        },
+        {
+          "id": 29,
+          "t": 347.10743801652893,
+          "value": 0.07222222222222222,
+          "selected": true
+        },
+        {
+          "id": 30,
+          "t": 638.4297520661158,
+          "value": 0.18888888888888894,
+          "selected": true
+        },
+        {
+          "id": 31,
+          "t": 873.9669421487602,
+          "value": 0.33333333333333337,
+          "selected": true
+        },
+        {
+          "id": 32,
+          "t": 1028.9256198347107,
+          "value": 0.49444444444444435,
+          "selected": true
+        },
+        {
+          "id": 33,
+          "t": 1140.495867768595,
+          "value": 0.6833333333333332,
+          "selected": true
+        },
+        {
+          "id": 34,
+          "t": 1221.0743801652893,
+          "value": 1,
+          "selected": true
+        },
+        {
+          "id": 35,
+          "t": 1239.6694214876034,
+          "value": 2.7755575615628914e-17,
+          "selected": true
+        },
+        {
+          "id": 45,
+          "t": 1591.194968553459,
+          "value": 2.220446049250313e-16,
+          "selected": true
+        },
+        {
+          "id": 46,
+          "t": 1938.3024065699879,
+          "value": 0.07222222222222222,
+          "selected": true
+        },
+        {
+          "id": 47,
+          "t": 2229.624720619575,
+          "value": 0.18888888888888894,
+          "selected": true
+        },
+        {
+          "id": 48,
+          "t": 2465.161910702219,
+          "value": 0.33333333333333337,
+          "selected": true
+        },
+        {
+          "id": 49,
+          "t": 2620.1205883881694,
+          "value": 0.49444444444444435,
+          "selected": true
+        },
+        {
+          "id": 50,
+          "t": 2731.6908363220537,
+          "value": 0.6833333333333332,
+          "selected": true
+        },
+        {
+          "id": 51,
+          "t": 2812.269348718748,
+          "value": 1,
+          "selected": true
+        },
+        {
+          "id": 52,
+          "t": 2830.8643900410625,
+          "value": 2.7755575615628914e-17,
+          "selected": true
+        }
+      ]
+    },
+    "frequency": {
+      "valueScale": [
+        50,
+        500
+      ],
+      "data": [
+        {
+          "id": 43,
+          "t": 0,
+          "value": 50,
+          "selected": true
+        },
+        {
+          "id": 39,
+          "t": 591.1949685534591,
+          "value": 104.99999999999977,
+          "selected": true
+        },
+        {
+          "id": 40,
+          "t": 962.2641509433959,
+          "value": 192.4999999999999,
+          "selected": true
+        },
+        {
+          "id": 41,
+          "t": 1264.1509433962265,
+          "value": 305,
+          "selected": true
+        },
+        {
+          "id": 42,
+          "t": 1289.308176100629,
+          "value": 50.00000000000023,
+          "selected": true
+        },
+        {
+          "id": 53,
+          "t": 1591.194968553459,
+          "value": 50,
+          "selected": true
+        },
+        {
+          "id": 54,
+          "t": 2182.3899371069183,
+          "value": 104.99999999999977,
+          "selected": true
+        },
+        {
+          "id": 55,
+          "t": 2553.459119496855,
+          "value": 192.4999999999999,
+          "selected": true
+        },
+        {
+          "id": 56,
+          "t": 2855.3459119496856,
+          "value": 305,
+          "selected": true
+        },
+        {
+          "id": 57,
+          "t": 2880.503144654088,
+          "value": 50.00000000000023,
+          "selected": true
+        }
+      ]
+    }
+  }
+},
 
 	test2: {
 			selected:false,
