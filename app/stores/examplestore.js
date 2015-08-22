@@ -274,7 +274,7 @@ var examples = {
     "time1": 0,
     "time2": 0
   },
-  "selected": true,
+  "selected": false,
   "parameters": {
     "amplitude": {
       "valueScale": [
@@ -438,7 +438,7 @@ v10_augmented: { //w/ v-10-21-3-11
     "time1": 0,
     "time2": 0
   },
-  "selected": true,
+  "selected": false,
   "parameters": {
     "amplitude": {
       "valueScale": [
@@ -665,7 +665,7 @@ v10_09_1_8: {
     "time1": 0,
     "time2": 0
   },
-  "selected": true,
+  "selected": false,
   "parameters": {
     "amplitude": {
       "valueScale": [
