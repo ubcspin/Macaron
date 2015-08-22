@@ -117,6 +117,24 @@ var Lightning = {
 
 };
 
+var Snow = {
+	flake1: {
+		0:0,
+		2000:1
+	},
+
+	flake2: {
+		650:0,
+		2650:1
+	},
+
+	flake3: {
+		1000:0,
+		3000:1
+	}
+
+};
+
 
 
 var BouncingBall = {
@@ -132,7 +150,8 @@ var Animations = {
 	'heartbeat': Heartbeat,
 	'mobile': Mobile,
 	'cat':Cat,
-	'lightning':Lightning
+	'lightning':Lightning,
+	'snow': Snow
 };
 
 
