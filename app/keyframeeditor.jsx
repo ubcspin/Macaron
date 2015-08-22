@@ -18,6 +18,7 @@ var KeyframeEditor = React.createClass({
 
 
 	propTypes: {
+		name : React.PropTypes.string.isRequired,
 		parameter : React.PropTypes.string.isRequired,
 		vticon : React.PropTypes.object.isRequired,
 		selection : React.PropTypes.object.isRequired,
@@ -28,7 +29,7 @@ var KeyframeEditor = React.createClass({
 	
 	getDefaultProps: function() {
 	    return {
-	      height: 250,
+	      height: 190,
 	      width:"100%",
 	      circleColor:'#FF8400',
 	      selectedCircleColor:'#B05B00',
@@ -37,7 +38,10 @@ var KeyframeEditor = React.createClass({
 	      doubleClickTime:500, //ms
 	      axisTickLength:5,
 	      axisNameWidth:18,
-	      axisTickLeft:30
+	      axisTickLeft:30,
+	      selectable:true,
+	      visualization:true,
+	      modifiable:true
 	    }
 	},
 
@@ -47,8 +51,8 @@ var KeyframeEditor = React.createClass({
 
     	this._lastMouseDownTime = 0;
 
-    	ScaleStore.actions.setTrackrange(this.props.parameter, parameter_range); 
-    	ScaleStore.actions.setTopOffset(this.props.parameter, this.refs.divWrapper.getDOMNode().offsetTop) ;
+    	ScaleStore.actions.setTrackrange(this.props.name, this.props.parameter, parameter_range); 
+    	ScaleStore.actions.setTopOffset(this.props.name, this.props.parameter, this.refs.divWrapper.getDOMNode().offsetTop) ;
 	},
 
 
@@ -62,7 +66,7 @@ var KeyframeEditor = React.createClass({
 
 		var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
-		var scaleY = this.state.scales.scaleParameter[this.props.parameter];
+		var scaleY = this.state.scales[this.props.name].scaleParameter[this.props.parameter];
 
         var scaleX = this.props.scaleX;
         var height = this.props.height;
@@ -118,10 +122,11 @@ var KeyframeEditor = React.createClass({
 		var axisTickLength = this.props.axisTickLength;
 		var axisTickLeft = this.props.axisTickLeft;
 
-
+		
+		var selectable = this.props.selectable;
 		//selection square
 		var selectionSquare = <rect />;
-		if(this.props.selection.active) {
+		if(selectable && this.props.vticon.selected && this.props.selection.active) {
 			var tLeft = this.props.selection.time1;
 			var tRight = this.props.selection.time2;
 			if(tLeft > tRight) {
@@ -154,19 +159,28 @@ var KeyframeEditor = React.createClass({
 				opacity={this.props.selectionOpacity} />
 		}
 
-		return (
-				<div ref="divWrapper" style={divStyle}>
-					<svg  width="100%" height="100%" onMouseDown={this._onMouseDown} >
-						<path
+		var playheadLine = <rect />;
+		if(this.props.vticon.selected) {
+			playheadLine = <path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />
+		}
+
+
+		var visualization = this.props.visualization;
+		var visPath = <path />;
+		if (visualization) {
+			visPath = (<path
 							d={fillPath}
 							fill="#FFDDAD"
 							stroke="#FFDDAD"
 							onMouseDown={this._onMouseDown}>
-						</path>
+						</path>);
+		}
 
-						<text x="0" y="0" transform={"translate("+this.props.axisNameWidth+","+this.props.height/2+") rotate(-90)"}>{this.props.parameter.charAt(0).toUpperCase() + this.props.parameter.slice(1)}</text>
-
-						{scaleY.ticks(5).map(function(tick, idx) {
+		var paramLabels = <text />;
+		var paramTicks = <rect />;
+		if (visualization) {
+			paramTicks = <text x="0" y="0" transform={"translate("+this.props.axisNameWidth+","+this.props.height/2+") rotate(-90)"}>{this.props.parameter.charAt(0).toUpperCase() + this.props.parameter.slice(1)}</text>;
+			paramTicks = scaleY.ticks(5).map(function(tick, idx) {
 
 								//tick line
 								var lineProps = {
@@ -193,22 +207,33 @@ var KeyframeEditor = React.createClass({
 										</g>);
 
 
-						})
-						}
+						});
+		}
+
+		return (
+				<div ref="divWrapper" style={divStyle}>
+					<svg  width="100%" height="100%" onMouseDown={this._onMouseDown} >
+						
+						{visPath}
+						{paramLabels}
+
+						{paramTicks}
 
 						{data.map(function(d)
 							{
-								return (
-									<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={keyframeCircleRadius} onMouseDown={keyframeCallback} data-id={d.id} data-selected={d.selected} fill={d.selected ? selectedCircleColor : circleColor}>
-									</circle>
-									);
-
+								var rv = <rect />;
+								if (visualization && selectable) {
+									rv = (<circle cx={scaleX(d.t)} cy={scaleY(d.value)} r={keyframeCircleRadius} onMouseDown={keyframeCallback} data-id={d.id} data-selected={d.selected} fill={d.selected ? selectedCircleColor : circleColor}>
+									</circle>);
+								}
+								return rv;
 							})
 						}
 
 						{selectionSquare}
+
+						{playheadLine}
 						
-						<path stroke={this.props.playheadFill} strokeWidth="2" fill="none" d={currentTimePath} />
 
 					</svg>
 				</div>
@@ -223,24 +248,30 @@ var KeyframeEditor = React.createClass({
 
 		var t = Date.now();
 
-		if ( (t - this._lastMouseDownTime) <= this.props.doubleClickTime)
+		VTIconStore.actions.selectVTIcon(this.props.name);
+
+		if ( this.props.modifiable && ((t - this._lastMouseDownTime) <= this.props.doubleClickTime))
 		{
 			//double click
 			var keyframeCircleRadius = this.props.keyframeCircleRadius;
 
 			var valueScale = this.props.vticon.parameters[this.props.parameter].valueScale;
 
-	        var scaleY = this.state.scales.scaleParameter[this.props.parameter];
+	        var scaleY = this.state.scales[this.props.name].scaleParameter[this.props.parameter];
 
-	        var x = e.clientX;// - this.state.offsetLeft;
+	        var x = e.clientX - this.state.offsetLeft;
 	        var y = e.clientY - this.state.offsetTop;
 
-	        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey);
-	        DragStore.actions.startKeyframeDrag();
+	        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey, name=this.props.name);
+	        DragStore.actions.startKeyframeDrag(this.props.name, e.shiftKey);
 
+		} else if (this.props.selectable) {
+  			DragStore.actions.startSelectDrag(this.props.name, e.shiftKey);
 		} else {
-  			DragStore.actions.startSelectDrag(e.shiftKey);
+		VTIconStore.actions.unselectKeyframes();
 		}
+
+		
 
 		this._lastMouseDownTime = t;
 
@@ -248,18 +279,30 @@ var KeyframeEditor = React.createClass({
 	},
 
 	_onMouseDownKeyframe(e) {
+
+		VTIconStore.actions.selectVTIcon(this.props.name);
+
 		var id = parseInt(e.target.getAttribute("data-id"));
 		var selected = (e.target.getAttribute("data-selected") === 'true');
 
-		if (!selected)
+		if (this.props.selectable)
 		{
-			if(e.shiftKey) {
-				VTIconStore.actions.addToggleSelectedKeyframe(id);
-			} else {
-				VTIconStore.actions.selectKeyframe(id);
+			if (!selected)
+			{
+				if(e.shiftKey) {
+					VTIconStore.actions.addToggleSelectedKeyframe(id, name=this.props.name);
+				} else {
+					VTIconStore.actions.selectKeyframe(id, name=this.props.name);
+				}
 			}
+
+			if(this.props.modifiable)
+			{
+				DragStore.actions.startKeyframeDrag(this.props.name);
+			}
+
 		}
-		DragStore.actions.startKeyframeDrag();
+		
 
 		return false;
 	}

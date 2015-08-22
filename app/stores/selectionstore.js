@@ -5,6 +5,11 @@ var VTIconStore = require('./vticonstore.js');
 var selectActions = Reflux.createActions([
 			'startSelecting',
 			'changeSelecting',
+
+			'startSelectingTimeRange',
+			'changeSelectingTimeRange',
+
+
 			'stopSelecting'
 		]);
 
@@ -16,6 +21,7 @@ var selectStore = Reflux.createStore({
 		this._data = {
 			active:false,
 			adding:false,
+			targetName:"",
 			time1:0,
 			time2:0,
 			parameters: {
@@ -37,7 +43,12 @@ var selectStore = Reflux.createStore({
 	},
 
 
-	onStartSelecting(time, parameter_value_map, adding=false) {
+	/*
+	* Standard selection (of keyframes)
+	*/
+
+	onStartSelecting(targetName, time, parameter_value_map, adding=false) {
+		this._data.targetName = targetName;
 		this._data.active = true;
 		this._data.time1 = time;
 		this._data.time2 = time;
@@ -59,7 +70,28 @@ var selectStore = Reflux.createStore({
 		this.trigger(this._data);
 	},
 
+
+	/**
+	* Time Range Selection
+	*/
+	onStartSelectingTimeRange(targetName, time) {
+		this._data.targetName = targetName;
+		this._data.active = true;
+		this._data.time1 = time;
+		this._data.time2 = time;
+		this._updateSelectedTimeRange();
+		this.trigger(this._data);
+	},
+
+	onChangeSelectingTimeRange(time) {
+		this._data.time2 = time;
+		this._updateSelectedTimeRange();
+		this.trigger(this._data);
+	},
+
+
 	onStopSelecting() {
+		this._data.targetName="";
 		this._data.active = false;
 		this.trigger(this._data);
 	},
@@ -70,6 +102,10 @@ var selectStore = Reflux.createStore({
 		} else {
 			VTIconStore.actions.selectKeyframesInRange(this._data.time1, this._data.time2, this._data.parameters);	
 		}
+	},
+
+	_updateSelectedTimeRange() {
+		VTIconStore.actions.selectTimeRange(this._data.time1, this._data.time2);	
 	}
 
 });

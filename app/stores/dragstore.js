@@ -11,7 +11,8 @@ var Draggable = {
 	NONE :0,
 	PLAYHEAD:1,
 	KEYFRAME:2,
-	SELECT:3
+	SELECT:3,
+	TIMESELECT:4
 };
 
 
@@ -20,6 +21,7 @@ var dragActions = Reflux.createActions(
 		'startPlayheadDrag',
 		'startKeyframeDrag',
 		'startSelectDrag',
+		'startTimeSelectDrag',
 
 		'handleMouseMove',
 
@@ -38,6 +40,7 @@ var dragStore = Reflux.createStore({
 
 		this._dragging = Draggable.NONE;
 		this._lastMouseMove = {};
+		this._targetName = "";
 	},
 
 	_ScaleUpdate(scales) {
@@ -45,36 +48,58 @@ var dragStore = Reflux.createStore({
 	},
 
 
-	onStartPlayheadDrag(newtime) {
+	onStartPlayheadDrag(name, newtime) {
+		this._targetName = name;
 		this._dragging = Draggable.PLAYHEAD;
+		VTIconStore.actions.selectVTIcon(name);
 		PlaybackStore.actions.setTime(newtime);
 	},
 
-	onStartKeyframeDrag() {
-		VTIconStore.actions.startMovingSelectedKeyframes();
+	onStartKeyframeDrag(name) {
+		this._targetName = name;
+		VTIconStore.actions.startMovingSelectedKeyframes(name=this._targetName);
 		this._dragging = Draggable.KEYFRAME;
 	},
 
-	onStartSelectDrag(addmode=false) {
+	onStartSelectDrag(name, addmode=false) {
+		this._targetName = name;
 		this._dragging = Draggable.SELECT;
-		SelectionStore.actions.startSelecting(this._scales.scaleTimeline.invert(this._lastX), this._calculateSelectionParameterMap(this._lastY), addmode); 
+		var unoffsetX = this._lastX - this._scales[this._targetName].leftOffset;
+		SelectionStore.actions.startSelecting(name, this._scales[this._targetName].scaleTimeline.invert(unoffsetX), this._calculateSelectionParameterMap(this._lastY), addmode); 
 	},
 
-	onHandleMouseMove(x, y) {		
-		if (this._dragging == Draggable.PLAYHEAD)
-		{
-			PlaybackStore.actions.setTime(this._scales.scaleTimeline.invert(x));
-		} else if (this._dragging == Draggable.KEYFRAME) {
-			var dt = this._scales.scaleTimeline.invert(x) - this._scales.scaleTimeline.invert(this._lastX);
-			var dv = {};
-			for (var p in this._scales.scaleParameter) {
-				dv[p] = this._scales.scaleParameter[p].invert(y) - this._scales.scaleParameter[p].invert(this._lastY);
-			}
-			VTIconStore.actions.moveSelectedKeyframes(dt, dv);
-		} else if (this._dragging == Draggable.SELECT) {
-				SelectionStore.actions.changeSelecting(this._scales.scaleTimeline.invert(x), this._calculateSelectionParameterMap(y)); 
+	//selects everything in a time frame
+	onStartTimeSelectDrag(name, addmode=false) {
+		this._targetName = name;
+		this._dragging = Draggable.TIMESELECT;
+		var unoffsetX = this._lastX - this._scales[this._targetName].leftOffset;
+		SelectionStore.actions.startSelectingTimeRange(name, this._scales[this._targetName].scaleTimeline.invert(unoffsetX));
+	},
 
-		}
+	onHandleMouseMove(x, y) {
+	 	if (this._targetName in this._scales) {
+
+	 		var unoffsetX = x - this._scales[this._targetName].leftOffset;
+			if (this._dragging == Draggable.PLAYHEAD)
+			{
+				PlaybackStore.actions.setTime(this._scales[this._targetName].scaleTimeline.invert(unoffsetX));
+			} else if (this._dragging == Draggable.KEYFRAME) {
+		 		var unoffsetLastX = this._lastX - this._scales[this._targetName].leftOffset;
+
+				var dt = this._scales[this._targetName].scaleTimeline.invert(unoffsetX) - this._scales[this._targetName].scaleTimeline.invert(unoffsetLastX);
+				var dv = {};
+				for (var p in this._scales[this._targetName].scaleParameter) {
+					dv[p] = this._scales[this._targetName].scaleParameter[p].invert(y) - this._scales[this._targetName].scaleParameter[p].invert(this._lastY);
+				}
+				VTIconStore.actions.moveSelectedKeyframes(dt, dv, name=this._targetName);
+			} else if (this._dragging == Draggable.SELECT) {
+					SelectionStore.actions.changeSelecting(this._scales[this._targetName].scaleTimeline.invert(unoffsetX), this._calculateSelectionParameterMap(y)); 
+			} else if (this._dragging == Draggable.TIMESELECT) {
+					SelectionStore.actions.changeSelectingTimeRange(this._scales[this._targetName].scaleTimeline.invert(unoffsetX)); 
+			}
+
+	 	}	
+		
 		this._lastX = x;
 		this._lastY = y;
 
@@ -86,16 +111,18 @@ var dragStore = Reflux.createStore({
 			SelectionStore.actions.stopSelecting();
 		}
 		this._dragging = Draggable.NONE;
+		this._targetName="";
 	},
 
 	/**
 	 * Helper Functions
 	 */
+
 	 _calculateSelectionParameterMap(y) {
 	 	var pmap = {};
 
-	 	for (var p in this._scales.topOffsetParameter) {
-	 		pmap[p] = this._scales.scaleParameter[p].invert(y-this._scales.topOffsetParameter[p]);
+	 	for (var p in this._scales[this._targetName].topOffsetParameter) {
+	 		pmap[p] = this._scales[this._targetName].scaleParameter[p].invert(y-this._scales[this._targetName].topOffsetParameter[p]);
 	 	}
 
 	 	return pmap;
