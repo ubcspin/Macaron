@@ -23,8 +23,14 @@ var sineExample = function(frequency, duration, dt) {
 				frequency: {
 					valueScale:[50,500], //Hz
 					data : [
-						{ t: 0, value:250}, 
-						{ t: 1500, value:400}]
+						{
+          "t": 1025.1572327044023,
+          "value": 312.50000000000057,
+        },
+        {
+          "t": 1943.3962264150944,
+          "value": 157.4999999999999,
+        }]
 				}
 			};
 
@@ -33,7 +39,7 @@ var sineExample = function(frequency, duration, dt) {
 		rv.parameters.amplitude.data.push(
 			{
 				t:t,
-				value:Math.sin(2*Math.PI*frequency*t/1000)/2.0+0.5
+				value:Math.sin(2*Math.PI*frequency*t/1000 - Math.PI/2*frequency)/2.0+0.5
 			});
 	}
 
