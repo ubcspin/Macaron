@@ -85,6 +85,38 @@ Cat.size[5*CAT_PAUSE_TIME+2*CAT_BREATHE_IN_TIME+2*CAT_BREATHE_OUT_TIME] = CAT_ST
 
 
 
+var Lightning = {
+	right: {
+		0:0,
+		800:0,
+		950:1,
+		1100:0,
+		1200:1,
+		1350:0,
+		1800:0,
+		1900:1,
+		2100:1,
+		2200:0
+	},
+	left: {
+		0:0,
+		400:0,
+		650:1,
+		900:0,
+		1500:0,
+		1600:1,
+		1650:1,
+		1800:0,
+		1850:0,
+		1950:1,
+		2050:0,
+		2300:0,
+		2500:1,
+		2700:0
+	}
+
+};
+
 
 
 var BouncingBall = {
@@ -99,7 +131,8 @@ var Animations = {
 	'none' : {},
 	'heartbeat': Heartbeat,
 	'mobile': Mobile,
-	'cat':Cat
+	'cat':Cat,
+	'lightning':Lightning
 };
 
 
