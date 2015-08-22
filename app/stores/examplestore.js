@@ -431,7 +431,7 @@ sineExample: sineExample(1, 3000, 25),
 
 randomExample: randomNoiseExample(3000, 100),
 
-v10_augmented: {
+v10_augmented: { //w/ v-10-21-3-11
   "duration": 3000,
   "selectedTimeRange": {
     "active": false,
