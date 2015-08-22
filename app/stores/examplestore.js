@@ -938,34 +938,375 @@ v10_09_1_8: {
   }
 },
 
-	test3: {
-			selected:false,
-			duration: 3000, //ms
-
-			selectedTimeRange: {
-						active:false,
-						time1:0,
-						time2:0
-					},
-
-			parameters: {
-				amplitude: {
-					valueScale:[0,1], //normalized
-					data : [
-						{ t: 600, value:0.5}, 
-						{ t: 1500, value:0.75 },
-						{ t: 2100, value:0.5}, 
-						{ t: 2900, value:0.25 }]
-				},
-
-				frequency: {
-					valueScale:[50,500], //Hz
-					data : [
-						{ t: 0, value:250}, 
-						{ t: 1500, value:400}]
-				}
-			}
-		},
+	textures: {
+  "duration": 3000,
+  "selectedTimeRange": {
+    "active": false,
+    "time1": 0,
+    "time2": 0
+  },
+  "selected": false,
+  "parameters": {
+    "amplitude": {
+      "valueScale": [
+        0,
+        1
+      ],
+      "data": [
+        {
+          "t": 433.96226415094316,
+          "value": 1.1102230246251565e-16,
+          "selected": false,
+          "id": 78
+        },
+        {
+          "t": 440.2515723270441,
+          "value": 0.38888888888888895,
+          "selected": false,
+          "id": 79
+        },
+        {
+          "t": 522.0125786163524,
+          "value": 0.38888888888888895,
+          "selected": false,
+          "id": 80
+        },
+        {
+          "t": 534.5911949685534,
+          "value": 0.2666666666666666,
+          "selected": false,
+          "id": 73
+        },
+        {
+          "t": 616.3522012578613,
+          "value": 0.2666666666666666,
+          "selected": false,
+          "id": 74
+        },
+        {
+          "t": 622.6415094339623,
+          "value": 0.6555555555555554,
+          "selected": false,
+          "id": 75
+        },
+        {
+          "t": 704.4025157232707,
+          "value": 0.6555555555555554,
+          "selected": false,
+          "id": 76
+        },
+        {
+          "t": 710.6918238993711,
+          "value": 0.4388888888888889,
+          "selected": false,
+          "id": 71
+        },
+        {
+          "t": 792.4528301886791,
+          "value": 0.4388888888888889,
+          "selected": false,
+          "id": 72
+        },
+        {
+          "t": 798.74213836478,
+          "value": 0.8277777777777777,
+          "selected": false,
+          "id": 69
+        },
+        {
+          "t": 880.5031446540884,
+          "value": 0.8277777777777777,
+          "selected": false,
+          "id": 70
+        },
+        {
+          "t": 886.7924528301886,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 67
+        },
+        {
+          "t": 968.5534591194966,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 68
+        },
+        {
+          "t": 968.5534591194967,
+          "value": 1,
+          "selected": false,
+          "id": 42
+        },
+        {
+          "t": 1050.314465408805,
+          "value": 1,
+          "selected": false,
+          "id": 45
+        },
+        {
+          "t": 1062.8930817610064,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 47
+        },
+        {
+          "t": 1144.6540880503144,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 50
+        },
+        {
+          "t": 1157.2327044025158,
+          "value": 1,
+          "selected": false,
+          "id": 51
+        },
+        {
+          "t": 1238.9937106918242,
+          "value": 1,
+          "selected": false,
+          "id": 52
+        },
+        {
+          "t": 1245.2830188679245,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 54
+        },
+        {
+          "t": 1327.0440251572325,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 55
+        },
+        {
+          "t": 1327.0440251572327,
+          "value": 1,
+          "selected": false,
+          "id": 56
+        },
+        {
+          "t": 1408.805031446541,
+          "value": 1,
+          "selected": false,
+          "id": 57
+        },
+        {
+          "t": 1421.3836477987422,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 58
+        },
+        {
+          "t": 1509.4339622641508,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 81
+        },
+        {
+          "t": 1509.433962264151,
+          "value": 1,
+          "selected": false,
+          "id": 82
+        },
+        {
+          "t": 1591.1949685534591,
+          "value": 1,
+          "selected": false,
+          "id": 83
+        },
+        {
+          "t": 1603.7735849056608,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 84
+        },
+        {
+          "t": 1685.5345911949685,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 85
+        },
+        {
+          "t": 1698.11320754717,
+          "value": 1,
+          "selected": false,
+          "id": 86
+        },
+        {
+          "t": 1779.8742138364782,
+          "value": 1,
+          "selected": false,
+          "id": 87
+        },
+        {
+          "t": 1786.1635220125786,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 88
+        },
+        {
+          "t": 1867.9245283018868,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 89
+        },
+        {
+          "t": 1867.9245283018868,
+          "value": 1,
+          "selected": false,
+          "id": 90
+        },
+        {
+          "t": 1949.6855345911954,
+          "value": 1,
+          "selected": false,
+          "id": 91
+        },
+        {
+          "t": 1962.2641509433965,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 92
+        },
+        {
+          "t": 2031.4465408805033,
+          "value": 0.6166666666666667,
+          "selected": false,
+          "id": 110
+        },
+        {
+          "t": 2037.7358490566037,
+          "value": 0.8277777777777777,
+          "selected": false,
+          "id": 113
+        },
+        {
+          "t": 2119.496855345912,
+          "value": 0.8277777777777777,
+          "selected": false,
+          "id": 114
+        },
+        {
+          "t": 2125.786163522013,
+          "value": 0.4388888888888889,
+          "selected": false,
+          "id": 115
+        },
+        {
+          "t": 2207.5471698113206,
+          "value": 0.4388888888888889,
+          "selected": false,
+          "id": 116
+        },
+        {
+          "id": 119,
+          "t": 2207.547169811321,
+          "value": 0.6555555555555554,
+          "selected": false
+        },
+        {
+          "id": 120,
+          "t": 2289.308176100629,
+          "value": 0.6555555555555554,
+          "selected": false
+        },
+        {
+          "id": 121,
+          "t": 2301.8867924528304,
+          "value": 0.2666666666666666,
+          "selected": false
+        },
+        {
+          "id": 122,
+          "t": 2383.647798742138,
+          "value": 0.2666666666666666,
+          "selected": false
+        },
+        {
+          "id": 123,
+          "t": 2389.937106918239,
+          "value": 0.38888888888888895,
+          "selected": false
+        },
+        {
+          "id": 124,
+          "t": 2471.698113207547,
+          "value": 0.38888888888888895,
+          "selected": false
+        },
+        {
+          "id": 125,
+          "t": 2477.9874213836474,
+          "value": 1.1102230246251565e-16,
+          "selected": false
+        }
+      ]
+    },
+    "frequency": {
+      "valueScale": [
+        50,
+        500
+      ],
+      "data": [
+        {
+          "id": 139,
+          "t": 427.67295597484275,
+          "value": 117.50000000000034,
+          "selected": false
+        },
+        {
+          "id": 129,
+          "t": 886.7924528301886,
+          "value": 277.5,
+          "selected": false
+        },
+        {
+          "id": 130,
+          "t": 1094.3396226415093,
+          "value": 235,
+          "selected": false
+        },
+        {
+          "id": 132,
+          "t": 1276.7295597484276,
+          "value": 277.5,
+          "selected": false
+        },
+        {
+          "id": 133,
+          "t": 1484.2767295597484,
+          "value": 235,
+          "selected": false
+        },
+        {
+          "id": 134,
+          "t": 1672.955974842767,
+          "value": 277.5,
+          "selected": false
+        },
+        {
+          "id": 135,
+          "t": 1880.503144654088,
+          "value": 235,
+          "selected": false
+        },
+        {
+          "id": 136,
+          "t": 2081.761006289308,
+          "value": 277.5,
+          "selected": false
+        },
+        {
+          "id": 138,
+          "t": 2471.698113207547,
+          "value": 117.50000000000034,
+          "selected": false
+        }
+      ]
+    }
+  }
+},
 };
 
 var exampleActions = Reflux.createActions(
