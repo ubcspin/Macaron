@@ -65,15 +65,75 @@ Mobile.rotation[vibrationEnd] = 0;
 
 
 //Cat  ANIMATION
+var CAT_PAUSE_TIME = 150;
+var CAT_BREATHE_IN_TIME = 650;
+var CAT_BREATHE_OUT_TIME = 350;
+var CAT_START_VALUE = 1;
+var CAT_BREATHE_VALUE = 1.25;
 var Cat = {
-	size: {
-		0:1,
-		1000:1,
-		1500:1.25,
-		2000:1
-	}
-}
+	size: {}
+};
+Cat.size[0] = CAT_START_VALUE;
+Cat.size[CAT_PAUSE_TIME] = CAT_START_VALUE;
+Cat.size[CAT_PAUSE_TIME+CAT_BREATHE_IN_TIME] = CAT_BREATHE_VALUE;
+Cat.size[2*CAT_PAUSE_TIME+CAT_BREATHE_IN_TIME] = CAT_BREATHE_VALUE;
+Cat.size[2*CAT_PAUSE_TIME+CAT_BREATHE_IN_TIME+CAT_BREATHE_OUT_TIME] = CAT_START_VALUE;
+Cat.size[4*CAT_PAUSE_TIME+CAT_BREATHE_IN_TIME+CAT_BREATHE_OUT_TIME] = CAT_START_VALUE;
+Cat.size[4*CAT_PAUSE_TIME+2*CAT_BREATHE_IN_TIME+CAT_BREATHE_OUT_TIME] = CAT_BREATHE_VALUE;
+Cat.size[5*CAT_PAUSE_TIME+2*CAT_BREATHE_IN_TIME+CAT_BREATHE_OUT_TIME] = CAT_BREATHE_VALUE;
+Cat.size[5*CAT_PAUSE_TIME+2*CAT_BREATHE_IN_TIME+2*CAT_BREATHE_OUT_TIME] = CAT_START_VALUE;
 
+
+
+var Lightning = {
+	right: {
+		0:0,
+		800:0,
+		950:1,
+		1100:0,
+		1200:1,
+		1350:0,
+		1800:0,
+		1900:1,
+		2100:1,
+		2200:0
+	},
+	left: {
+		0:0,
+		400:0,
+		650:1,
+		900:0,
+		1500:0,
+		1600:1,
+		1650:1,
+		1800:0,
+		1850:0,
+		1950:1,
+		2050:0,
+		2300:0,
+		2500:1,
+		2700:0
+	}
+
+};
+
+var Snow = {
+	flake1: {
+		0:0,
+		2000:1
+	},
+
+	flake2: {
+		650:0,
+		2650:1
+	},
+
+	flake3: {
+		1000:0,
+		3000:1
+	}
+
+};
 
 
 
@@ -89,7 +149,9 @@ var Animations = {
 	'none' : {},
 	'heartbeat': Heartbeat,
 	'mobile': Mobile,
-	'cat':Cat
+	'cat':Cat,
+	'lightning':Lightning,
+	'snow': Snow
 };
 
 
