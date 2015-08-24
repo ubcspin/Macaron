@@ -1,5 +1,8 @@
 import Reflux from 'reflux';
 
+var LogStore = require('./logstore.js');
+
+
 var DisplayModes = {
 	NO_EXAMPLES:0,
 	 LOWVIS_LOWSELECT:1,
@@ -20,7 +23,8 @@ var studyStore = Reflux.createStore({
 
 	init: function() {
 		this._data = {
-			currentMode:DisplayModes.HIGHVIS_HIGHSELECT,
+			currentMode:LogStore.store.getInitialState().currentMode,
+			// currentMode:DisplayModes.HIGHVIS_HIGHSELECT,
 			modes:DisplayModes
 		};
 	},
