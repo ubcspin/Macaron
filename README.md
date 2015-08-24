@@ -30,6 +30,7 @@ You will also need to install the following libraries:
 
 - [d3][d3]: `npm install d3 --save`
 - [reflux][reflux]: `npm install reflux --save`
+- [firebase][firebase]: `npm install firebase --save`
 
 And you will need two custom loaders for webpack, to import Audiolet, a non-NPM library contained in `thirdparty/audiolet`:
 
@@ -50,4 +51,5 @@ For more information, follow this tutorial: https://github.com/christianalfoni/r
 [webpack]: http://webpack.github.io
 [d3]: http://d3js.org
 [reflux]: https://github.com/spoike/refluxjs
+[firebase]: https://www.firebase.com
 
