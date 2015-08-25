@@ -37,8 +37,6 @@ var logStore = Reflux.createStore({
 				this._animation = "none";
 			}
 
-			AnimationStore.actions.setAnimation(this._animation);
-
 			interfaceText = prompt("Interface: ", "");
 			if (interfaceText == null || interfaceText == "") {
 				interfaceText = "none";

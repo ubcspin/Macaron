@@ -1,5 +1,7 @@
 import Reflux from 'reflux';
 
+var LogStore = require('./logstore.js');
+
 var vticonActions = Reflux.createActions(
 	[
 		'selectVTIcon',
@@ -190,6 +192,8 @@ var vticonStore = Reflux.createStore({
 	onNewKeyframe(parameter, t, value, addToSelection=false, name="") {
 		this._saveStateForUndo();
 		name = this._selectVTIcon(name);
+
+		LogStore.actions.log("VTICON_NEWKEYFRAME_"+name);
 
 		var new_id = this._addNewKeyframe(parameter, t, value, addToSelection, name=name);
 		if (new_id >= 0)
@@ -502,6 +506,8 @@ var vticonStore = Reflux.createStore({
 	onDeleteSelectedKeyframes(name="") {
 		name = this._selectVTIcon(name);
 
+		LogStore.actions.log("VTICON_DELETEKEYFRAMES_"+name);
+
 		var kfNotSelected = function(value) {
 			return !value.selected;
 		};
@@ -643,6 +649,7 @@ var vticonStore = Reflux.createStore({
 	 onUndo() {
 	 	if (this._previousStates.length > 0 )
 	 	{
+			LogStore.actions.log("UNDO");
 	 		this._nextStates.push(this._copyState());
 	 		this._data = this._previousStates.pop();
 	 		this.trigger(this._data);
@@ -652,6 +659,7 @@ var vticonStore = Reflux.createStore({
 	 onRedo() {
 	 	if (this._nextStates.length > 0 )
 	 	{
+			LogStore.actions.log("REDO");
 	 		this._previousStates.push(this._copyState());
 	 		this._data = this._nextStates.pop();
 	 		this.trigger(this._data);
