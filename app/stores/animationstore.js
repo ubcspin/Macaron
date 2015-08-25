@@ -166,7 +166,7 @@ var animationStore = Reflux.createStore({
 
 		var initialAnimation = StudyStore.store.getInitialState().animationMode;
 		this._data = {
-			animation:"none",
+			animation:initialAnimation,
 			animationParameters:{},
 			animationOptions:Object.keys(Animations)
 		},
