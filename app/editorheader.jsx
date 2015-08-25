@@ -20,6 +20,9 @@ var EditorHeader = React.createClass({
 
 	getDefaultProps: function() {
 	    return {
+	    	displayAnimation:false,
+	    	displayInterfaceMode:false,
+	    	displaySaveButton:true
 	    }
 	},
 
@@ -52,20 +55,39 @@ var EditorHeader = React.createClass({
 		var selectedAnimation = this.state.animation.animation;
 		var selectedDisplayMode = this.state.study.currentMode;
 
-		return (
-			<div className="header" style={headerStyle}>
-				<span className="title unselectable"> Macaron Editor </span>
-				<select className="animationoptions unselectable" onChange={animationChangeCallback}>
+		var animationOptionDisplay = <span />
+		if (this.props.displayAnimation)
+		{
+			animationOptionDisplay = (<select className="animationoptions unselectable" onChange={animationChangeCallback}>
 					{animationOptions.map( (animationOption) => (
 						<option value={animationOption} selected={animationOption==selectedAnimation}>{animationOption}</option>
 						))}
-				</select>
-				<select className="displayoptions unselectable" onChange={displayChangeCallback}>
+				</select>);
+		}
+
+		var interfaceModeDisplay = <span />
+		if (this.props.displayInterfaceMode)
+		{
+			interfaceModeDisplay = (<select className="displayoptions unselectable" onChange={displayChangeCallback}>
 					{Object.keys(displayOptions).map( (displayOption) => (
 						<option value={displayOption} selected={displayOption==selectedDisplayMode}>{displayOption}</option>
 						))}
-				</select>
-				<button onClick={this._onSaveClick}>Save</button>
+				</select>);
+		}
+
+		var saveButton = <span />
+		if (this.props.displaySaveButton)
+		{
+			saveButton = (<button onClick={this._onSaveClick}>Save</button>);
+		}
+
+
+		return (
+			<div className="header" style={headerStyle}>
+				<span className="title unselectable"> Macaron Editor </span>
+				{animationOptionDisplay}
+				{interfaceModeDisplay}
+				{saveButton}
 			</div>
 			);
 	}
