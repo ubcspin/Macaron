@@ -1,7 +1,7 @@
 import Reflux from 'reflux';
 
 var PlaybackStore = require('./playbackstore.js');
-
+var StudyStore = require('./studystore.js');
 
 var animationActions = Reflux.createActions(
 	[
@@ -163,6 +163,8 @@ var animationStore = Reflux.createStore({
 	listenables:[animationActions],
 
 	init : function() {
+
+		var initialAnimation = StudyStore.store.getInitialState().animationMode;
 		this._data = {
 			animation:"none",
 			animationParameters:{},
