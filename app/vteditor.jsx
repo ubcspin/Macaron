@@ -265,6 +265,7 @@ var VTEditor = React.createClass({
 			var keyframeSelectable = (this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT);
 			var visualization = ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT)
 								|| ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_LOWSELECT) ));
+			var visualizeTicks = keyframeSelectable;
 			var modifiable = this.props.examplesModifiable;
 			exampleEditor = (
 			<div name="example" id="exampleeditor" ref="exampleEditorRef" style={editorStyle}>
@@ -301,6 +302,7 @@ var VTEditor = React.createClass({
 								selection={this.state.selection}
 								selectable={keyframeSelectable}
 								visualization={visualization}
+								visualizeTicks={visualizeTicks}
 								modifiable={modifiable} />
 						))}
 				</div>);

@@ -41,6 +41,7 @@ var KeyframeEditor = React.createClass({
 	      axisTickLeft:30,
 	      selectable:true,
 	      visualization:true,
+	      visualizeTicks:true,
 	      modifiable:true,
 	      topBuffer:20,
 	    }
@@ -179,7 +180,7 @@ var KeyframeEditor = React.createClass({
 
 		var paramLabels = <text />;
 		var paramTicks = <rect />;
-		if (visualization) {
+		if (this.props.visualizeTicks) {
 			paramTicks = <text x="0" y="0" transform={"translate("+this.props.axisNameWidth+","+this.props.height/2+") rotate(-90)"}>{this.props.parameter.charAt(0).toUpperCase() + this.props.parameter.slice(1)}</text>;
 			paramTicks = scaleY.ticks(5).map(function(tick, idx) {
 
