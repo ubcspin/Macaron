@@ -219,6 +219,8 @@ var KeyframeEditor = React.createClass({
 						{paramLabels}
 
 						{paramTicks}
+						
+						{playheadLine}
 
 						{data.map(function(d)
 							{
@@ -233,7 +235,7 @@ var KeyframeEditor = React.createClass({
 
 						{selectionSquare}
 
-						{playheadLine}
+
 						
 
 					</svg>
