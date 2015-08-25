@@ -5,7 +5,7 @@ var AnimationStore = require('./animationstore.js');
 var StudyStore = require('./studystore.js');
 
 var FIREBASE_URL = "https://shining-heat-4904.firebaseio.com";
-var FIREBASE_AUTH_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2IjowLCJkIjp7InVpZCI6Im9saXZlci1tYWNhcm9uIn0sImlhdCI6MTQ0MDQ0MDMxOH0.wDebqVW8m17r24mtrlVo_7XFs4uzhwIT4hLimU7NhSo";
+var FIREBASE_AUTH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0NDA1MjY5NDMsImQiOnsidWlkIjoib2xpdmVyLW1hY2Fyb24ifSwidiI6MH0.ICq8i8FMOMTL4VaEedsRsY-hZe2-a6YsebuHc3ptPo4";
 
 var logActions = Reflux.createActions(
 	[
