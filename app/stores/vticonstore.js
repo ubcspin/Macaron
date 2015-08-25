@@ -23,6 +23,7 @@ var vticonActions = Reflux.createActions(
 		'selectAllKeyframes',
 
 		'selectTimeRange',
+		'selectAllTimeRange',
 		'unselectTimeRange',
 
 		'moveSelectedKeyframes',
@@ -443,6 +444,13 @@ var vticonStore = Reflux.createStore({
 		this._data[name].selectedTimeRange.time2 = Math.max(0, Math.min(this._data[name].duration, time2));
 
 		this.trigger(this._data);
+	},
+
+	onSelectAllTimeRange(name="")
+	{
+		name = this._selectVTIcon(name);
+		LogStore.actions.log("VTICON_SELECTALLTIME_"+name);
+		this.onSelectTimeRange(0, this._data[name].duration, name);
 	},
 
 	onUnselectTimeRange(name="")

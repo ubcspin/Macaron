@@ -175,7 +175,12 @@ var VTEditor = React.createClass({
    				break;
    			case 65: //a
    				if (e.ctrlKey || e.metaKey) {
-   					VTIconStore.actions.selectAllKeyframes();
+   					if(this.state.vticons["example"].selected && (this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT))
+   					{
+   						VTIconStore.actions.selectAllTimeRange();  
+   					} else {
+   						VTIconStore.actions.selectAllKeyframes();   						
+   					}
    				}
    				break;
    			case 67: //c
