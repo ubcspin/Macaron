@@ -2,6 +2,7 @@ import Reflux from 'reflux';
 
 var VTIconStore = require('./vticonstore.js');
 var PlaybackStore = require('./playbackstore.js');
+var LogStore = require('./logstore.js');
 
 var clipboardActions = Reflux.createActions(
 	[
@@ -66,6 +67,7 @@ var clipboardStore = Reflux.createStore({
 
 					if (keyframes_to_add.length > 0)
 					{
+						LogStore.actions.log("COPY_"+n+"_"+keyframes_to_add.length);
 						this._clipboard[p] = keyframes_to_add;
 					}
 				}
@@ -123,6 +125,7 @@ var clipboardStore = Reflux.createStore({
 
 					if (keyframes_to_add.length > 0)
 					{
+						LogStore.actions.log("COPYTIME_"+n+"_"+keyframes_to_add.length);
 						this._clipboard[p] = keyframes_to_add;
 					}
 				}
@@ -139,6 +142,7 @@ var clipboardStore = Reflux.createStore({
 
 	onPaste(overwrite=true) {
 		var to_paste = {};
+		var pasteCount=0;
 		for (var p in this._clipboard)
 		{
 			to_paste[p] = [];
@@ -150,8 +154,10 @@ var clipboardStore = Reflux.createStore({
 					value:d.value,
 					selected:true
 				});
+				pasteCount+=1;
 			}
 		}
+		LogStore.actions.log("PASTE_"+pasteCount);
 		VTIconStore.actions.newMultipleKeyframes(to_paste, overwrite=overwrite);
 	},
 

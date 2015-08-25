@@ -16,6 +16,7 @@ config = {
     module: {
         loaders: [{
             test: /\.jsx?$/,
+            exclude: /firebase/,
             loader: 'babel'
         },
         {
@@ -26,6 +27,7 @@ config = {
             test: /\.css$/,
             loader: "style-loader!css-loader"
         }
+
         ],
         noParse: [pathToReact]
     }    
