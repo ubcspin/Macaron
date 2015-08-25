@@ -41,13 +41,14 @@ var KeyframeEditor = React.createClass({
 	      axisTickLeft:30,
 	      selectable:true,
 	      visualization:true,
-	      modifiable:true
+	      modifiable:true,
+	      topBuffer:20,
 	    }
 	},
 
 
 	componentDidMount: function () {
-    	var parameter_range = [this.props.height-this.props.keyframeCircleRadius, this.props.keyframeCircleRadius];
+    	var parameter_range = [this.props.height-this.props.keyframeCircleRadius, this.props.keyframeCircleRadius+this.props.topBuffer];
 
     	this._lastMouseDownTime = 0;
 
