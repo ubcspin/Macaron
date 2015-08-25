@@ -146,6 +146,7 @@ var vticonStore = Reflux.createStore({
 				}
 			}
 		}
+		LogStore.actions.log("VTICON_SELECT_"+rv);
 		return rv;
 	},
 
