@@ -19,6 +19,8 @@ var playbackActions = Reflux.createActions(
 
 		'stepBackward',
 		'stepForward',
+		'skipBackward',
+		'skipForward',
 
 		'toggleMute']
 
@@ -92,6 +94,12 @@ var playbackStore = Reflux.createStore({
 	onStepBackward() { this.onSetTime(this._data.currentTime-STEP_AMOUNT); },
 
 	onStepForward() {this.onSetTime(this._data.currentTime+STEP_AMOUNT);},
+
+
+
+	onSkipBackward() { this.onSetTime(0); },
+
+	onSkipForward() {this.onSetTime(this._vtduration);},
 
 
 	/**
