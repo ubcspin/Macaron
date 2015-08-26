@@ -1,6 +1,7 @@
 import Reflux from 'reflux';
 
 var VTIconStore = require('./vticonstore.js');
+var LogStore = require('./logstore.js');
 
 var saveLoadActions = Reflux.createActions(
 	[
@@ -15,6 +16,7 @@ var saveLoadStore = Reflux.createStore({
 
 	onSave() {
 		var data = JSON.stringify(VTIconStore.store.getInitialState()["main"], null, 2);
+		LogStore.actions.log("SAVE_"+data);
 		var url = 'data:text/json;charset=utf8,' + encodeURIComponent(data);
     	window.open(url, '_blank');
     	window.focus();
