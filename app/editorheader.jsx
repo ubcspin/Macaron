@@ -5,6 +5,7 @@ import Reflux from 'reflux';
 var AnimationStore = require('./stores/animationstore.js');
 var StudyStore = require('./stores/studystore.js');
 var SaveLoadStore = require('./stores/saveloadstore.js');
+var LogStore = require('./stores/logstore.js');
 
 
 var EditorHeader = React.createClass({
@@ -22,7 +23,8 @@ var EditorHeader = React.createClass({
 	    return {
 	    	displayAnimation:false,
 	    	displayInterfaceMode:false,
-	    	displaySaveButton:true
+	    	displaySaveButton:true,
+	    	displayStartButton:true
 	    }
 	},
 
@@ -34,8 +36,12 @@ var EditorHeader = React.createClass({
 		StudyStore.actions.setDisplayMode(val.target.value);
 	},
 
+	_onStartClick : function(e) {
+		LogStore.actions.log("START_TASK");
+	},
+
 	_onSaveClick : function(e) {
-		SaveLoadStore.actions.save({test:1});
+		SaveLoadStore.actions.save();
 	},
 
 	/**
@@ -75,15 +81,22 @@ var EditorHeader = React.createClass({
 				</select>);
 		}
 
+		var startButton = <span />
+		if (this.props.displayStartButton)
+		{
+			startButton = (<button onClick={this._onStartClick}>Start</button>);
+		}
+
 		var saveButton = <span />
 		if (this.props.displaySaveButton)
 		{
-			saveButton = (<button onClick={this._onSaveClick}>Save</button>);
+			saveButton = (<button onClick={this._onSaveClick}>Finish</button>);
 		}
 
 
 		return (
 			<div className="header" style={headerStyle}>
+				{startButton}
 				<span className="title unselectable"> Macaron Editor </span>
 				{animationOptionDisplay}
 				{interfaceModeDisplay}
