@@ -71,7 +71,11 @@ var CAT_BREATHE_OUT_TIME = 350;
 var CAT_START_VALUE = 1;
 var CAT_BREATHE_VALUE = 1.25;
 var Cat = {
-	size: {}
+	size: {},
+	t: {
+		0:0,
+		3000:3000
+	}
 };
 Cat.size[0] = CAT_START_VALUE;
 Cat.size[CAT_PAUSE_TIME] = CAT_START_VALUE;

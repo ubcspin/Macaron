@@ -73,8 +73,10 @@ var AnimationWindow = React.createClass({
 		} else if (this.props.animation === "cat")
 		{
 			var transformation = "";
-			transformation += " translate(0," + ((1-this.props.animationParameters.size)*50) + ")"
-			transformation += "scale("+1+","+this.props.animationParameters.size+")";
+			var f = 6;
+			var dy = 0.75*Math.sin(this.props.animationParameters.t/1000*2*Math.PI*f);
+			transformation += " translate(0," + ((1-this.props.animationParameters.size)*50+dy) + ")"
+			transformation += "scale("+1+","+(this.props.animationParameters.size)+")";
 			animationContent = (
 				<g>
 					<g transform={transformation} stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1"><path d="M 82.275525 45.8 C 81.700727 42.346694 79.135463 38.983972 74.57973 36.339208 C 64.15274 30.285907 47.247262 30.285907 36.82027 36.339208 C 32.264538 38.983973 29.699274 42.346695 29.124477 45.800002 Z" fill="black"/></g>
