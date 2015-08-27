@@ -170,9 +170,12 @@ var AnimationWindow = React.createClass({
 		} else if (this.props.animation === "car") {
 
 			var transform = "";
-			var f = 5;
-			var dy = 2*Math.sin(this.props.animationParameters.t/1000*2*Math.PI*f);
+			var f = 6;
+			var dy = 1.5*Math.sin(this.props.animationParameters.t/1000*2*Math.PI*f);
 			transform += " translate(0, " + dy + ")";
+
+			transform += " rotate("+this.props.animationParameters.rotation+", 50, 50)";
+
 			animationContent = (
 				<g transform={transform} stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
 					<path d="M 13.85 40.695977 L -23.8 54.8 C -23.8 54.8 -14.8 74.915985 -14.8 75.2 C -14.8 75.484017 17.65 44.695977 17.65 44.695977 Z" fill="white"/>
