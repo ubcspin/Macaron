@@ -254,18 +254,38 @@ var VTEditor = React.createClass({
 		var example_icon = this.state.vticons["example"];
 
 
-		var editorStyle = {
-			width:"45%",
+		var designStyle = {
+			width:"44%",
 			marginLeft:'auto',
 			marginRight:'auto',
-			display:"block"};
+			display:"block",
+			borderStyle:"solid",
+			borderWidth:0
+		};
+		var exampleStyle = {
+			width:"44%",
+			marginLeft:'auto',
+			marginRight:'auto',
+			display:"block",
+			borderStyle:"solid",
+			borderWidth:0
+		};
 
 
 		var exampleEditor = <div />;
 		var exampleGallery = <div />;
 
+		if(design_icon.selected) {
+			designStyle.borderColor="black";
+			exampleStyle.borderColor="white";
+		} else {
+			designStyle.borderColor="white";
+			exampleStyle.borderColor="black";
+		}
+
 		if(this.state.study.currentMode != this.state.study.modes.NO_EXAMPLES) {
-			editorStyle.float="left";
+			exampleStyle.float="left";
+			designStyle.float="left";
 			var iconVisSelectable = (this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT);
 			var keyframeSelectable = (this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT);
 			var visualization = ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT)
@@ -273,7 +293,7 @@ var VTEditor = React.createClass({
 			var visualizeTicks = keyframeSelectable;
 			var modifiable = this.props.examplesModifiable;
 			exampleEditor = (
-			<div name="example" id="exampleeditor" ref="exampleEditorRef" style={editorStyle}>
+			<div name="example" id="exampleeditor" ref="exampleEditorRef" style={exampleStyle}>
 					<ControlBar
 						name="example"
 						playing={this.state.playback.playing}
@@ -322,7 +342,7 @@ var VTEditor = React.createClass({
 						name="main"
 						animation={this.state.animation.animation}
 						animationParameters={this.state.animation.animationParameters} />
-				<div name="main" id="maineditor" ref="mainEditorRef" style={editorStyle}>
+				<div name="main" id="maineditor" ref="mainEditorRef" style={designStyle}>
 					<ControlBar
 						name="main"
 						playing={this.state.playback.playing}
