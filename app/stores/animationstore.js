@@ -136,6 +136,13 @@ var Snow = {
 };
 
 
+var Car = {
+	t: {
+		0:0,
+		3000:3000
+	}
+};
+
 
 var BouncingBall = {
 	position: {
@@ -150,6 +157,7 @@ var Animations = {
 	'heartbeat': Heartbeat,
 	'mobile': Mobile,
 	'cat':Cat,
+	'car':Car,
 	'lightning':Lightning,
 	'snow': Snow
 };
