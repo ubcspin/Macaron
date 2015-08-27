@@ -210,6 +210,12 @@ var KeyframeEditor = React.createClass({
 
 
 						});
+			paramLabels = (<text
+					x="0" y="0"
+					transform={"translate("+this.props.axisNameWidth+","+this.props.height/2+") rotate(-90)"}>
+						{this.props.parameter.charAt(0).toUpperCase() + this.props.parameter.slice(1)}
+				</text>);
+
 		}
 
 		return (
