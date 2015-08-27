@@ -73,7 +73,7 @@ var AnimationWindow = React.createClass({
 		} else if (this.props.animation === "cat")
 		{
 			var transformation = "";
-			var f = 6;
+			var f = 7.5;
 			var dy = 0.75*Math.sin(this.props.animationParameters.t/1000*2*Math.PI*f);
 			transformation += " translate(0," + ((1-this.props.animationParameters.size)*50+dy) + ")"
 			transformation += "scale("+1+","+(this.props.animationParameters.size)+")";
