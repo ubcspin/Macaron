@@ -3,11 +3,13 @@ import React from 'react';
 import d3 from 'd3';
 
 var PlaybackStore = require('./stores/playbackstore.js');
+var VTIconStore = require('./stores/vticonstore.js');
 
 
 var ControlBar = React.createClass({
 
 	propTypes: {
+		name : React.PropTypes.string.isRequired,
 		playing: React.PropTypes.bool.isRequired,
 		mute: React.PropTypes.bool.isRequired
 			},
@@ -32,14 +34,17 @@ var ControlBar = React.createClass({
 	},
 
 	_onPlayClick : function (event) {
+		VTIconStore.actions.selectVTIcon(this.props.name);
 		PlaybackStore.actions.togglePlaying();
 	},
 
 	_onSkipBackwardClick : function (event) {
+		VTIconStore.actions.selectVTIcon(this.props.name);
 		PlaybackStore.actions.skipBackward();
 	},
 
 	_onSkipForwardClick : function (event) {
+		VTIconStore.actions.selectVTIcon(this.props.name);
 		PlaybackStore.actions.skipForward();
 	},
 
