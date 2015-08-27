@@ -14,11 +14,11 @@ var SCALE_FUNCTION = function(in_gain, in_freq) {
 	var pf = 0;
 	var scaleFactor = 1;
 	if (in_freq < 300) {
-		pf = (in_freq-45)/255; //proportion of way btwn 50 and 300
-		scaleFactor = pf*2; // proportion of gain difference, here 24
+		pf = (in_freq-50)/250; //proportion of way btwn 50 and 300
+		scaleFactor = pf*4+1; // proportion of gain difference, here 24
 	} else {
-		pf = (in_freq-300)/205; //proportion of way btwn 300 and 550
-		scaleFactor = (1-pf)*2; // proportion of gain difference, here 24
+		pf = (in_freq-300)/200; //proportion of way btwn 300 and 550
+		scaleFactor = (1-pf)*3+2; // proportion of gain difference, here 24
 	}
 	rv = in_gain / scaleFactor;
 
@@ -47,7 +47,7 @@ var SoundGen = React.createClass({
 
 	getDefaultProps: function() {
 	    return {
-	      perceptuallyScaleOutput:false
+	      perceptuallyScaleOutput:true
 	    }
 	},
 
