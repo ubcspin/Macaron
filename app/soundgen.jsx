@@ -9,6 +9,23 @@
 import React from 'react';
 require('./../thirdparty/audiolet/audiolet.js');
 
+var SCALE_FUNCTION = function(in_gain, in_freq) {
+	var rv = in_gain;
+	var pf = 0;
+	var scaleFactor = 1;
+	if (in_freq < 300) {
+		pf = (in_freq-50)/250; //proportion of way btwn 50 and 300
+		scaleFactor = pf*4+1; // proportion of gain difference, here 24
+	} else {
+		pf = (in_freq-300)/200; //proportion of way btwn 300 and 550
+		scaleFactor = (1-pf)*3+2; // proportion of gain difference, here 24
+	}
+	rv = in_gain / scaleFactor;
+
+	return rv;
+
+};
+
 //TODO: import Audiolet
 
 var SoundGen = React.createClass({
@@ -26,6 +43,12 @@ var SoundGen = React.createClass({
 			mult: null
 		}
 
+	},
+
+	getDefaultProps: function() {
+	    return {
+	      perceptuallyScaleOutput:true
+	    }
 	},
 
 	componentWillMount: function() {
@@ -56,7 +79,12 @@ var SoundGen = React.createClass({
 		if(this.props.mute) {
 			this.state.mult.value.setValue(0);
 		} else {
-			this.state.mult.value.setValue(this.props.amplitude);
+			var amplitude = this.props.amplitude;
+			if (this.props.perceptuallyScaleOutput)
+			{
+				amplitude = SCALE_FUNCTION(amplitude, this.props.frequency);
+			}
+			this.state.mult.value.setValue(amplitude);
 		}
 		return <div id="soundgen"></div>
 

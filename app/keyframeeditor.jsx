@@ -41,13 +41,15 @@ var KeyframeEditor = React.createClass({
 	      axisTickLeft:30,
 	      selectable:true,
 	      visualization:true,
-	      modifiable:true
+	      visualizeTicks:true,
+	      modifiable:true,
+	      topBuffer:20,
 	    }
 	},
 
 
 	componentDidMount: function () {
-    	var parameter_range = [this.props.height-this.props.keyframeCircleRadius, this.props.keyframeCircleRadius];
+    	var parameter_range = [this.props.height-this.props.keyframeCircleRadius, this.props.keyframeCircleRadius+this.props.topBuffer];
 
     	this._lastMouseDownTime = 0;
 
@@ -178,7 +180,7 @@ var KeyframeEditor = React.createClass({
 
 		var paramLabels = <text />;
 		var paramTicks = <rect />;
-		if (visualization) {
+		if (this.props.visualizeTicks) {
 			paramTicks = <text x="0" y="0" transform={"translate("+this.props.axisNameWidth+","+this.props.height/2+") rotate(-90)"}>{this.props.parameter.charAt(0).toUpperCase() + this.props.parameter.slice(1)}</text>;
 			paramTicks = scaleY.ticks(5).map(function(tick, idx) {
 
@@ -208,6 +210,12 @@ var KeyframeEditor = React.createClass({
 
 
 						});
+			paramLabels = (<text
+					x="0" y="0"
+					transform={"translate("+this.props.axisNameWidth+","+this.props.height/2+") rotate(-90)"}>
+						{this.props.parameter.charAt(0).toUpperCase() + this.props.parameter.slice(1)}
+				</text>);
+
 		}
 
 		return (
@@ -218,6 +226,8 @@ var KeyframeEditor = React.createClass({
 						{paramLabels}
 
 						{paramTicks}
+						
+						{playheadLine}
 
 						{data.map(function(d)
 							{
@@ -232,7 +242,7 @@ var KeyframeEditor = React.createClass({
 
 						{selectionSquare}
 
-						{playheadLine}
+
 						
 
 					</svg>

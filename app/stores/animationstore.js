@@ -71,7 +71,11 @@ var CAT_BREATHE_OUT_TIME = 350;
 var CAT_START_VALUE = 1;
 var CAT_BREATHE_VALUE = 1.25;
 var Cat = {
-	size: {}
+	size: {},
+	t: {
+		0:0,
+		3000:3000
+	}
 };
 Cat.size[0] = CAT_START_VALUE;
 Cat.size[CAT_PAUSE_TIME] = CAT_START_VALUE;
@@ -136,6 +140,22 @@ var Snow = {
 };
 
 
+var Car = {
+	t: {
+		0:0,
+		3000:3000
+	},
+
+	rotation: {
+		700:0,
+		950:-30,
+		1750:0,
+		1900:0,
+		2200:30,
+		2700:0
+	}
+};
+
 
 var BouncingBall = {
 	position: {
@@ -150,6 +170,7 @@ var Animations = {
 	'heartbeat': Heartbeat,
 	'mobile': Mobile,
 	'cat':Cat,
+	'car':Car,
 	'lightning':Lightning,
 	'snow': Snow
 };
@@ -166,7 +187,7 @@ var animationStore = Reflux.createStore({
 
 		var initialAnimation = StudyStore.store.getInitialState().animationMode;
 		this._data = {
-			animation:"none",
+			animation:initialAnimation,
 			animationParameters:{},
 			animationOptions:Object.keys(Animations)
 		},

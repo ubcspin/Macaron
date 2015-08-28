@@ -114,7 +114,10 @@ var dragStore = Reflux.createStore({
 		{
 			SelectionStore.actions.stopSelecting();
 		}
-		LogStore.actions.log("STOPDRAG_"+this._dragging);
+		if(this._dragging != Draggable.NONE)
+		{
+			LogStore.actions.log("STOPDRAG_"+this._dragging);	
+		}
 		this._dragging = Draggable.NONE;
 		this._targetName="";
 	},

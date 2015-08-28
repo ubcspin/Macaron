@@ -23,6 +23,7 @@ var vticonActions = Reflux.createActions(
 		'selectAllKeyframes',
 
 		'selectTimeRange',
+		'selectAllTimeRange',
 		'unselectTimeRange',
 
 		'moveSelectedKeyframes',
@@ -59,17 +60,13 @@ var vticonStore = Reflux.createStore({
 							amplitude: {
 								valueScale:[0,1], //normalized
 								data : [
-									{ id: 0, t: 600, value:0.5, selected:false}, 
-									{ id: 1, t: 1500, value:1, selected:false},
-									{ id: 2, t: 3000, value:0, selected:false}]
+									{ id: 0, t: 1500, value:0.5, selected:false}]
 							},
 
 							frequency: {
 								valueScale:[50,500], //Hz
 								data : [
-									{ id: 3, t: 0, value:250, selected:false}, 
-									{ id: 4, t: 1200, value:50, selected:false},
-									{ id: 5, t: 1800, value:500, selected:false}]
+									{ id: 1, t: 1500, value:250, selected:false}]
 							}
 						}
 					},
@@ -146,6 +143,7 @@ var vticonStore = Reflux.createStore({
 				}
 			}
 		}
+		LogStore.actions.log("VTICON_SELECT_"+rv);
 		return rv;
 	},
 
@@ -211,6 +209,7 @@ var vticonStore = Reflux.createStore({
 	{
 		this._saveStateForUndo();
 		name = this._selectVTIcon(name);
+		var leftover_ids_to_delete = [];
 
 		if (overwrite) {
 
@@ -253,6 +252,18 @@ var vticonStore = Reflux.createStore({
 
 			this._setSelectedKeyframes(ids_to_delete, true, name=name);
 			this.onDeleteSelectedKeyframes(name);
+
+			//store any remaining keyframes (e.g., if we deleted the last of them)
+			for (var p in this._data[name].parameters) {
+				for (var i = 0; i < this._data[name].parameters[p].data.length; i++)
+				{
+					if (this._data[name].parameters[p].data[i].t >= min[p] &&
+						this._data[name].parameters[p].data[i].t <= max[p])
+					{
+						leftover_ids_to_delete.push(this._data[name].parameters[p].data[i].id);
+					}
+				}
+			}
 		} 
 
 
@@ -263,6 +274,16 @@ var vticonStore = Reflux.createStore({
 				this._addNewKeyframe(p, parameter_keyframe_map[p][i].t, parameter_keyframe_map[p][i].value, true, name=name);
 			}
 		}
+
+		//delete leftover ids
+		var not_leftover_id = function(kf) {
+			return (leftover_ids_to_delete.indexOf(kf.id) < 0);
+		};
+
+		for (var p in this._data[name].parameters) {
+			this._data[name].parameters[p].data = this._data[name].parameters[p].data.filter(not_leftover_id);
+		}
+
 		this.trigger(this._data);
 		
 	},
@@ -446,6 +467,13 @@ var vticonStore = Reflux.createStore({
 		this._data[name].selectedTimeRange.time2 = Math.max(0, Math.min(this._data[name].duration, time2));
 
 		this.trigger(this._data);
+	},
+
+	onSelectAllTimeRange(name="")
+	{
+		name = this._selectVTIcon(name);
+		LogStore.actions.log("VTICON_SELECTALLTIME_"+name);
+		this.onSelectTimeRange(0, this._data[name].duration, name);
 	},
 
 	onUnselectTimeRange(name="")

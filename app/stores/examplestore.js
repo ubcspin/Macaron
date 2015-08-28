@@ -2,6 +2,7 @@ import Reflux from 'reflux';
 
 var LogStore = require('./logstore.js');
 var VTIconStore = require('./vticonstore.js');
+var PlaybackStore = require('./playbackstore.js');
 var EXAMPLE_KEY = "example"; //TODO: More general?
 
 
@@ -1353,8 +1354,9 @@ var exampleStore = Reflux.createStore({
 				this._data.examples[ex].selected = (ex === foundName);
 			}
 			VTIconStore.actions.setVTIcon(this._data.examples[foundName], name=EXAMPLE_KEY);
+      PlaybackStore.actions.setTime(0);
       LogStore.actions.log("EXAMPLE_SELECT_"+foundName);
-		}
+    }
 
 		this.trigger(this._data);
 	}
