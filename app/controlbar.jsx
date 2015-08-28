@@ -86,7 +86,7 @@ var ControlBar = React.createClass({
 					 <a class="btn" href="#"><i onClick={this._onSkipBackwardClick} className="fa fa-step-backward" style={buttonStyle}></i></a>
 					 <a class="btn" href="#"><i onClick={this._onPlayClick} className={iconText} style={buttonStyle}></i></a>
 					 <a class="btn" href="#"><i onClick={this._onSkipForwardClick} className="fa fa-step-forward" style={buttonStyle}></i></a>
-					 <a class="btn" href="#"><span onClick={this._onMuteClick} className="unselectable"><input type="checkbox" checked={this.props.mute}/>Mute</span></a>
+					 <a class="btn" href="#"><span onClick={this._onMuteClick} className="unselectable mute"><input type="checkbox" checked={this.props.mute}/>Mute</span></a>
 				</div>	
 			</div>
 			);
