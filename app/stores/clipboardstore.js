@@ -47,7 +47,7 @@ var clipboardStore = Reflux.createStore({
 			if (this._vticons[n].selected)
 			{
 				this._lowest_time = this._vticons[n].duration;
-
+				this._highest_time = 0;
 				for (var p in this._vticons[n].parameters)
 				{
 					var keyframes_to_add = [];
@@ -55,6 +55,7 @@ var clipboardStore = Reflux.createStore({
 						var d = this._vticons[n].parameters[p].data[i];
 						if (d.selected) {
 							this._lowest_time = Math.min(this._lowest_time, d.t);
+							this._highest_time = Math.max(this._highest_time, d.t);
 							keyframes_to_add.push(
 							{
 								t:d.t,
@@ -67,7 +68,7 @@ var clipboardStore = Reflux.createStore({
 
 					if (keyframes_to_add.length > 0)
 					{
-						LogStore.actions.log("COPY_"+n+"_"+keyframes_to_add.length);
+						LogStore.actions.log("COPY_"+n+"_"+keyframes_to_add.length+"_"+this._lowest_time+"_"+this._highest_time);
 						this._clipboard[p] = keyframes_to_add;
 					}
 				}
@@ -125,7 +126,7 @@ var clipboardStore = Reflux.createStore({
 
 					if (keyframes_to_add.length > 0)
 					{
-						LogStore.actions.log("COPYTIME_"+n+"_"+keyframes_to_add.length);
+						LogStore.actions.log("COPYTIME_"+n+"_"+keyframes_to_add.length+"_"+this._lowest_time+"_"+this._highest_time);
 						this._clipboard[p] = keyframes_to_add;
 					}
 				}

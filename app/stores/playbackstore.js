@@ -153,6 +153,8 @@ var playbackStore = Reflux.createStore({
 			this._data['currentTime'] = this._vtduration;
 			this._data.playing = false;
 			this._stopUpdateTimer();
+			LogStore.actions.log("PLAYBACK_PLAYEND");
+
 		}
 		this.trigger(this._data);
 	},
