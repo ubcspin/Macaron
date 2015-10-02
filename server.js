@@ -20,6 +20,7 @@ var board, myServo;
 
 app.use("/css", express.static(__dirname + '/css'));
 app.use("/build", express.static(__dirname + '/build'));
+app.use("/dist", express.static(__dirname + '/dist'));
 app.use("/thirdparty", express.static(__dirname + '/thirdparty'));
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/build/index.html');
