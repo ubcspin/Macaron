@@ -24,7 +24,7 @@ var IconVis = React.createClass({
 		interpolateParameters: React.PropTypes.func.isRequired,
 		name : React.PropTypes.string.isRequired,
 		selection : React.PropTypes.object.isRequired			},
-	
+
 	getDefaultProps: function() {
 	    return {
 	      height: 25,
@@ -41,6 +41,7 @@ var IconVis = React.createClass({
 	},
 
 	onVTIconChange: function(vticon) {
+		var socket = io();
 	 	var scaleY = d3.scale.linear()
                     .domain( [-1, 1]) // return value from sine
                     .range([0, this.props.height]);
@@ -50,6 +51,9 @@ var IconVis = React.createClass({
 		this._visPath = this.computeWaveformPath(this.props.vticon,
 			scaleX, scaleY,
 			this.props.resolution, this.props.maxFrequencyRendered, this.props.limitFrequencies);
+		console.log('changing vticon');
+		socket.emit('path',this._visPath);
+
 	},
 
 	onMouseDown: function(e) {
@@ -85,7 +89,7 @@ var IconVis = React.createClass({
 								});
 		var currentTimePath = currentTimeLineFunc([
 						[scaleX(this.props.currentTime), 0],
-						[scaleX(this.props.currentTime), this.props.height]	
+						[scaleX(this.props.currentTime), this.props.height]
 				]);
 
 		var playheadLine = <path />;
@@ -104,7 +108,7 @@ var IconVis = React.createClass({
 				tLeft = this.props.vticon.selectedTimeRange.time2;
 				tRight = this.props.vticon.selectedTimeRange.time1;
 			}
-			
+
 			var x = scaleX(tLeft);
 			var y = 0;
 			var width = scaleX(tRight) - x;
@@ -112,7 +116,7 @@ var IconVis = React.createClass({
 
 			selectionSquare = <rect
 				x={x}
-				y={y} 
+				y={y}
 				width={width}
 				height={height}
 				fill={this.props.selectionColor}

@@ -3,10 +3,10 @@ import React from 'react';
 import Reflux from 'reflux';
 import d3 from 'd3';
 
+var BitGen = require('./bitgen.jsx'); // must precede editor header
 var EditorHeader = require('./editorheader.jsx');
 var ControlBar = require('./controlbar.jsx');
 var SoundGen = require('./soundgen.jsx'); //TODO
-var BitGen = require('./bitgen.jsx');
 var PlayHead = require('./playhead.jsx');
 var IconVis = require('./iconvis.jsx');
 var AnimationWindow = require('./animationwindow.jsx');

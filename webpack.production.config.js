@@ -4,6 +4,7 @@ var pathToReact = path.resolve(node_modules, 'react/dist/react.min.js');
 
 config = {
     entry: path.resolve(__dirname, 'app/main.js'),
+    cache:true,
     resolve: {
         alias: {
           'react': pathToReact
