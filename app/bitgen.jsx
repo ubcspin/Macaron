@@ -12,6 +12,8 @@ import React from 'react';
 require('./../thirdparty/audiolet/audiolet.js');
 require('./../thirdparty/socket/socket.io.js');
 
+var socket = io();
+
 var SCALE_FUNCTION = function(in_gain, in_freq) {
 	var rv = in_gain;
 	var pf = 0;

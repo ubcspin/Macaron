@@ -3,7 +3,6 @@
 //------------------------------------------------------------------------------
 var express = require('express');
 var app = express();
-// var io = require('socket.io')(http);
 var five = require("johnny-five");
 var fs = require('fs');
 var path = require('path');
@@ -14,7 +13,7 @@ var path = require('path');
 var board, myServo;
 
 //------------------------------------------------------------------------------
-// Setup
+// Server setup
 //------------------------------------------------------------------------------
 
 
@@ -25,7 +24,6 @@ app.use("/thirdparty", express.static(__dirname + '/thirdparty'));
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/build/index.html');
 });
-
 var server = app.listen(8080, function () {
   var host = server.address().address;
   var port = server.address().port;
@@ -33,27 +31,16 @@ var server = app.listen(8080, function () {
   console.log('Example app listening at http://%s:%s', host, port);
 });
 
-
-// board = new five.Board();
-// var myServo;
-// board.on("ready", function() {
-// 	myServo = new five.Servo({
-// 		pin:9,
-// 		center:true,
-// 		range: [20,160]
-// 	});
-// 	board.repl.inject({
-// 		servo: myServo
-// 	});
-// 	io.emit('server_message','ready to start board');
-//     	console.log('sweep away, my captain');
-// });
+//------------------------------------------------------------------------------
+// Socket setup
+//------------------------------------------------------------------------------
+var io = require('socket.io')(server);
 
 //------------------------------------------------------------------------------
 // Socket functions (connect to index.html)
 //------------------------------------------------------------------------------
-// io.on('connection', function(socket){
-// 	console.log('a user connected');
+io.on('connection', function(socket){
+	console.log('a user connected');
 
 	//User disconnects
 	// socket.on('disconnect', function(){
@@ -79,4 +66,19 @@ var server = app.listen(8080, function () {
 	// 	myServo.stop();
 	// 	console.log('stopping servo');
 	// });
+});
+
+// board = new five.Board();
+// var myServo;
+// board.on("ready", function() {
+// 	myServo = new five.Servo({
+// 		pin:9,
+// 		center:true,
+// 		range: [20,160]
+// 	});
+// 	board.repl.inject({
+// 		servo: myServo
+// 	});
+// 	io.emit('server_message','ready to start board');
+//     	console.log('sweep away, my captain');
 // });
