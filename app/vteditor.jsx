@@ -6,6 +6,7 @@ import d3 from 'd3';
 var EditorHeader = require('./editorheader.jsx');
 var ControlBar = require('./controlbar.jsx');
 var SoundGen = require('./soundgen.jsx'); //TODO
+var BitGen = require('./bitgen.jsx');
 var PlayHead = require('./playhead.jsx');
 var IconVis = require('./iconvis.jsx');
 var AnimationWindow = require('./animationwindow.jsx');
@@ -24,11 +25,11 @@ var StudyStore = require('./stores/studystore.js')
 var VTEditor = React.createClass({
 	mixins : [
 				Reflux.connect(PlaybackStore.store, 'playback'), //emitted updates go to 'playback' key
-				Reflux.connect(VTIconStore.store, 'vticons'), //emitted updates go to 'vticon' key			
-				Reflux.connect(ScaleStore.store, 'scales'), //emitted updates go to 'scales' key			
-				Reflux.connect(SelectionStore.store, 'selection'), //emitted updates go to 'selection' key			
-				Reflux.connect(AnimationStore.store, 'animation'), //emitted updates go to 'animation' key						
-				Reflux.connect(StudyStore.store, 'study') //emitted updates go to 'study' key						
+				Reflux.connect(VTIconStore.store, 'vticons'), //emitted updates go to 'vticon' key
+				Reflux.connect(ScaleStore.store, 'scales'), //emitted updates go to 'scales' key
+				Reflux.connect(SelectionStore.store, 'selection'), //emitted updates go to 'selection' key
+				Reflux.connect(AnimationStore.store, 'animation'), //emitted updates go to 'animation' key
+				Reflux.connect(StudyStore.store, 'study') //emitted updates go to 'study' key
 	],
 
 
@@ -51,12 +52,12 @@ var VTEditor = React.createClass({
 
 		for(var i = 0; i < data.length; i++)
 		{
-			
+
 			if (data[i].t == t)
 			{
 				rv = data[i].value;
 			}
-			else if (data[i].t < t) 
+			else if (data[i].t < t)
 			{
 				if (prev == null || prev.t <= data[i].t) {
 					prev = data[i];
@@ -79,7 +80,7 @@ var VTEditor = React.createClass({
 				throw "No keyframes found in parameter " + p;
 			}
 			//if an exact match was found, we already stored rv
-				
+
 			} else if (next == null) {
 				//use prev
 				rv = prev.value;
@@ -88,7 +89,7 @@ var VTEditor = React.createClass({
 				rv = next.value;
 			} else {
 				//TODO: not just linear interpolation
-				if (prev.t == next.t) 
+				if (prev.t == next.t)
 				{
 					rv = prev.value;
 				} else {
@@ -108,7 +109,7 @@ var VTEditor = React.createClass({
 			}
 
 		}
-	
+
 		return rv;
 
 	} ,
@@ -117,7 +118,7 @@ var VTEditor = React.createClass({
 	interpolateParameters: function(t, name) {
 		var interpolateParameter = this.interpolateParameter;
 		//map _interpolateParameter to vticon keys
-		return Object.keys(this.state.vticons[name].parameters).reduce( function(obj, p) 
+		return Object.keys(this.state.vticons[name].parameters).reduce( function(obj, p)
 			{
 				obj[p] = interpolateParameter(p, t, name);
 				return obj;
@@ -178,9 +179,9 @@ var VTEditor = React.createClass({
    				if (e.ctrlKey || e.metaKey) {
    					if(this.state.vticons["example"].selected && (this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT))
    					{
-   						VTIconStore.actions.selectAllTimeRange();  
+   						VTIconStore.actions.selectAllTimeRange();
    					} else {
-   						VTIconStore.actions.selectAllKeyframes();   						
+   						VTIconStore.actions.selectAllKeyframes();
    					}
    				}
    				break;
@@ -205,7 +206,7 @@ var VTEditor = React.createClass({
    					}
    				}
    				break;
-   			case 88: //x	
+   			case 88: //x
    				if (e.ctrlKey || e.metaKey) {
 					//only delete in main editor
    					//TODO: should this check be somewhere else?
@@ -316,30 +317,30 @@ var VTEditor = React.createClass({
 						mute={this.state.playback.mute}/>
 					<PlayHead name="example"
 						displayPlayhead={this.state.vticons["example"].selected}
-						scaleX={scaleXExample} 
-						currentTime={this.state.playback.currentTime} 
-						duration={example_icon.duration} 
-						keyframeCircleRadius={this.props.keyframeCircleRadius} 
+						scaleX={scaleXExample}
+						currentTime={this.state.playback.currentTime}
+						duration={example_icon.duration}
+						keyframeCircleRadius={this.props.keyframeCircleRadius}
 						playheadFill={this.props.playheadFill}/>
 					<IconVis name="example"
-						scaleX={scaleXExample} 
-						vticon={example_icon} 
-						currentTime={this.state.playback.currentTime} 
-						keyframeCircleRadius={this.props.keyframeCircleRadius} 
-						playheadFill={this.props.playheadFill} 
-						interpolateParameters={this.interpolateParameters} 
+						scaleX={scaleXExample}
+						vticon={example_icon}
+						currentTime={this.state.playback.currentTime}
+						keyframeCircleRadius={this.props.keyframeCircleRadius}
+						playheadFill={this.props.playheadFill}
+						interpolateParameters={this.interpolateParameters}
 						interpolateParameter={this.interpolateParameter}
 						selection={this.state.selection}
 						selectable={iconVisSelectable} />
 					{Object.keys(example_icon.parameters).map( (p) => (
-							<KeyframeEditor 
-								name="example" 
-								scaleX={scaleXExample} 
-								currentTime={this.state.playback.currentTime} 
-								parameter={p} 
-								vticon={example_icon} 
-								keyframeCircleRadius={this.props.keyframeCircleRadius} 
-								playheadFill={this.props.playheadFill} 
+							<KeyframeEditor
+								name="example"
+								scaleX={scaleXExample}
+								currentTime={this.state.playback.currentTime}
+								parameter={p}
+								vticon={example_icon}
+								keyframeCircleRadius={this.props.keyframeCircleRadius}
+								playheadFill={this.props.playheadFill}
 								selection={this.state.selection}
 								selectable={keyframeSelectable}
 								visualization={visualization}
@@ -365,35 +366,35 @@ var VTEditor = React.createClass({
 						mute={this.state.playback.mute}/>
 					<PlayHead name="main"
 						displayPlayhead={this.state.vticons["main"].selected}
-						scaleX={scaleXMain} 
-						currentTime={this.state.playback.currentTime} 
-						duration={design_icon.duration} 
-						keyframeCircleRadius={this.props.keyframeCircleRadius} 
+						scaleX={scaleXMain}
+						currentTime={this.state.playback.currentTime}
+						duration={design_icon.duration}
+						keyframeCircleRadius={this.props.keyframeCircleRadius}
 						playheadFill={this.props.playheadFill}/>
 					<IconVis name="main"
-						scaleX={scaleXMain} 
-						vticon={design_icon} 
-						currentTime={this.state.playback.currentTime} 
-						keyframeCircleRadius={this.props.keyframeCircleRadius} 
-						playheadFill={this.props.playheadFill} 
-						interpolateParameters={this.interpolateParameters} 
+						scaleX={scaleXMain}
+						vticon={design_icon}
+						currentTime={this.state.playback.currentTime}
+						keyframeCircleRadius={this.props.keyframeCircleRadius}
+						playheadFill={this.props.playheadFill}
+						interpolateParameters={this.interpolateParameters}
 						interpolateParameter={this.interpolateParameter}
 						selection={this.state.selection}/>
 					{Object.keys(design_icon.parameters).map( (p) => (
-							<KeyframeEditor 
-								name="main" 
-								scaleX={scaleXMain} 
-								currentTime={this.state.playback.currentTime} 
-								parameter={p} 
-								vticon={design_icon} 
-								keyframeCircleRadius={this.props.keyframeCircleRadius} 
-								playheadFill={this.props.playheadFill} 
+							<KeyframeEditor
+								name="main"
+								scaleX={scaleXMain}
+								currentTime={this.state.playback.currentTime}
+								parameter={p}
+								vticon={design_icon}
+								keyframeCircleRadius={this.props.keyframeCircleRadius}
+								playheadFill={this.props.playheadFill}
 								selection={this.state.selection}/>
 						))}
 				</div>
 				{exampleEditor}
 				{exampleGallery}
-					
+
 			</div>);
 		},
 
@@ -401,7 +402,7 @@ var VTEditor = React.createClass({
 	/**
 	*Resizing functions
 	*/
-				
+
 	componentDidMount: function () {
 
 		window.addEventListener('resize', this.handleResize);
@@ -421,7 +422,7 @@ var VTEditor = React.createClass({
 	_updateScales : function() {
 		for (var n in this.state.scales)
 		{
-    		ScaleStore.actions.setTimelineRange(n, this._calculateTimelineRange(n));	
+    		ScaleStore.actions.setTimelineRange(n, this._calculateTimelineRange(n));
 
 			var actualLeft = this.refs[n+"EditorRef"].getDOMNode().offsetLeft;
 	    	// var actualTop = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
@@ -432,7 +433,7 @@ var VTEditor = React.createClass({
 	_calculateTimelineRange(name) {
 	    var actualWidth = this.refs[name+"EditorRef"].getDOMNode().clientWidth;
     	// var actualHeight = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
-		
+
 		return [this.props.timelineLeftOffset+this.props.keyframeCircleRadius, actualWidth-this.props.keyframeCircleRadius-this.props.timelineRightOffset];
 
 	}

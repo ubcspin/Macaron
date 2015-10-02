@@ -2,7 +2,6 @@ import React from 'react';
 var VTEditor = require('./vteditor.jsx');
 require('../css/macaron.css');
 
-
 main();
 
 function main() {
