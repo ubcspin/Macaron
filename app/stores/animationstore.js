@@ -156,6 +156,8 @@ var Car = {
 	}
 };
 
+var Bit = {};
+
 
 var BouncingBall = {
 	position: {
@@ -172,7 +174,8 @@ var Animations = {
 	'cat':Cat,
 	'car':Car,
 	'lightning':Lightning,
-	'snow': Snow
+	'snow': Snow,
+	'bit':Bit
 };
 
 
