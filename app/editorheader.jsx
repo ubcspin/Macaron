@@ -90,7 +90,7 @@ var EditorHeader = React.createClass({
 		var saveButton = <span />
 		if (this.props.displaySaveButton)
 		{
-			saveButton = (<button onClick={this._onSaveClick}>Finish</button>);
+			saveButton = (<button onClick={this._onSaveClick}>Save</button>);
 		}
 
 
