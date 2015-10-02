@@ -24,6 +24,10 @@ config = {
             loaders: ['imports?this=>window', 'script']
         },
         {
+            test:/socket\.io\.js/,
+            loaders: ['imports?this=>window', 'script']
+        },
+        {
             test: /\.css$/,
             loader: "style-loader!css-loader"
         }
