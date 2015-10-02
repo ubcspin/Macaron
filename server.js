@@ -40,45 +40,41 @@ var io = require('socket.io')(server);
 // Socket functions (connect to index.html)
 //------------------------------------------------------------------------------
 io.on('connection', function(socket){
-	console.log('a user connected');
+	console.log('User connected.');
 
 	//User disconnects
-	// socket.on('disconnect', function(){
-	// 	console.log('user disconnected');
-	// });
+	socket.on('disconnect', function(){
+		console.log('User disconnected.');
+	});
 
-	//Full servo motion
-	// socket.on('sweep', function(){
-    //     	io.emit('server_message', 'started arduino sweep');
-    //     	servo_start();
-	// 	console.log('start arduino sweep');
-	// });
+	// Test servo motion
+	socket.on('test', function(){
+        	io.emit('server_message', 'Started arduino sweep.');
+        	myServo.to(0);
+		console.log('Arduino test.');
+	});
 
-	// Go to a specific degree
-	// socket.on('to_degrees', function(deg) {
-	// 	var degrees = parseInt(deg);
-	// 	myServo.to(degrees);
-	// 	console.log('moving servo to ' + degrees + 'degrees');
-	// });
+    // Move to degree
+    socket.on('degree', function(degree){
+            var d = parseInt(degree);
+        	io.emit('server_message', 'Moving to degree ' + degree + ".");
+        	myServo.to(d);
+		console.log('Moving to degree ' + degree + ".");
+	});
 
-	// Stop all motion
-	// socket.on('stop', function() {
-	// 	myServo.stop();
-	// 	console.log('stopping servo');
-	// });
 });
 
-// board = new five.Board();
-// var myServo;
-// board.on("ready", function() {
-// 	myServo = new five.Servo({
-// 		pin:9,
-// 		center:true,
-// 		range: [20,160]
-// 	});
-// 	board.repl.inject({
-// 		servo: myServo
-// 	});
-// 	io.emit('server_message','ready to start board');
-//     	console.log('sweep away, my captain');
-// });
+board = new five.Board();
+var myServo;
+board.on("ready", function() {
+	myServo = new five.Servo({
+		pin:9,
+		center:true,
+		range: [0,180]
+	});
+	board.repl.inject({
+		servo: myServo
+	});
+	io.emit('server_message','Ready to start board.');
+    	console.log('Sweep away, my captain.');
+});

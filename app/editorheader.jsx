@@ -7,13 +7,15 @@ var StudyStore = require('./stores/studystore.js');
 var SaveLoadStore = require('./stores/saveloadstore.js');
 var LogStore = require('./stores/logstore.js');
 
+var IO = require('./../thirdparty/socket/socket.io.js');
+var socket = io();
 
 var EditorHeader = React.createClass({
 
 	mixins : [
 				Reflux.connect(AnimationStore.store, 'animation'), //emitted updates go to 'animation' key
 				Reflux.connect(StudyStore.store, 'study'), //emitted updates go to 'study' key
-					
+
 			],
 
 	propTypes: {
@@ -24,7 +26,8 @@ var EditorHeader = React.createClass({
 	    	displayAnimation:false,
 	    	displayInterfaceMode:false,
 	    	displaySaveButton:true,
-	    	displayStartButton:true
+	    	displayStartButton:true,
+			displayTestButton:true
 	    }
 	},
 
@@ -44,9 +47,14 @@ var EditorHeader = React.createClass({
 		SaveLoadStore.actions.save();
 	},
 
+	_onTestClick : function(e) {
+		// LogStore.actions.log("START_TASK");
+		socket.emit('test');
+	},
+
 	/**
 	* Rendering
-	* 
+	*
 	*/
 
 	render : function() {
@@ -93,6 +101,12 @@ var EditorHeader = React.createClass({
 			saveButton = (<button onClick={this._onSaveClick}>Finish</button>);
 		}
 
+		var testButton = <span />
+		if (this.props.displayTestButton)
+		{
+			testButton = (<button onClick={this._onTestClick}>Test</button>);
+		}
+
 
 		return (
 			<div className="header" style={headerStyle}>
@@ -101,6 +115,7 @@ var EditorHeader = React.createClass({
 				{animationOptionDisplay}
 				{interfaceModeDisplay}
 				{saveButton}
+				{testButton}
 			</div>
 			);
 	}
