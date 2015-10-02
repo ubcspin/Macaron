@@ -174,6 +174,7 @@ var WaveformPathMixin = {
 									return scaleY(d[1])
 								});
 
+			limitFrequencies = false;
 
 			//do icon visualization
 			var visPoints = [];
@@ -196,7 +197,14 @@ var WaveformPathMixin = {
 				if (i == 0) {
 					// phaseIntegral = frequency;
 				} else { 
-					phaseIntegral += (frequency)*dt_in_s;
+					var biasFactor = 0.5;
+					// console.log(phaseIntegral);
+					if ( phaseIntegral-Math.floor(phaseIntegral) > 0.25
+						&& phaseIntegral-Math.floor(phaseIntegral) < 0.75) 
+					{
+						biasFactor = 1.0 - biasFactor;
+					}
+					phaseIntegral += (biasFactor/0.5)*(frequency)*dt_in_s;
 				};
 				var v = amplitude * Math.sin(2*Math.PI*phaseIntegral);
 				visPoints.push ( [t_in_ms, v]);
