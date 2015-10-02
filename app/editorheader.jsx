@@ -27,7 +27,8 @@ var EditorHeader = React.createClass({
 	    	displayInterfaceMode:false,
 	    	displaySaveButton:true,
 	    	displayStartButton:true,
-			displayTestButton:true
+			displayTestButton:true,
+			displayRenderButton:true
 	    }
 	},
 
@@ -48,8 +49,11 @@ var EditorHeader = React.createClass({
 	},
 
 	_onTestClick : function(e) {
-		// LogStore.actions.log("START_TASK");
 		socket.emit('test');
+	},
+
+	_onRenderClick : function(e) {
+		socket.emit('render');
 	},
 
 	/**
@@ -107,6 +111,12 @@ var EditorHeader = React.createClass({
 			testButton = (<button onClick={this._onTestClick}>Test</button>);
 		}
 
+		var renderButton = <span />
+		if (this.props.displayRenderButton)
+		{
+			renderButton = (<button onClick={this._onRenderClick}>Render</button>);
+		}
+
 
 		return (
 			<div className="header" style={headerStyle}>
@@ -116,6 +126,7 @@ var EditorHeader = React.createClass({
 				{interfaceModeDisplay}
 				{saveButton}
 				{testButton}
+				{renderButton}
 			</div>
 			);
 	}

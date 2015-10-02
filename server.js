@@ -11,6 +11,7 @@ var path = require('path');
 // Globals
 //------------------------------------------------------------------------------
 var board, myServo;
+var rendered_path;
 
 //------------------------------------------------------------------------------
 // Server setup
@@ -62,6 +63,41 @@ io.on('connection', function(socket){
 		console.log('Moving to degree ' + degree + ".");
 	});
 
+    socket.on('path', function(path){
+        var unscaled_points = [];
+        var scaled_points = [];
+
+        var values = path.split(',');
+
+        console.log(parseFloat(values[10].split('L')[0]));
+        for (var i=10; i<values.length; i++) {
+            var value = parseFloat(values[i].split('L')[0]);
+            // if (value > max) {
+            //     max = value;
+            // }
+            // if (value < min) {
+            //     min = value;
+            // }
+            unscaled_points.push(value);
+        }
+        // console.log(unscaled_points);
+        var min = 0;  // may need to change these for scaling factor
+        var max = 50; //
+        var span = max - min;
+
+        for (var i=0; i < unscaled_points.length; i++) {
+            var p = ((unscaled_points[i] - min) / span) * 180;
+            scaled_points.push(p);
+        }
+        rendered_path = scaled_points;
+        console.log(scaled_points);
+    });
+	socket.on('render', function(){
+        render();
+		console.log('Loading points.');
+	});
+
+
 });
 
 board = new five.Board();
@@ -78,3 +114,15 @@ board.on("ready", function() {
 	io.emit('server_message','Ready to start board.');
     	console.log('Sweep away, my captain.');
 });
+
+function render() {
+    for(var i=0;i<rendered_path.length;i++) {
+        doSetTimeout(i);
+    }
+}
+function doSetTimeout(i) {
+    setTimeout(function(){
+        myServo.to(rendered_path[i]);
+        console.log('Moving servo to ' + rendered_path[i]);
+    },50 * i);
+}

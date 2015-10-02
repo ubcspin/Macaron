@@ -4,5 +4,7 @@
 
 */
 
-import React from 'react';
-require('./../thirdparty/audiolet/audiolet.js');
+// import React from 'react';
+// require('./../thirdparty/audiolet/audiolet.js');
+
+//wave = computeWaveformPath(vticon, scaleX, scaleY, resolution, maxFrequencyRendered, limitFrequencies);
