@@ -188,6 +188,12 @@ var WaveformPathMixin = {
 
 				var amplitude = this.interpolateParameter("amplitude", t_in_ms, vticon);//paramValues.amplitude;
 				var frequency = this.interpolateParameter("frequency", t_in_ms, vticon); //paramValues.frequency;
+				var bias = 0.5;
+				if ("bias" in vticon.parameters)
+				{
+					bias = this.interpolateParameter("bias", t_in_ms, vticon); //paramValues.bias;	
+				}
+
 				if (limitFrequencies) {
 					frequency = Math.min(maxFrequencyRendered, frequency/frequencyScaleFactor);
 				}
@@ -197,14 +203,13 @@ var WaveformPathMixin = {
 				if (i == 0) {
 					// phaseIntegral = frequency;
 				} else { 
-					var biasFactor = 0.5;
 					// console.log(phaseIntegral);
 					if ( phaseIntegral-Math.floor(phaseIntegral) > 0.25
 						&& phaseIntegral-Math.floor(phaseIntegral) < 0.75) 
 					{
-						biasFactor = 1.0 - biasFactor;
+						bias = 1.0 - bias;
 					}
-					phaseIntegral += (biasFactor/0.5)*(frequency)*dt_in_s;
+					phaseIntegral += (bias/0.5)*(frequency)*dt_in_s;
 				};
 				var v = amplitude * Math.sin(2*Math.PI*phaseIntegral);
 				visPoints.push ( [t_in_ms, v]);

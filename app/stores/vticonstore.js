@@ -67,7 +67,14 @@ var vticonStore = Reflux.createStore({
 								valueScale:[1,50], //Hz
 								data : [
 									{ id: 1, t: 1500, value:25, selected:false}]
+							},
+
+							bias: {
+								valueScale:[0.01,0.99], //normalized
+								data : [
+									{ id: 2, t: 1500, value:0.5, selected:false}]
 							}
+
 						}
 					},
 
@@ -97,7 +104,13 @@ var vticonStore = Reflux.createStore({
 									{ id: 9, t: 0, value:250, selected:false}, 
 									{ id: 10, t: 1200, value:50, selected:false},
 									{ id: 11, t: 1800, value:500, selected:false}]
+							},
+							bias: {
+								valueScale:[0.01,0.99], //normalized
+								data : [
+									{ id: 12, t: 1500, value:0.5, selected:false}]
 							}
+
 						}
 					}
 						
