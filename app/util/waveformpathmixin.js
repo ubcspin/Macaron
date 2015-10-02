@@ -204,12 +204,13 @@ var WaveformPathMixin = {
 					// phaseIntegral = frequency;
 				} else { 
 					// console.log(phaseIntegral);
+					var biasedFrequency = frequency/bias;
 					if ( phaseIntegral-Math.floor(phaseIntegral) > 0.25
-						&& phaseIntegral-Math.floor(phaseIntegral) < 0.75) 
+						&& phaseIntegral-Math.floor(phaseIntegral) <= 0.75) 
 					{
-						bias = 1.0 - bias;
+						biasedFrequency = frequency/(1-bias);
 					}
-					phaseIntegral += (bias/0.5)*(frequency)*dt_in_s;
+					phaseIntegral += biasedFrequency*dt_in_s;
 				};
 				var v = amplitude * Math.sin(2*Math.PI*phaseIntegral);
 				visPoints.push ( [t_in_ms, v]);
