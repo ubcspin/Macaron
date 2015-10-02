@@ -10,7 +10,9 @@ var AnimationWindow = React.createClass({
 	getDefaultProps: function() {
 		return {
 		      height: 50,
-		      width:'100%'
+		      width:'100%',
+		      frequency:50,
+		      amplitude:1
 		};
 
 	},
@@ -22,7 +24,6 @@ var AnimationWindow = React.createClass({
 			marginRight:'auto',
 			display:'block'
 		};
-
 
 		var animationContent = <group />;
 		var viewBox = "0 0 100 100";
@@ -209,6 +210,20 @@ var AnimationWindow = React.createClass({
 					<path d="M 21.129179 43.552906 C 19.453439 42.952906 17.917343 40.752906 17.079473 42.952906 C 16.241603 45.152906 19.872374 47.752906 19.872374 47.752906 C 19.872374 47.752906 21.268824 48.552906 22.106694 47.352906 C 22.944564 46.152906 22.804919 44.152906 21.129179 43.552906 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25"/>
 					<path d="M 11.390629 41.379976 L 9.4051344 40.495977 L 6.6319416 46.72467 L 8.617436 47.60867 Z" fill="white"/>
 				</g>);
+		} else if (this.props.animation === "bit")
+		{
+			var transformation = "";
+			var frequency = this.props.frequency;
+			var amplitude = this.props.amplitude;
+			transformation += " translate(-25," + ((1-amplitude)*50) + ")";
+			transformation += "scale("+1.33+","+(1+amplitude)+")";
+			animationContent = (
+				<g>
+					<g transform={transformation} stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1"><path d="M 82.275525 45.8 C 81.700727 42.346694 79.135463 38.983972 74.57973 36.339208 C 64.15274 30.285907 47.247262 30.285907 36.82027 36.339208 C 32.264538 38.983973 29.699274 42.346695 29.124477 45.800002 Z" fill="black"/></g>
+					// <g stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1"><ellipse cx="55.7" cy="47.29962" rx="26.700043" ry="15.500405" fill="black"/><path d="M 28.6 23.4 L 29.4 23.4 C 37.242443 23.4 43.6 29.757557 43.6 37.6 L 43.6 37.6 C 43.6 45.442444 37.242443 51.8 29.4 51.8 L 28.6 51.8 C 20.757557 51.8 14.4 45.442444 14.4 37.6 L 14.4 37.6 C 14.4 29.757557 20.757557 23.4 28.6 23.4 Z" fill="black"/><path d="M 28.6 23.4 L 29.4 23.4 C 37.242443 23.4 43.6 29.757557 43.6 37.6 L 43.6 37.6 C 43.6 45.442444 37.242443 51.8 29.4 51.8 L 28.6 51.8 C 20.757557 51.8 14.4 45.442444 14.4 37.6 L 14.4 37.6 C 14.4 29.757557 20.757557 23.4 28.6 23.4 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path d="M 26.1 41.4 L 29 47.2 L 31.9 41.4 Z" fill="white"/><path d="M 16.2 18.8 L 30.4 33 L 16.2 33 Z" fill="black"/><path d="M 41.7 18.8 L 27.5 33 L 41.7 33 Z" fill="black"/><path d="M 19 34.26288 C 19 34.26288 20.743552 33.687607 22.925 33.6875 C 25.106448 33.687393 26.7 34.2625 26.7 34.2625" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path d="M 38.7 34.26288 C 38.7 34.26288 36.956448 33.687607 34.775 33.6875 C 32.593552 33.687393 31 34.2625 31 34.2625" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><ellipse cx="43.3" cy="62.5" rx="12.30002" ry="3.9000063" fill="black"/><ellipse cx="37.5" cy="57.5" rx="12.30002" ry="3.9000063" fill="black"/><ellipse cx="65.5" cy="62.5" rx="12.30002" ry="3.9000063" fill="black"/><ellipse cx="72.3" cy="53.05" rx="10.700017" ry="12.0500194" fill="black"/><path d="M 73.8 42.00038 C 73.8 42.00038 83.600003 41.875001 87.2 47.8 C 90.8 53.725 91 60.85826 88.6 64.60038 C 86.200003 68.3425 81.4 73.00038 80.2 73.00038 C 79 73.00038 76.6 70.00038 76.6 69.00038 C 76.6 68.00038 82.925003 65.7175 84.4 61.60038 C 85.875 57.48326 86.05 53.87462 83.2 49.79962 C 80.350003 45.724622 75 46.00038 75 46.00038 Z" fill="black"/></g>
+
+				</g>
+				);
 		}
 
 		

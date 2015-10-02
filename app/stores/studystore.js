@@ -1,6 +1,8 @@
 import Reflux from 'reflux';
 
 var REQUEST_PARTICIPANT_ID = true;
+var REQUEST_ANIMATION_MODE = false;
+var REQUEST_INTERFACE = false;
 
 var DisplayModes = {
 	NO_EXAMPLES:0,
@@ -24,8 +26,8 @@ var studyStore = Reflux.createStore({
 
 
 		var pid = "test";
-		var animationMode = "none";
-		var interfaceText = "none";
+		var animationMode = "bit";
+		var interfaceText = "hi";
 
 		if (REQUEST_PARTICIPANT_ID)
 		{
@@ -33,12 +35,18 @@ var studyStore = Reflux.createStore({
 			if (pid == null || pid == "") {
 				pid = "test";
 			}
+		}
 
+		if (REQUEST_ANIMATION_MODE)
+		{
 			animationMode = prompt("Animation: ", "");
 			if (animationMode == null || animationMode == "") {
-				animationMode = "none";
+				animationMode = "bit";
 			}
+		}
 
+		if(REQUEST_INTERFACE)
+		{
 			interfaceText = prompt("Interface: ", "");
 			if (interfaceText == null || interfaceText == "") {
 				interfaceText = "none";
