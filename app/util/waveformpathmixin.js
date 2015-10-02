@@ -174,12 +174,14 @@ var WaveformPathMixin = {
 									return scaleY(d[1])
 								});
 
+			limitFrequencies = false;
 
 			//do icon visualization
 			var visPoints = [];
 			var lastFrequency = 0;
 			var dt_in_s = vticon.duration/1000/resolution;
 			var phaseIntegral = 0;
+			var phaseIntegralTexture = 0;
 			var frequencyScaleFactor = Math.max(vticon.parameters.frequency.valueScale[0], vticon.parameters.frequency.valueScale[1])/maxFrequencyRendered;
 			for (var i = 0; i < resolution; i++) {
 				var t_in_ms = i/resolution*vticon.duration;
@@ -187,6 +189,22 @@ var WaveformPathMixin = {
 
 				var amplitude = this.interpolateParameter("amplitude", t_in_ms, vticon);//paramValues.amplitude;
 				var frequency = this.interpolateParameter("frequency", t_in_ms, vticon); //paramValues.frequency;
+				var ampTex = 0;
+				if ("ampTex" in vticon.parameters)
+				{
+					ampTex = this.interpolateParameter("ampTex", t_in_ms, vticon); //paramValues.bias;	
+				}
+				var freqTex = 10;
+				if ("freqTex" in vticon.parameters)
+				{
+					freqTex = this.interpolateParameter("freqTex", t_in_ms, vticon); //paramValues.bias;	
+				}
+				var bias = 0.5;
+				if ("bias" in vticon.parameters)
+				{
+					bias = this.interpolateParameter("bias", t_in_ms, vticon); //paramValues.bias;	
+				}
+
 				if (limitFrequencies) {
 					frequency = Math.min(maxFrequencyRendered, frequency/frequencyScaleFactor);
 				}
@@ -196,9 +214,17 @@ var WaveformPathMixin = {
 				if (i == 0) {
 					// phaseIntegral = frequency;
 				} else { 
-					phaseIntegral += (frequency)*dt_in_s;
+					// console.log(phaseIntegral);
+					var biasedFrequency = frequency/bias;
+					if ( phaseIntegral-Math.floor(phaseIntegral) > 0.25
+						&& phaseIntegral-Math.floor(phaseIntegral) <= 0.75) 
+					{
+						biasedFrequency = frequency/(1-bias);
+					}
+					phaseIntegral += biasedFrequency*dt_in_s;
+					phaseIntegralTexture += freqTex*dt_in_s
 				};
-				var v = amplitude * Math.sin(2*Math.PI*phaseIntegral);
+				var v = amplitude * Math.sin(2*Math.PI*phaseIntegral) + ampTex*Math.sin(2*Math.PI*phaseIntegralTexture);
 				visPoints.push ( [t_in_ms, v]);
 				lastFrequency = frequency;
 			}

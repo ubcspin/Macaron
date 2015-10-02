@@ -32,12 +32,18 @@ var scaleStore = Reflux.createStore({
 				scaleTimeline:stub_fn,
 				scaleParameter:{
 					amplitude:stub_fn,
-					frequency:stub_fn
+					frequency:stub_fn,
+					ampTex:stub_fn,
+					freqTex:stub_fn,
+					bias:stub_fn
 				},
 				leftOffset:0,
 				topOffsetParameter:{
 					amplitude:0,
-					frequency:0
+					frequency:0,
+					ampTex:0,
+					freqTex:0,
+					bias:0
 				}			
 			};
 

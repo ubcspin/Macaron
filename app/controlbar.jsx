@@ -18,7 +18,7 @@ var ControlBar = React.createClass({
 	    return {
 	      width:'100%',
 	      background:'lightgrey',
-	      fontSize: "28pt",
+	      fontSize: "20pt",
 
 
 	    }

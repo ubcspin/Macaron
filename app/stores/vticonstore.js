@@ -64,10 +64,27 @@ var vticonStore = Reflux.createStore({
 							},
 
 							frequency: {
-								valueScale:[50,500], //Hz
+								valueScale:[0.01,3], //Hz
 								data : [
-									{ id: 1, t: 1500, value:250, selected:false}]
+									{ id: 1, t: 1500, value:1, selected:false}]
+							},
+							ampTex: {
+								valueScale:[0,1], //normalized
+								data : [
+									{ id: 2, t: 1500, value:0.5, selected:false}]
+							},
+							freqTex: {
+								valueScale:[10,50], //Hz
+								data : [
+									{ id: 3, t: 1500, value:25, selected:false}]
+							},
+
+							bias: {
+								valueScale:[0.10,0.90], //normalized
+								data : [
+									{ id: 4, t: 1500, value:0.5, selected:false}]
 							}
+
 						}
 					},
 
@@ -86,18 +103,20 @@ var vticonStore = Reflux.createStore({
 							amplitude: {
 								valueScale:[0,1], //normalized
 								data : [
-									{ id: 6, t: 600, value:0.5, selected:false}, 
-									{ id: 7, t: 1500, value:1, selected:false},
-									{ id: 8, t: 3000, value:0, selected:false}]
+									{ id: 6, t: 1500, value:0.5, selected:false}]
 							},
 
 							frequency: {
-								valueScale:[50,500], //Hz
+								valueScale:[0.01,3], //Hz
 								data : [
-									{ id: 9, t: 0, value:250, selected:false}, 
-									{ id: 10, t: 1200, value:50, selected:false},
-									{ id: 11, t: 1800, value:500, selected:false}]
+									{ id: 9, t: 1500, value:1, selected:false}]
+							},
+							bias: {
+								valueScale:[0.10,0.90], //normalized
+								data : [
+									{ id: 12, t: 1500, value:0.5, selected:false}]
 							}
+
 						}
 					}
 						
