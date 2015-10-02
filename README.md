@@ -38,11 +38,21 @@ And you will need two custom loaders for webpack, to import Audiolet, a non-NPM 
  - `npm install script-loader --save`
 
  As well, the following two loaders for loading CSS stylesheets:
- 
+
  - `npm install style-loader css-loader --save-dev`
 
-Now, you can build the environment with `npm run build`, and serve it on `localhost:8080` with `npm run dev`. When served, it will automatically refresh when you change components. 
+You'll need this for websockets:
+
+- `npm install socket.io --save`
+- `npm install express --save`
+
+And this to talk to the Arduino:
+
+- `npm install johnny-five --save`
+
+Now, you can build the environment with `npm run build`, and serve it on `localhost:8080` with `npm run dev`. When served, it will automatically refresh when you change components.
 For more information, follow this tutorial: https://github.com/christianalfoni/react-webpack-cookbook/wiki
+
 
 
 [nodejs]: http://nodejs.org
@@ -52,4 +62,3 @@ For more information, follow this tutorial: https://github.com/christianalfoni/r
 [d3]: http://d3js.org
 [reflux]: https://github.com/spoike/refluxjs
 [firebase]: https://www.firebase.com
-
