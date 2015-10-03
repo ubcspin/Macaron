@@ -331,7 +331,8 @@ var VTEditor = React.createClass({
 						interpolateParameters={this.interpolateParameters}
 						interpolateParameter={this.interpolateParameter}
 						selection={this.state.selection}
-						selectable={iconVisSelectable} />
+						selectable={iconVisSelectable}
+						logValues={true} />
 					{Object.keys(example_icon.parameters).map( (p) => (
 							<KeyframeEditor
 								name="example"

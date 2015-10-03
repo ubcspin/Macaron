@@ -69,7 +69,7 @@ io.on('connection', function(socket){
 
         var values = path.split(',');
 
-        console.log(parseFloat(values[10].split('L')[0]));
+        // console.log(parseFloat(values[10].split('L')[0]));
         for (var i=10; i<values.length; i++) {
             var value = parseFloat(values[i].split('L')[0]);
             // if (value > max) {
@@ -82,7 +82,7 @@ io.on('connection', function(socket){
         }
         // console.log(unscaled_points);
         var min = 0;  // may need to change these for scaling factor
-        var max = 50; //
+        var max = 25; //
         var span = max - min;
 
         for (var i=0; i < unscaled_points.length; i++) {
@@ -90,7 +90,7 @@ io.on('connection', function(socket){
             scaled_points.push(p);
         }
         rendered_path = scaled_points;
-        console.log(scaled_points);
+        // console.log(scaled_points);
     });
 	socket.on('render', function(){
         render();
@@ -124,5 +124,5 @@ function doSetTimeout(i) {
     setTimeout(function(){
         myServo.to(rendered_path[i]);
         console.log('Moving servo to ' + rendered_path[i]);
-    },50 * i);
+    },5 * i);
 }

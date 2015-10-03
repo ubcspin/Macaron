@@ -36,12 +36,12 @@ var IconVis = React.createClass({
 	      limitFrequencies:true,
   	      selectionColor:'#676767',
 	      selectionOpacity:0.2,
-  	      selectable:false
+  	      selectable:false,
+		  logValues:false
 	    }
 	},
 
 	onVTIconChange: function(vticon) {
-		var socket = io();
 	 	var scaleY = d3.scale.linear()
                     .domain( [-1, 1]) // return value from sine
                     .range([0, this.props.height]);
@@ -52,7 +52,13 @@ var IconVis = React.createClass({
 			scaleX, scaleY,
 			this.props.resolution, this.props.maxFrequencyRendered, this.props.limitFrequencies);
 		console.log('changing vticon');
-		socket.emit('path',this._visPath);
+
+		// Send to server side for eventual rendering
+		if (this.props.logValues) {
+			var socket = io();
+			socket.emit('path',this._visPath);
+		}
+
 
 	},
 
