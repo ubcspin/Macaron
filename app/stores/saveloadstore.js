@@ -17,9 +17,9 @@ var saveLoadStore = Reflux.createStore({
 	onSave() {
 		var data = JSON.stringify(VTIconStore.store.getInitialState()["main"], null, 2);
 		LogStore.actions.log("SAVE_"+data);
-		// var url = 'data:text/json;charset=utf8,' + encodeURIComponent(data);
-    	// window.open(url, '_blank');
-    	// window.focus();
+		var url = 'data:text/json;charset=utf8,' + encodeURIComponent(data);
+    	window.open(url, '_blank');
+    	window.focus();
 	}
 
 });
