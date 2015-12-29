@@ -1,6 +1,6 @@
 import Reflux from 'reflux';
 
-var REQUEST_PARTICIPANT_ID = true;
+var REQUEST_PARTICIPANT_ID = false;
 
 var DisplayModes = {
 	NO_EXAMPLES:0,
@@ -25,7 +25,7 @@ var studyStore = Reflux.createStore({
 
 		var pid = "test";
 		var animationMode = "none";
-		var interfaceText = "none";
+		var interfaceText = "hi";
 
 		if (REQUEST_PARTICIPANT_ID)
 		{
