@@ -23,7 +23,7 @@ var EditorHeader = React.createClass({
 	    return {
 	    	displayAnimation:false,
 	    	displayInterfaceMode:false,
-	    	displaySaveButton:false,
+	    	displaySaveButton:true,
 	    	displayStartButton:false
 	    }
 	},
@@ -61,6 +61,14 @@ var EditorHeader = React.createClass({
 		var selectedAnimation = this.state.animation.animation;
 		var selectedDisplayMode = this.state.study.currentMode;
 
+
+		var buttonStyle = {
+			marginLeft:'0.5em',
+			marginRight:'0.5em',
+			className:'unselectable',
+			fontSize:12
+		};
+
 		var animationOptionDisplay = <span />
 		if (this.props.displayAnimation)
 		{
@@ -90,7 +98,8 @@ var EditorHeader = React.createClass({
 		var saveButton = <span />
 		if (this.props.displaySaveButton)
 		{
-			saveButton = (<button onClick={this._onSaveClick}>Finish</button>);
+			saveButton = <a class="btn header" href="#" style={buttonStyle} onClick={this._onSaveClick}><i className="fa fa-download"></i> Save</a>
+			//saveButton = (<button onClick={this._onSaveClick}><i class="fa fa-download"></i>Finish</button>);
 		}
 
 
