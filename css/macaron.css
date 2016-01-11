@@ -35,10 +35,6 @@ body {
 
 }
 
-.btn.header:hover {
-    background-color: red
-}
-
 a:link {
     text-decoration: none;
     color:black;
