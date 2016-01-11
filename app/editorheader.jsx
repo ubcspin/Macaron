@@ -23,8 +23,8 @@ var EditorHeader = React.createClass({
 	    return {
 	    	displayAnimation:false,
 	    	displayInterfaceMode:false,
-	    	displaySaveButton:true,
-	    	displayStartButton:true
+	    	displaySaveButton:false,
+	    	displayStartButton:false
 	    }
 	},
 
@@ -97,7 +97,7 @@ var EditorHeader = React.createClass({
 		return (
 			<div className="header" style={headerStyle}>
 				{startButton}
-				<span className="title unselectable"> Editor </span>
+				<span className="title unselectable"> Macaron </span>
 				{animationOptionDisplay}
 				{interfaceModeDisplay}
 				{saveButton}
