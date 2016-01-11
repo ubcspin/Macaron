@@ -5,6 +5,8 @@ var ScaleStore = require('./scalestore.js');
 var VTIconStore = require('./vticonstore.js');
 var SelectionStore = require('./selectionstore.js');
 
+var LogStore = require('./logstore.js');
+
 
 //'enum' for possible draggables
 var Draggable = {
@@ -51,12 +53,14 @@ var dragStore = Reflux.createStore({
 	onStartPlayheadDrag(name, newtime) {
 		this._targetName = name;
 		this._dragging = Draggable.PLAYHEAD;
+		LogStore.actions.log("STARTDRAG_PLAYHEAD_"+name);
 		VTIconStore.actions.selectVTIcon(name);
 		PlaybackStore.actions.setTime(newtime);
 	},
 
 	onStartKeyframeDrag(name) {
 		this._targetName = name;
+		LogStore.actions.log("STARTDRAG_KEYFRAME_"+name);
 		VTIconStore.actions.startMovingSelectedKeyframes(name=this._targetName);
 		this._dragging = Draggable.KEYFRAME;
 	},
@@ -109,6 +113,10 @@ var dragStore = Reflux.createStore({
 		if(this._dragging == Draggable.SELECT)
 		{
 			SelectionStore.actions.stopSelecting();
+		}
+		if(this._dragging != Draggable.NONE)
+		{
+			LogStore.actions.log("STOPDRAG_"+this._dragging);	
 		}
 		this._dragging = Draggable.NONE;
 		this._targetName="";

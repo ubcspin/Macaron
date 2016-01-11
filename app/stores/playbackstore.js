@@ -1,6 +1,7 @@
 import Reflux from 'reflux';
 
 var VTIconStore = require('./vticonstore.js');
+var LogStore = require('./logstore.js');
 
 var PLAYBACK_RATE = 60; //Hz
 
@@ -18,6 +19,8 @@ var playbackActions = Reflux.createActions(
 
 		'stepBackward',
 		'stepForward',
+		'skipBackward',
+		'skipForward',
 
 		'toggleMute']
 
@@ -65,6 +68,7 @@ var playbackStore = Reflux.createStore({
 
 	onToggleMute() {
 		this._data.mute = !this._data.mute;
+		LogStore.actions.log("PLAYBACK_MUTE_"+this._data.mute);
 		this.trigger(this._data);
 	},
 
@@ -92,6 +96,12 @@ var playbackStore = Reflux.createStore({
 	onStepForward() {this.onSetTime(this._data.currentTime+STEP_AMOUNT);},
 
 
+
+	onSkipBackward() { this.onSetTime(0); },
+
+	onSkipForward() {this.onSetTime(this._vtduration);},
+
+
 	/**
 	* Play/Pause Action Functions
 	* 
@@ -106,6 +116,8 @@ var playbackStore = Reflux.createStore({
 	onSetPlaying(newplaying) {
 		this._data['playing'] = newplaying;
 		this.trigger(this._data);
+
+		LogStore.actions.log("PLAYBACK_SETPLAY_"+newplaying);
 
 		if(this._data['playing']) {
 			if (this._data.currentTime >= this._vtduration)
@@ -141,6 +153,8 @@ var playbackStore = Reflux.createStore({
 			this._data['currentTime'] = this._vtduration;
 			this._data.playing = false;
 			this._stopUpdateTimer();
+			LogStore.actions.log("PLAYBACK_PLAYEND");
+
 		}
 		this.trigger(this._data);
 	},

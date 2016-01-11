@@ -1,5 +1,7 @@
 import Reflux from 'reflux';
 
+var LogStore = require('./logstore.js');
+
 var vticonActions = Reflux.createActions(
 	[
 		'selectVTIcon',
@@ -21,6 +23,7 @@ var vticonActions = Reflux.createActions(
 		'selectAllKeyframes',
 
 		'selectTimeRange',
+		'selectAllTimeRange',
 		'unselectTimeRange',
 
 		'moveSelectedKeyframes',
@@ -57,17 +60,13 @@ var vticonStore = Reflux.createStore({
 							amplitude: {
 								valueScale:[0,1], //normalized
 								data : [
-									{ id: 0, t: 600, value:0.5, selected:false}, 
-									{ id: 1, t: 1500, value:1, selected:false},
-									{ id: 2, t: 3000, value:0, selected:false}]
+									{ id: 0, t: 1500, value:0.5, selected:false}]
 							},
 
 							frequency: {
 								valueScale:[50,500], //Hz
 								data : [
-									{ id: 3, t: 0, value:250, selected:false}, 
-									{ id: 4, t: 1200, value:50, selected:false},
-									{ id: 5, t: 1800, value:500, selected:false}]
+									{ id: 1, t: 1500, value:250, selected:false}]
 							}
 						}
 					},
@@ -144,6 +143,7 @@ var vticonStore = Reflux.createStore({
 				}
 			}
 		}
+		LogStore.actions.log("VTICON_SELECT_"+rv);
 		return rv;
 	},
 
@@ -191,6 +191,8 @@ var vticonStore = Reflux.createStore({
 		this._saveStateForUndo();
 		name = this._selectVTIcon(name);
 
+		LogStore.actions.log("VTICON_NEWKEYFRAME_"+name);
+
 		var new_id = this._addNewKeyframe(parameter, t, value, addToSelection, name=name);
 		if (new_id >= 0)
 		{
@@ -207,6 +209,7 @@ var vticonStore = Reflux.createStore({
 	{
 		this._saveStateForUndo();
 		name = this._selectVTIcon(name);
+		var leftover_ids_to_delete = [];
 
 		if (overwrite) {
 
@@ -249,6 +252,18 @@ var vticonStore = Reflux.createStore({
 
 			this._setSelectedKeyframes(ids_to_delete, true, name=name);
 			this.onDeleteSelectedKeyframes(name);
+
+			//store any remaining keyframes (e.g., if we deleted the last of them)
+			for (var p in this._data[name].parameters) {
+				for (var i = 0; i < this._data[name].parameters[p].data.length; i++)
+				{
+					if (this._data[name].parameters[p].data[i].t >= min[p] &&
+						this._data[name].parameters[p].data[i].t <= max[p])
+					{
+						leftover_ids_to_delete.push(this._data[name].parameters[p].data[i].id);
+					}
+				}
+			}
 		} 
 
 
@@ -259,6 +274,16 @@ var vticonStore = Reflux.createStore({
 				this._addNewKeyframe(p, parameter_keyframe_map[p][i].t, parameter_keyframe_map[p][i].value, true, name=name);
 			}
 		}
+
+		//delete leftover ids
+		var not_leftover_id = function(kf) {
+			return (leftover_ids_to_delete.indexOf(kf.id) < 0);
+		};
+
+		for (var p in this._data[name].parameters) {
+			this._data[name].parameters[p].data = this._data[name].parameters[p].data.filter(not_leftover_id);
+		}
+
 		this.trigger(this._data);
 		
 	},
@@ -444,6 +469,13 @@ var vticonStore = Reflux.createStore({
 		this.trigger(this._data);
 	},
 
+	onSelectAllTimeRange(name="")
+	{
+		name = this._selectVTIcon(name);
+		LogStore.actions.log("VTICON_SELECTALLTIME_"+name);
+		this.onSelectTimeRange(0, this._data[name].duration, name);
+	},
+
 	onUnselectTimeRange(name="")
 	{
 		name = this._selectVTIcon(name);
@@ -501,6 +533,8 @@ var vticonStore = Reflux.createStore({
 
 	onDeleteSelectedKeyframes(name="") {
 		name = this._selectVTIcon(name);
+
+		LogStore.actions.log("VTICON_DELETEKEYFRAMES_"+name);
 
 		var kfNotSelected = function(value) {
 			return !value.selected;
@@ -561,17 +595,20 @@ var vticonStore = Reflux.createStore({
 	 	var state = {};
 	 	for (name in this._data)
 	 	{
-	 		state.duration = this._data[name].duration;
-		 	state.parameters = {};
+	 		state[name] = {};
+	 		state[name].duration = this._data[name].duration;
+	 		state[name].selectedTimeRange = this._data[name].selectedTimeRange;
+	 		state[name].selected = this._data[name].selected;
+		 	state[name].parameters = {};
 		 	for (var p in this._data[name].parameters)
 		 	{
-		 		state.parameters[p] = {};
-		 		state.parameters[p].valueScale = this._data[name].parameters[p].valueScale;
-		 		state.parameters[p].data = [];
+		 		state[name].parameters[p] = {};
+		 		state[name].parameters[p].valueScale = this._data[name].parameters[p].valueScale;
+		 		state[name].parameters[p].data = [];
 		 		for (var i = 0; i < this._data[name].parameters[p].data.length; i++)
 		 		{
 		 			var d = this._data[name].parameters[p].data[i];
-		 			state.parameters[p].data.push({
+		 			state[name].parameters[p].data.push({
 		 				t:d.t,
 		 				value:d.value,
 		 				selected:d.selected,
@@ -602,19 +639,19 @@ var vticonStore = Reflux.createStore({
 
 			 	for (var p in this._data[name].parameters)
 			 	{
-			 		if (this._data[name].parameters[p].valueScale != pState.parameters[p].valueScale)
+			 		if (this._data[name].parameters[p].valueScale != pState[name].parameters[p].valueScale)
 			 		{
 			 			rv = true;
 			 		}
 
-			 		if (this._data[name].parameters[p].data.length != pState.parameters[p].data.length)
+			 		if (this._data[name].parameters[p].data.length != pState[name].parameters[p].data.length)
 			 		{
 			 			rv = true;
 			 		} else {
 			 			for (var i = 0; i < this._data[name].parameters[p].data.length; i++)
 				 		{
 				 			var d = this._data[name].parameters[p].data[i];
-				 			var pd = pState.parameters[p].data[i];
+				 			var pd = pState[name].parameters[p].data[i];
 				 			if (d.t != pd.t || d.value != pd.value || d.id != pd.id)
 				 			{
 				 				rv = true;
@@ -640,6 +677,7 @@ var vticonStore = Reflux.createStore({
 	 onUndo() {
 	 	if (this._previousStates.length > 0 )
 	 	{
+			LogStore.actions.log("UNDO");
 	 		this._nextStates.push(this._copyState());
 	 		this._data = this._previousStates.pop();
 	 		this.trigger(this._data);
@@ -649,6 +687,7 @@ var vticonStore = Reflux.createStore({
 	 onRedo() {
 	 	if (this._nextStates.length > 0 )
 	 	{
+			LogStore.actions.log("REDO");
 	 		this._previousStates.push(this._copyState());
 	 		this._data = this._nextStates.pop();
 	 		this.trigger(this._data);

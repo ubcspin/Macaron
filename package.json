@@ -1,11 +1,13 @@
 {
   "scripts": {
     "build": "webpack",
-    "dev": "webpack-dev-server --devtool eval --progress --colors --hot --content-base build"
+    "dev": "webpack-dev-server --devtool eval --progress --colors --hot --content-base build",
+    "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js"
   },
   "dependencies": {
     "d3": "^3.5.6",
     "exports-loader": "^0.6.2",
+    "firebase": "^2.2.9",
     "imports-loader": "^0.6.4",
     "react": "^0.13.3",
     "reflux": "^0.2.9",

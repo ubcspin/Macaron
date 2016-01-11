@@ -3,14 +3,14 @@ var node_modules = path.resolve(__dirname, 'node_modules');
 var pathToReact = path.resolve(node_modules, 'react/dist/react.min.js');
 
 config = {
-    entry: ['webpack/hot/dev-server', path.resolve(__dirname, 'app/main.js')],
+    entry: path.resolve(__dirname, 'app/main.js'),
     resolve: {
         alias: {
           'react': pathToReact
         }
     },
     output: {
-        path: path.resolve(__dirname, 'build'),
+        path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
     },
     module: {

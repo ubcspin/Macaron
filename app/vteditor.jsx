@@ -131,7 +131,8 @@ var VTEditor = React.createClass({
 			playheadFill:"red",
 			timelineLeftOffset:60,
 			timelineRightOffset:20,
-			examplesModifiable:false
+			examplesModifiable:false,
+			playbackAtEndOfVTIcon:false
 		}
 
 	},
@@ -175,7 +176,12 @@ var VTEditor = React.createClass({
    				break;
    			case 65: //a
    				if (e.ctrlKey || e.metaKey) {
-   					VTIconStore.actions.selectAllKeyframes();
+   					if(this.state.vticons["example"].selected && (this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT))
+   					{
+   						VTIconStore.actions.selectAllTimeRange();  
+   					} else {
+   						VTIconStore.actions.selectAllKeyframes();   						
+   					}
    				}
    				break;
    			case 67: //c
@@ -241,7 +247,13 @@ var VTEditor = React.createClass({
 		// TODO: sound of SELECTED icon
 		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime, this.state.playback.playingIcon);
 		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime, this.state.playback.playingIcon);
-		
+
+		var amplitude_for_soundgen = 0;
+		if (this.props.playbackAtEndOfVTIcon)
+		{
+			amplitude_for_soundgen = amplitude;
+		}
+
 		var scaleXMain = this.state.scales.main.scaleTimeline;
 		var scaleXExample = this.state.scales.example.scaleTimeline;
 
@@ -249,25 +261,55 @@ var VTEditor = React.createClass({
 		var example_icon = this.state.vticons["example"];
 
 
-		var editorStyle = {
-			width:"45%",
+		var designStyle = {
+			width:"44%",
 			marginLeft:'auto',
 			marginRight:'auto',
-			display:"block"};
+			display:"block",
+			borderStyle:"solid",
+			borderWidth:0
+		};
+		var exampleStyle = {
+			width:"44%",
+			marginLeft:'auto',
+			marginRight:'auto',
+			display:"block",
+			borderStyle:"solid",
+			borderWidth:0
+		};
 
 
 		var exampleEditor = <div />;
 		var exampleGallery = <div />;
 
+		if(design_icon.selected) {
+			designStyle.borderColor="black";
+			exampleStyle.borderColor="white";
+			if (this.state.playback.currentTime < this.state.vticons.main.duration)
+			{
+				amplitude_for_soundgen = amplitude;
+			}
+
+		} else {
+			designStyle.borderColor="white";
+			exampleStyle.borderColor="black";
+			if (this.state.playback.currentTime < this.state.vticons.example.duration)
+			{
+				amplitude_for_soundgen = amplitude;
+			}
+		}
+
 		if(this.state.study.currentMode != this.state.study.modes.NO_EXAMPLES) {
-			editorStyle.float="left";
+			exampleStyle.float="left";
+			designStyle.float="left";
 			var iconVisSelectable = (this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT);
 			var keyframeSelectable = (this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT);
 			var visualization = ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT)
 								|| ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_LOWSELECT) ));
+			var visualizeTicks = keyframeSelectable;
 			var modifiable = this.props.examplesModifiable;
 			exampleEditor = (
-			<div name="example" id="exampleeditor" ref="exampleEditorRef" style={editorStyle}>
+			<div name="example" id="exampleeditor" ref="exampleEditorRef" style={exampleStyle}>
 					<ControlBar
 						name="example"
 						playing={this.state.playback.playing}
@@ -301,6 +343,7 @@ var VTEditor = React.createClass({
 								selection={this.state.selection}
 								selectable={keyframeSelectable}
 								visualization={visualization}
+								visualizeTicks={visualizeTicks}
 								modifiable={modifiable} />
 						))}
 				</div>);
@@ -310,12 +353,12 @@ var VTEditor = React.createClass({
 		return (
 			<div id="app" ref="appRef">
 				<EditorHeader />
-				<SoundGen frequency={frequency} amplitude={amplitude} mute={this.state.playback.mute} />
+				<SoundGen frequency={frequency} amplitude={amplitude_for_soundgen} mute={this.state.playback.mute} />
 				<AnimationWindow
 						name="main"
 						animation={this.state.animation.animation}
 						animationParameters={this.state.animation.animationParameters} />
-				<div name="main" id="maineditor" ref="mainEditorRef" style={editorStyle}>
+				<div name="main" id="maineditor" ref="mainEditorRef" style={designStyle}>
 					<ControlBar
 						name="main"
 						playing={this.state.playback.playing}

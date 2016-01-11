@@ -18,6 +18,10 @@ body {
 	padding:5px;
 }
 
+.mute {
+    font-size:18pt;
+}
+
 /* PlayHead */
 .playhead {
 	height:20px;
