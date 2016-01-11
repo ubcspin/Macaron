@@ -24,7 +24,8 @@ var EditorHeader = React.createClass({
 	    	displayAnimation:false,
 	    	displayInterfaceMode:false,
 	    	displaySaveButton:true,
-	    	displayStartButton:false
+	    	displayStartButton:false,
+			uploadFileID:"uploadedFile"
 	    }
 	},
 
@@ -42,6 +43,14 @@ var EditorHeader = React.createClass({
 
 	_onSaveClick : function(e) {
 		SaveLoadStore.actions.save();
+	},
+
+	_onLoadClick : function(e) {
+		var uploadedFiles = document.getElementById(this.props.uploadFileID);
+		if (uploadedFiles.files.length > 0) {
+			SaveLoadStore.actions.loadMacaronFile(uploadedFiles.files[0]);
+		}
+		uploadedFiles.value = [];
 	},
 
 	/**
@@ -98,8 +107,15 @@ var EditorHeader = React.createClass({
 		var saveButton = <span />
 		if (this.props.displaySaveButton)
 		{
-			saveButton = <a class="btn header" href="#" style={buttonStyle} onClick={this._onSaveClick}><i className="fa fa-download"></i> Save</a>
+			saveButton = (<a class="btn header" style={buttonStyle} onClick={this._onSaveClick} ><i className="fa fa-download"></i> Save</a>);
 			//saveButton = (<button onClick={this._onSaveClick}><i class="fa fa-download"></i>Finish</button>);
+		}
+
+		var loadButton = <span />
+		if (this.props.displaySaveButton)
+		{
+			// loadButton = (<a class="btn header" style={buttonStyle} onClick={this._onLoadClick} ><i className="fa fa-upload"></i> Load</a>);
+			loadButton = (<input type="file" id={this.props.uploadFileID} onChange={this._onLoadClick}></input>);
 		}
 
 
@@ -110,6 +126,7 @@ var EditorHeader = React.createClass({
 				{animationOptionDisplay}
 				{interfaceModeDisplay}
 				{saveButton}
+				{loadButton}
 			</div>
 			);
 	}
