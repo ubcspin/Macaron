@@ -23,8 +23,9 @@ var EditorHeader = React.createClass({
 	    return {
 	    	displayAnimation:false,
 	    	displayInterfaceMode:false,
-	    	displaySaveButton:false,
-	    	displayStartButton:false
+	    	displaySaveButton:true,
+	    	displayStartButton:false,
+			uploadFileID:"uploadedFile"
 	    }
 	},
 
@@ -44,6 +45,18 @@ var EditorHeader = React.createClass({
 		SaveLoadStore.actions.save();
 	},
 
+	_onLoadButtonClick : function(e) {
+		document.getElementById(this.props.uploadFileID).click();
+	},
+
+	_onLoadClick : function(e) {
+		var uploadedFiles = document.getElementById(this.props.uploadFileID);
+		if (uploadedFiles.files.length > 0) {
+			SaveLoadStore.actions.loadMacaronFile(uploadedFiles.files[0]);
+		}
+		uploadedFiles.value = [];
+	},
+
 	/**
 	* Rendering
 	* 
@@ -60,6 +73,14 @@ var EditorHeader = React.createClass({
 		var displayChangeCallback = this._onDisplayModeChange;
 		var selectedAnimation = this.state.animation.animation;
 		var selectedDisplayMode = this.state.study.currentMode;
+
+
+		var buttonStyle = {
+			marginLeft:'0.5em',
+			marginRight:'0.5em',
+			className:'unselectable',
+			fontSize:12
+		};
 
 		var animationOptionDisplay = <span />
 		if (this.props.displayAnimation)
@@ -90,7 +111,19 @@ var EditorHeader = React.createClass({
 		var saveButton = <span />
 		if (this.props.displaySaveButton)
 		{
-			saveButton = (<button onClick={this._onSaveClick}>Finish</button>);
+			saveButton = (<a class="btn header" style={buttonStyle} onClick={this._onSaveClick} ><i className="fa fa-download"></i> Save</a>);
+			//saveButton = (<button onClick={this._onSaveClick}><i class="fa fa-download"></i>Finish</button>);
+		}
+
+		var loadButton = <span />
+		if (this.props.displaySaveButton)
+		{
+			// loadButton = (<a class="btn header" style={buttonStyle} onClick={this._onLoadClick} ><i className="fa fa-upload"></i> Load</a>);
+
+			loadButton = (<span>
+					<input type="file" className="hidden" id={this.props.uploadFileID} onChange={this._onLoadClick}></input>
+					<a class="btn header" style={buttonStyle} onClick={this._onLoadButtonClick} ><i className="fa fa-upload"></i> Load</a>
+					</span>);
 		}
 
 
@@ -98,9 +131,12 @@ var EditorHeader = React.createClass({
 			<div className="header" style={headerStyle}>
 				{startButton}
 				<span className="title unselectable"> Macaron </span>
-				{animationOptionDisplay}
-				{interfaceModeDisplay}
-				{saveButton}
+				<span className="menu">
+					{animationOptionDisplay}
+					{interfaceModeDisplay}
+					{saveButton}
+					{loadButton}
+				</span>
 			</div>
 			);
 	}
