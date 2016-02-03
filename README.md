@@ -33,7 +33,11 @@ For example I am Paul Bucci and I'm doing a polishing fix with the readme:
 
 `git checkout -b pb_polish_readmeupdate'
 
-After you've commited your changes, push the branch to the GitHub repo, then make a pull request. Either Paul, Oliver, or Matthew will review your code, make comments, and either merge to master or ask you to make some more changes.
+After you've commited your changes, push the branch to the GitHub repo:
+
+`git push origin <your initials>_<fix tag>_<one-or-two-word-description>'
+
+Then make a pull request. Either Paul, Oliver, or Matthew will review your code, make comments, and either merge to master or ask you to make some more changes.
 
 ## Detailed Build Environment Instructions
 
