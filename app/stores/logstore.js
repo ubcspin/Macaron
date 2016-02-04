@@ -1,7 +1,7 @@
 import Reflux from 'reflux';
 
 var Firebase = require("firebase");
-var AnimationStore = require('./animationstore.js');
+var AnimationStore = require('./animationstore.js'); //TODO: Delete this
 var StudyStore = require('./studystore.js');
 
 var FIREBASE_URL = "https://shining-heat-4904.firebaseio.com";
