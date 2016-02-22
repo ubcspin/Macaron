@@ -21,9 +21,9 @@ To run the server. If there are any issues, consult the detailed instructions be
 
 The cardinal rule for this repository is to LEAVE MASTER ALONE. For every new feature/bug fix/etc, the process is as follows. Make sure your local repository is current by:
 
-`git fetch`
-`git checkout master`
-`git pull master`
+`git fetch`;
+`git checkout master`;
+`git pull master`;
 
 You shouldn't have any conflicts, but if you do, make sure that your master branch is identical to the GitHub master. Then checkout your own branch:
 
