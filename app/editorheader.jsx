@@ -2,10 +2,13 @@
 import React from 'react';
 import Reflux from 'reflux';
 
+
+
 var AnimationStore = require('./stores/animationstore.js');
 var StudyStore = require('./stores/studystore.js');
 var SaveLoadStore = require('./stores/saveloadstore.js');
 var LogStore = require('./stores/logstore.js');
+
 
 
 var EditorHeader = React.createClass({
@@ -136,7 +139,10 @@ var EditorHeader = React.createClass({
 					{interfaceModeDisplay}
 					{saveButton}
 					{loadButton}
+                    
+					
 				</span>
+
 			</div>
 			);
 	}
