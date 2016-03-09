@@ -74,7 +74,7 @@ var userAgreementStore = Reflux.createStore({
         //userAgreementHeaderElement.id = "userAgreementHeaderElement";
         //userAgreementHeaderElement.innerHTML = "<h2 class='userAgreementHeader'>Privacy policy statement</h2>";
         //userAgreementHeaderElement.innerHTML = img;
-        userAgreementHeaderElement.innerHTML = "<h2 class='userAgreementHeader'>Privacy policy statement<img src='" + img.src + "' alt='Example Image' style='width:40px;height:51px;'></h2>";
+        userAgreementHeaderElement.innerHTML = "<h2 class='userAgreementHeader'> <img src='" + img.src + "' alt='Example Image' style='width:40px;height:50px;'>Privacy policy statement </h2>";
         document.getElementById("inner").appendChild(userAgreementHeaderElement);
     
         
