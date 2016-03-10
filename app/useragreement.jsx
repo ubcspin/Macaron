@@ -58,11 +58,11 @@ var userAgreement = React.createClass({
 
 
 		return (
-			<div className="userAgreement">
+			<span className="userAgreement">
 			  
 				{userAgreementButton}
 			 
-			</div>
+			</span>
 			);
 
     }

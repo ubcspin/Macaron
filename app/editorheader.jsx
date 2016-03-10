@@ -9,6 +9,7 @@ var StudyStore = require('./stores/studystore.js');
 var SaveLoadStore = require('./stores/saveloadstore.js');
 var LogStore = require('./stores/logstore.js');
 
+var UserAgreement = require('./useragreement.jsx');
 
 
 var EditorHeader = React.createClass({
@@ -141,13 +142,16 @@ var EditorHeader = React.createClass({
 		return (
 			<div className="header" style={headerStyle}>
 				{startButton}
+
 				<span className="logo"> {logoDisplay} </span>
 				<span className="title unselectable" > Macaron </span>
 				<span className="menu">
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
+					<UserAgreement />
 					{saveButton}
 					{loadButton}
+
 				</span>
 
 

@@ -21,8 +21,8 @@ var ClipboardStore = require('./stores/clipboardstore.js');
 var AnimationStore = require('./stores/animationstore.js');
 var StudyStore = require('./stores/studystore.js')
 
-//testing to see if I can add my own component
-var UserAgreement = require('./useragreement.jsx');
+
+
 
 
 var VTEditor = React.createClass({
@@ -357,7 +357,7 @@ var VTEditor = React.createClass({
 		return (
 			<div id="app" ref="appRef">
 				<EditorHeader />
-				<UserAgreement />
+				
 				<SoundGen frequency={frequency} amplitude={amplitude_for_soundgen} mute={this.state.playback.mute} />
 				<AnimationWindow
 						name="main"
