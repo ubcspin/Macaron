@@ -73,6 +73,8 @@ a:active {
     background: -ms-linear-gradient(top,  #ffc170 0%,#ffcc8e 100%); /* IE10+ */
     background: linear-gradient(to bottom,  #ffc170 0%,#ffcc8e 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffc170', endColorstr='#ffcc8e',GradientType=0 ); /* IE6-9 */
+
+
 }
 
 .header .menu {
@@ -83,6 +85,7 @@ a:active {
 
 .header .title {
     margin-left:0.5em;
+    
 }
 
 

@@ -87,8 +87,8 @@ var EditorHeader = React.createClass({
 
 		//The UBC Logo to be placed next to the title
         var logo = new Image();
-        logo.src = require("../img/ubc_logo_alpha_gone.png");
-        logo.style = "width:40px;height:51px;";
+        logo.src = require("../img/macaron-logo.png");
+        logo.style = "width:60px;height:71px;";
         logo.alt = "Example Image Location";
 
         var logoDisplay = <h8><img src={logo.src} alt={logo.alt} style={logo.style}/></h8>;
