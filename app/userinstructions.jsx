@@ -48,7 +48,7 @@ var userInstructions = React.createClass({
 		var userInstructionsButton = <span />
 		if (this.props.displayUserInstructionsButton)
 		{
-			userInstructionsButton = (<a className="btn" style={buttonStyle} onClick={this._onUserInstructionsClick} ><i className="fa fa-userInstructions"></i> Instructions</a>);
+			userInstructionsButton = (<a className="btn" style={buttonStyle} onClick={this._onUserInstructionsClick} ><i className="fa fa-userInstructions"></i>Instructions</a>);
 		    //userAgreementButton = (<p>Just a test</p>);
 		    //userAgreementButton=(<a class="btn header" style={buttonStyle} onClick={this._onUserAgreementClick} ><i className="fa fa-download"></i> Save</a>);
 		}

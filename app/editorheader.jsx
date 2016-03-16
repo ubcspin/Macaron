@@ -124,7 +124,7 @@ var EditorHeader = React.createClass({
 		var saveButton = <span />
 		if (this.props.displaySaveButton)
 		{
-			saveButton = (<a class="btn header" style={buttonStyle} onClick={this._onSaveClick} ><i className="fa fa-download"></i> Save</a>);
+			saveButton = (<a class="btn header" style={buttonStyle} onClick={this._onSaveClick} ><i className="fa fa-download"></i>Save</a>);
 			//saveButton = (<button onClick={this._onSaveClick}><i class="fa fa-download"></i>Finish</button>);
 		}
 
@@ -135,7 +135,7 @@ var EditorHeader = React.createClass({
 
 			loadButton = (<span>
 					<input type="file" className="hidden" id={this.props.uploadFileID} onChange={this._onLoadClick}></input>
-					<a class="btn header" style={buttonStyle} onClick={this._onLoadButtonClick} ><i className="fa fa-upload"></i> Load</a>
+					<a class="btn header" style={buttonStyle} onClick={this._onLoadButtonClick} ><i className="fa fa-upload"></i>Load</a>
 					</span>);
 		}
 

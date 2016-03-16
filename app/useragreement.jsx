@@ -49,7 +49,7 @@ var userAgreement = React.createClass({
 		var userAgreementButton = <span />
 		if (this.props.displayUserAgreementButton)
 		{
-			userAgreementButton = (<a className="btn" style={buttonStyle} onClick={this._onUserAgreementClick} ><i className="fa fa-userAgreement"></i> User Agreement</a>);
+			userAgreementButton = (<a className="btn" style={buttonStyle} onClick={this._onUserAgreementClick} ><i className="fa fa-userAgreement"></i>User Agreement</a>);
 		    //userAgreementButton = (<p>Just a test</p>);
 		    //userAgreementButton=(<a class="btn header" style={buttonStyle} onClick={this._onUserAgreementClick} ><i className="fa fa-download"></i> Save</a>);
 		}
