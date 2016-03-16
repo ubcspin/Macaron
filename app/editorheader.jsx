@@ -10,6 +10,7 @@ var SaveLoadStore = require('./stores/saveloadstore.js');
 var LogStore = require('./stores/logstore.js');
 
 var UserAgreement = require('./useragreement.jsx');
+var UserInstructions = require('./userinstructions.jsx');
 
 
 var EditorHeader = React.createClass({
@@ -148,6 +149,7 @@ var EditorHeader = React.createClass({
 				<span className="menu">
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
+					<UserInstructions />
 					<UserAgreement />
 					{saveButton}
 					{loadButton}
