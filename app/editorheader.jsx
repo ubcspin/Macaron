@@ -2,10 +2,15 @@
 import React from 'react';
 import Reflux from 'reflux';
 
+
+
 var AnimationStore = require('./stores/animationstore.js');
 var StudyStore = require('./stores/studystore.js');
 var SaveLoadStore = require('./stores/saveloadstore.js');
 var LogStore = require('./stores/logstore.js');
+
+var UserAgreement = require('./useragreement.jsx');
+var UserInstructions = require('./userinstructions.jsx');
 
 
 var EditorHeader = React.createClass({
@@ -82,6 +87,14 @@ var EditorHeader = React.createClass({
 			fontSize:12
 		};
 
+		//The UBC Logo to be placed next to the title
+        var logo = new Image();
+        logo.src = require("../img/macaron-logo.png");
+        logo.style = "width:60px;height:71px;";
+        logo.alt = "Example Image Location";
+
+        var logoDisplay = <h8><img src={logo.src} alt={logo.alt} style={logo.style}/></h8>;
+
 		var animationOptionDisplay = <span />
 		if (this.props.displayAnimation)
 		{
@@ -111,7 +124,7 @@ var EditorHeader = React.createClass({
 		var saveButton = <span />
 		if (this.props.displaySaveButton)
 		{
-			saveButton = (<a class="btn header" style={buttonStyle} onClick={this._onSaveClick} ><i className="fa fa-download"></i> Save</a>);
+			saveButton = (<a class="btn header" style={buttonStyle} onClick={this._onSaveClick} ><i className="fa fa-download"></i>Save</a>);
 			//saveButton = (<button onClick={this._onSaveClick}><i class="fa fa-download"></i>Finish</button>);
 		}
 
@@ -122,7 +135,7 @@ var EditorHeader = React.createClass({
 
 			loadButton = (<span>
 					<input type="file" className="hidden" id={this.props.uploadFileID} onChange={this._onLoadClick}></input>
-					<a class="btn header" style={buttonStyle} onClick={this._onLoadButtonClick} ><i className="fa fa-upload"></i> Load</a>
+					<a class="btn header" style={buttonStyle} onClick={this._onLoadButtonClick} ><i className="fa fa-upload"></i>Load</a>
 					</span>);
 		}
 
@@ -130,13 +143,20 @@ var EditorHeader = React.createClass({
 		return (
 			<div className="header" style={headerStyle}>
 				{startButton}
-				<span className="title unselectable"> Macaron </span>
+
+				<span className="logo"> {logoDisplay} </span>
+				<span className="title unselectable" > Macaron </span>
 				<span className="menu">
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
+					<UserInstructions />
+					<UserAgreement />
 					{saveButton}
 					{loadButton}
+
 				</span>
+
+
 			</div>
 			);
 	}

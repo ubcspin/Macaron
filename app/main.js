@@ -1,6 +1,10 @@
 import React from 'react';
 var VTEditor = require('./vteditor.jsx');
 require('../css/macaron.css');
+require('../css/mcpolicy.css');
+require('../css/mcinstructions.css');
+
+//require('../img/');
 
 
 main();

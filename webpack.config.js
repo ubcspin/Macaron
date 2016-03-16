@@ -11,6 +11,7 @@ config = {
     },
     output: {
         path: path.resolve(__dirname, 'build'),
+        publicPath: '/',
         filename: 'bundle.js',
     },
     module: {
@@ -26,6 +27,10 @@ config = {
         {
             test: /\.css$/,
             loader: "style-loader!css-loader"
+        },
+        {
+            test: /\.(png|jpg|gif)$/,
+            loader: "url"
         }
 
         ],

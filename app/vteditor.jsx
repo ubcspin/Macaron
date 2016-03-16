@@ -21,6 +21,10 @@ var ClipboardStore = require('./stores/clipboardstore.js');
 var AnimationStore = require('./stores/animationstore.js');
 var StudyStore = require('./stores/studystore.js')
 
+
+
+
+
 var VTEditor = React.createClass({
 	mixins : [
 				Reflux.connect(PlaybackStore.store, 'playback'), //emitted updates go to 'playback' key
@@ -353,6 +357,7 @@ var VTEditor = React.createClass({
 		return (
 			<div id="app" ref="appRef">
 				<EditorHeader />
+				
 				<SoundGen frequency={frequency} amplitude={amplitude_for_soundgen} mute={this.state.playback.mute} />
 				<AnimationWindow
 						name="main"
@@ -393,7 +398,7 @@ var VTEditor = React.createClass({
 				</div>
 				{exampleEditor}
 				{exampleGallery}
-					
+				
 			</div>);
 		},
 
