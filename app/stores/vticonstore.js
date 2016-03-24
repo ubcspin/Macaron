@@ -45,8 +45,8 @@ var vticonStore = Reflux.createStore({
 	init : function() {
 		this._data = {
 
-					main: {
-						duration: 3000, //ms
+					main: { //left side editor
+						duration: 3000, //ms //was 3000
 
 						selected: true,
 
@@ -71,8 +71,8 @@ var vticonStore = Reflux.createStore({
 						}
 					},
 
-					example: {
-						duration: 3000, //ms
+					example: { //right side editor
+						duration: 3000, //ms //was 3000
 
 						selected: false,
 
