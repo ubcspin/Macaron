@@ -3,6 +3,8 @@ import d3 from 'd3';
 
 var VTIconStore = require('./vticonstore.js');
 
+//Testing to see if loading example store default will lead to different console output
+var ExampleStore = require('./examplestore.js');
 
 var scaleActions = Reflux.createActions([
 			'setTimelineRange',

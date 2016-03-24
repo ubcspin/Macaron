@@ -1328,9 +1328,9 @@ var exampleStore = Reflux.createStore({
 	listenables: [exampleActions],
 
 	init() { 
-		this._data = { //this is the array reference it seems for onSelectExample
-			selected:"test1", //was test 1, seems arbitrary 
-			examples:examples //was examples:examples
+		this._data = { 
+			selected:"test1",  
+			examples:examples 
 		};
 	},
 
@@ -1338,7 +1338,7 @@ var exampleStore = Reflux.createStore({
 		return this._data;
 	},
 
-	onSelectExample(newName) { //we won't know what example is selected 
+	onSelectExample(newName) { 
 		var foundName = "";
 		for (var ex in this._data.examples) {
 			if (ex === newName)

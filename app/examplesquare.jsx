@@ -5,7 +5,7 @@ import d3 from 'd3';
 var ExampleStore = require('./stores/examplestore.js');
 var WaveformPathMixin = require('./util/waveformpathmixin.js');
 
-var VtIconStore = require('./stores/vticonstore.js')
+
 
 var ExampleSquare = React.createClass({
 	mixins: [
@@ -47,11 +47,10 @@ var ExampleSquare = React.createClass({
 			this.props.resolution, this.props.maxFrequencyRendered, this.props.limitFrequencies);
 	},
 
-	componentWillMount: function () { //basically would like this to 'handleClick' in a way
+	componentWillMount: function () { 
 	    this._visPath = "";
-	    //this.onExampleChange(ExampleStore.store.getInitialState()); //if left out, gallery squares are completely empty as expected, doesn't fix console errors 
-	    ExampleStore.actions.selectExample("v4"); //can now use to load different things which is good, v4 is the first example - the bad is that initial load seems bad plus Firebase error
-	    //this.onExampleChange(VtIconStore.store.getInitialState());
+	    ExampleStore.actions.selectExample("v4"); 
+	 
 
 	},
 
