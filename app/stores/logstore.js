@@ -56,7 +56,7 @@ var logStore = Reflux.createStore({
 	},
 
 	onLog(txt) {
-		this._firebase_log.push({t:Date.now(), value:txt});
+		//this._firebase_log.push({t:Date.now(), value:txt});
 	}
 
 });
