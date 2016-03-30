@@ -5,6 +5,8 @@ import d3 from 'd3';
 var ExampleStore = require('./stores/examplestore.js');
 var WaveformPathMixin = require('./util/waveformpathmixin.js');
 
+
+
 var ExampleSquare = React.createClass({
 	mixins: [
 		WaveformPathMixin,
@@ -45,9 +47,11 @@ var ExampleSquare = React.createClass({
 			this.props.resolution, this.props.maxFrequencyRendered, this.props.limitFrequencies);
 	},
 
-	componentWillMount: function () {
+	componentWillMount: function () { 
 	    this._visPath = "";
-	    this.onExampleChange(ExampleStore.store.getInitialState());
+	    ExampleStore.actions.selectExample("v4"); 
+	 
+
 	},
 
 	_handleClick : function(e) {
