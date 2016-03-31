@@ -406,6 +406,17 @@ var VTEditor = React.createClass({
 	/**
 	*Resizing functions
 	*/
+
+    //testing
+	// componentWillMount: function () { 
+
+	// 	window.addEventListener('resize', this.handleResize);
+	// 	window.addEventListener('mousemove', this._handleMouseMove);
+	// 	window.addEventListener('mouseup', this._handleMouseUp);
+	// 	window.addEventListener('keydown', this._handleKeyboard);
+	// 	 this._updateScales();
+
+	// },
 				
 	componentDidMount: function () {
 
