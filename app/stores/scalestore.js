@@ -28,7 +28,9 @@ var scaleStore = Reflux.createStore({
 		this._trackrange = {};
 		this._timelinerange = {};
 
-		this._data = {};
+		this._data = {
+
+		};
 		for (var i = 0; i < this._names.length; i++) {
 			this._data[this._names[i]] = {
 				scaleTimeline:stub_fn,
@@ -46,7 +48,7 @@ var scaleStore = Reflux.createStore({
 		this._parameterValues[this._names[i]] = {};
 		this._duration[this._names[i]] = 0;
 		this._trackrange[this._names[i]] = {}
-		this._timelinerange[this._names[i]] = [];
+		this._timelinerange[this._names[i]] = [0,3000]; //if set here, on init, won't get initial D3 errors
 
 		}
 		
