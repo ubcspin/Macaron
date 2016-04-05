@@ -45,8 +45,8 @@ var vticonStore = Reflux.createStore({
 	init : function() {
 		this._data = {
 
-					main: { //left side editor
-						duration: 3000, //ms //was 3000
+					main: {
+						duration: 3000, //ms
 
 						selected: true,
 
@@ -71,33 +71,32 @@ var vticonStore = Reflux.createStore({
 						}
 					},
 
-					example: { //right side editor
-						duration: 3000, //ms 
+					example: {
+						duration: 3000, //ms
 
-						selected: true,  
+						selected: false,
 
 						selectedTimeRange: {
-							active:false, 
-							time1:0, 
-							time2:0 
+							active:false,
+							time1:0,
+							time2:0
 						},
 
 						parameters: {
 							amplitude: {
-								valueScale:[0,1], 
+								valueScale:[0,1], //normalized
 								data : [
-									{ id: 6, t: 600, value:0.5, selected:false},  
-									{ id: 7, t: 1500, value:1, selected:false},   
-									{ id: 8, t: 3000, value:0, selected:false}]   
+									{ id: 6, t: 600, value:0.5, selected:false}, 
+									{ id: 7, t: 1500, value:1, selected:false},
+									{ id: 8, t: 3000, value:0, selected:false}]
 							},
 
 							frequency: {
-								valueScale:[50,500], //Hz , was [50,500]
+								valueScale:[50,500], //Hz
 								data : [
 									{ id: 9, t: 0, value:250, selected:false}, 
-									{ id: 10, t: 1200, value:50, selected:false}, 
-									{ id: 11, t: 1800, value:500, selected:false}] 
-									
+									{ id: 10, t: 1200, value:50, selected:false},
+									{ id: 11, t: 1800, value:500, selected:false}]
 							}
 						}
 					}

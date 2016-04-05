@@ -1327,10 +1327,10 @@ var exampleStore = Reflux.createStore({
 
 	listenables: [exampleActions],
 
-	init() { 
-		this._data = { 
-			selected:"test1",  
-			examples:examples 
+	init() {
+		this._data = {
+			selected:"test1",
+			examples:examples
 		};
 	},
 
@@ -1338,7 +1338,7 @@ var exampleStore = Reflux.createStore({
 		return this._data;
 	},
 
-	onSelectExample(newName) { 
+	onSelectExample(newName) {
 		var foundName = "";
 		for (var ex in this._data.examples) {
 			if (ex === newName)
@@ -1355,7 +1355,7 @@ var exampleStore = Reflux.createStore({
 			}
 			VTIconStore.actions.setVTIcon(this._data.examples[foundName], name=EXAMPLE_KEY);
       PlaybackStore.actions.setTime(0);
-      LogStore.actions.log("EXAMPLE_SELECT_"+foundName); //this causes a firebase error that we probably have to check for in there
+      LogStore.actions.log("EXAMPLE_SELECT_"+foundName);
     }
 
 		this.trigger(this._data);
