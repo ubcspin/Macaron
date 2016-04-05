@@ -21,10 +21,10 @@ var logStore = Reflux.createStore({
 	init: function() {
 
 		
-		//var studyParams = StudyStore.store.getInitialState();
-		//this._pid = studyParams.participantID;
-		//this._animation = studyParams.animationMode;
-		//var interfaceText = studyParams.interfaceText;
+		var studyParams = StudyStore.store.getInitialState();
+		this._pid = studyParams.participantID;
+		this._animation = studyParams.animationMode;
+		var interfaceText = studyParams.interfaceText;
 
 		//set up firebase test user data
 		var firebase_base = new Firebase(FIREBASE_URL+"/"+this._pid+"/");
@@ -41,22 +41,22 @@ var logStore = Reflux.createStore({
 
 
 
-		//this._firebase_block = firebase_base.push();
-		//this._firebase_block.set(
-			//{
-				//animation:this._animation,
-				//startTime:Date.now(),
-				//"interface":interfaceText
-			//});
+		this._firebase_block = firebase_base.push();
+		this._firebase_block.set(
+			{
+				animation:this._animation,
+				startTime:Date.now(),
+				"interface":interfaceText
+			});
 
 		//setup firebase log data
-		//var block_key = this._firebase_block.key();
-		//this._firebase_log = new Firebase(FIREBASE_URL+"/"+this._pid+"/"+block_key+"/log/");
+		var block_key = this._firebase_block.key();
+		this._firebase_log = new Firebase(FIREBASE_URL+"/"+this._pid+"/"+block_key+"/log/");
 
 	},
 
 	onLog(txt) {
-		//this._firebase_log.push({t:Date.now(), value:txt});
+		this._firebase_log.push({t:Date.now(), value:txt});
 	}
 
 });

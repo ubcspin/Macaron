@@ -34,17 +34,7 @@ var VTEditor = React.createClass({
 				Reflux.connect(AnimationStore.store, 'animation'), //emitted updates go to 'animation' key						
 				Reflux.connect(StudyStore.store, 'study') //emitted updates go to 'study' key						
 	],
-    
-    //testing
-  //   init: function(){
 
-  //       window.addEventListener('resize', this.handleResize);
-		// window.addEventListener('mousemove', this._handleMouseMove);
-		// window.addEventListener('mouseup', this._handleMouseUp);
-		// window.addEventListener('keydown', this._handleKeyboard);
-  //   	this._updateScales();
-
-  //   },
 
 	getInitialState : function () {
 		return {
