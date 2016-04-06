@@ -95,7 +95,7 @@ var userAgreementStore = Reflux.createStore({
         document.getElementById("inner").appendChild(userAgreementTextElementCont);
     
         var userAgreementTextElementFinalSeg = document.createElement("userAgreementTextElementFinalSeg");
-        userAgreementTextElementFinalSeg.innerHTML = "<p><b>We do not collect, store, or report personal or identifiable information about you or your account.</b> The research project associated with this tool has been approved by UBC's Behavioural Ethics Research Board (#H13-01620). If you have any questions, please contact us at tmp@ubc.com.</p>";
+        userAgreementTextElementFinalSeg.innerHTML = "<p><b>We do not collect, store, or report personal or identifiable information about you or your account.</b> The research project associated with this tool has been approved by UBC's Behavioural Ethics Research Board (#H13-01620). If you have any questions, please contact us at https://ethics.research.ubc.ca/.</p>";
         document.getElementById("inner").appendChild(userAgreementTextElementFinalSeg);
     
         //This can work to prevent further appendments... but prevents link from opening in first place?
