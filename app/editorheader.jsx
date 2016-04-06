@@ -144,7 +144,7 @@ var EditorHeader = React.createClass({
 			<div className="header" style={headerStyle}>
 				{startButton}
 
-				<span className="logo"> {logoDisplay} </span>
+				
 				<span className="title unselectable" > Macaron </span>
 				<span className="menu">
 					{animationOptionDisplay}
