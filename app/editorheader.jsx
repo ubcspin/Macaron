@@ -72,6 +72,13 @@ var EditorHeader = React.createClass({
 		var headerStyle = {
 		};
 
+		var blockStyle = {
+           display: 'block',
+           /*padding: '10px 10px 10px 10px'*/
+           height: '25px'
+           
+		};
+
 		var animationOptions = this.state.animation.animationOptions;
 		var displayOptions = this.state.study.modes;
 		var animationChangeCallback = this._onAnimationChange;
@@ -149,10 +156,13 @@ var EditorHeader = React.createClass({
 				<span className="menu">
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
-					<UserInstructions />
-					<UserAgreement />
+					<span className="other-block" style={blockStyle}>
+						<UserInstructions />
+						<UserAgreement />
+					</span>
 					{saveButton}
 					{loadButton}
+					
 
 				</span>
 
