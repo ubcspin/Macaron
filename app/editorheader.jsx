@@ -95,12 +95,12 @@ var EditorHeader = React.createClass({
 		};
 
 		//The UBC Logo to be placed next to the title
-        var logo = new Image();
-        logo.src = require("../img/macaron-logo.png");
-        logo.style = "width:60px;height:71px;";
-        logo.alt = "Example Image Location";
+        // var logo = new Image();
+        // logo.src = require("../img/macaron-logo.png");
+        // logo.style = "width:60px;height:71px;";
+        // logo.alt = "Example Image Location";
 
-        var logoDisplay = <h8><img src={logo.src} alt={logo.alt} style={logo.style}/></h8>;
+        // var logoDisplay = <h8><img src={logo.src} alt={logo.alt} style={logo.style}/></h8>;
 
 		var animationOptionDisplay = <span />
 		if (this.props.displayAnimation)
@@ -156,10 +156,8 @@ var EditorHeader = React.createClass({
 				<span className="menu">
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
-					<span className="other-block" style={blockStyle}>
-						<UserInstructions />
-						<UserAgreement />
-					</span>
+					<UserInstructions />
+					<UserAgreement />
 					{saveButton}
 					{loadButton}
 					
