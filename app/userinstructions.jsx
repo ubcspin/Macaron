@@ -35,6 +35,8 @@ var userInstructions = React.createClass({
        
        //empty but needed to refer to it by other HTML 
        var userInstructionsStyle = {
+
+       	 
 		};
 
 
@@ -57,7 +59,7 @@ var userInstructions = React.createClass({
 
 
 		return (
-			<span className="userInstructions">
+			<span className="userInstructions" >
 			  
 				{userInstructionsButton}
 			 

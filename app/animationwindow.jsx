@@ -20,6 +20,7 @@ var AnimationWindow = React.createClass({
 		var centerStyle = {
 			marginLeft:'auto',
 			marginRight:'auto',
+			height:'0px',
 			display:'block'
 		};
 
