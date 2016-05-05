@@ -18,7 +18,7 @@ var userInstructionsStore = Reflux.createStore({
             document.body.removeChild(page1);
 
         }
-    
+
     	var a = document.createElement('a');
         a.href = "#page1";
 
@@ -28,15 +28,15 @@ var userInstructionsStore = Reflux.createStore({
         userInstructionsElement.className = "modalDialogInstructions";
         document.body.appendChild(a);
         document.body.appendChild(userInstructionsElement);
-        
+
         a.click();
 
         //the main div that all the main text elements will go under
         var inner1 = document.createElement("div");
         inner1.id = "inner1";
         document.getElementById("page1").appendChild(inner1);
-        
-        //should be able to re-use 
+
+        //should be able to re-use
         a.href = "#close";
         a.title = "Close";
         a.className = "close";
@@ -51,7 +51,7 @@ var userInstructionsStore = Reflux.createStore({
 
         //need a div to centre image and text
         var centre = document.createElement("div");
-        centre.style = "text-align:center;";
+        centre.style.textAlign = "center";
         centre.id = "centre";
         document.getElementById("inner1").appendChild(centre);
 
@@ -66,13 +66,13 @@ var userInstructionsStore = Reflux.createStore({
         userInstructionsImageLocation.id = "macaronText";
         userInstructionsImageLocation.innerHTML = "<p><img src='" + img.src + "' alt='Example Image'></p>";
         document.getElementById("centre").appendChild(userInstructionsImageLocation);
-  
+
         //The actual instruction text location
         var userInstructionsTextElement = document.createElement("userAgreementTextElement");
         userInstructionsTextElement.id = "macaronInstruction";
         userInstructionsTextElement.innerHTML = "<p>Thank you for using Macaron! Below are quick references to the most important interface elements. Please make sure to plug in an actuator to the headphone jack of your computer to feel the vibrations. <b>Please remember to unmute the button when editing or playing back any vibrations.</b></p>";
         document.getElementById("inner1").appendChild(userInstructionsTextElement);
-   
+
         //The actual instruction text location continued eg. bullet point list
         var userInstructionsListElement = document.createElement("userInstructionsListElement");
         userInstructionsListElement.innerHTML = "<ul><li><b>A: </b>The left hand pane here is the area where you can edit your current vibration in terms of amplitude and frequency</li><li><b>B: </b>The top pane is where you can view the vibration in their overall waveform distribution</li><li><b>C: </b>The left axes here shows that you can specifically target a vibration pattern's amplitude or frequency to be edited</li><li><b>D: </b>The right hand pane here is the area where you can load an example vibration pattern that can be viewed (not edited)</li><li><b>E: </b>The Mute button is on by default when loading Macaron in order to prevent constant vibrations of any actuators plugged in</li><li><b>F: </b>The top header here contains the User Agreement, and Save/Load buttons for backing up your current vibrations being edited</li></ul>";
@@ -85,7 +85,7 @@ var userInstructionsStore = Reflux.createStore({
         a.className = "nextPageButton";
         a.innerHTML = "Next";
         document.getElementById("inner1").appendChild(a);
-        //a.click(); 
+        //a.click();
 
         /*****************************************************************************************************
         ******************************************************************************************************
@@ -106,7 +106,7 @@ var userInstructionsStore = Reflux.createStore({
 
         var a = document.createElement('a');
         a.href = "#page2";
-   
+
         var userInstructionsElement = document.createElement("div");
         userInstructionsElement.id = "page2";
         userInstructionsElement.className = "modalDialogInstructions";
@@ -119,8 +119,8 @@ var userInstructionsStore = Reflux.createStore({
         var inner2 = document.createElement("div");
         inner2.id = "inner2";
         document.getElementById("page2").appendChild(inner2);
-        
-        //should be able to re-use 
+
+        //should be able to re-use
         a.href = "#close";
         a.title = "Close";
         a.className = "close";
@@ -135,7 +135,7 @@ var userInstructionsStore = Reflux.createStore({
 
         //div to centre
         var centre2 = document.createElement("div");
-        centre2.style = "text-align:center;";
+        centre2.style.textAlign = "center";
         centre2.id = "centre2";
         document.getElementById("inner2").appendChild(centre2);
 
@@ -156,7 +156,7 @@ var userInstructionsStore = Reflux.createStore({
         userInstructionsTextElement2.id = "macaronInstruction2";
         userInstructionsTextElement2.innerHTML = "<p>You can playback any vibrations through the respective 'play' icon for either your currently selected example vibration (right side), or your own custom vibration (left side).<br></br>You can also skip to the beginning or the end of the vibration by using the left or right arrow icons. Manual scrubbing of the vibration is also possible by clicking and dragging the red position marker.</p>";
         document.getElementById("inner2").appendChild(userInstructionsTextElement2);
-     
+
         //the prev or next button location
         //prev
         var a = document.createElement('a');
@@ -172,7 +172,7 @@ var userInstructionsStore = Reflux.createStore({
         a.className = "nextPageButton";
         a.innerHTML = "Next";
         document.getElementById("inner2").appendChild(a);
-     
+
         /*****************************************************************************************************
         ******************************************************************************************************
         ******************************************************************************************************
@@ -182,7 +182,7 @@ var userInstructionsStore = Reflux.createStore({
         ******************************************************************************************************
         ******************************************************************************************************
         ******************************************************************************************************/
-    
+
         if(document.getElementById("page3")){
             document.body.removeChild(page3);
 
@@ -190,7 +190,7 @@ var userInstructionsStore = Reflux.createStore({
 
         var a = document.createElement('a');
         a.href = "#page3";
-   
+
         var userInstructionsElement = document.createElement("div");
         userInstructionsElement.id = "page3";
         userInstructionsElement.className = "modalDialogInstructions";
@@ -203,8 +203,8 @@ var userInstructionsStore = Reflux.createStore({
         var inner3 = document.createElement("div");
         inner3.id = "inner3";
         document.getElementById("page3").appendChild(inner3);
-        
-        //should be able to re-use 
+
+        //should be able to re-use
         a.href = "#close";
         a.title = "Close";
         a.className = "close";
@@ -219,7 +219,7 @@ var userInstructionsStore = Reflux.createStore({
 
         //div to centre
         var centre3 = document.createElement("div");
-        centre3.style = "text-align:center;";
+        centre3.style.textAlign = "center";
         centre3.id = "centre3";
         document.getElementById("inner3").appendChild(centre3);
 
@@ -274,7 +274,7 @@ var userInstructionsStore = Reflux.createStore({
 
         var a = document.createElement('a');
         a.href = "#page4";
-   
+
         var userInstructionsElement = document.createElement("div");
         userInstructionsElement.id = "page4";
         userInstructionsElement.className = "modalDialogInstructions";
@@ -287,8 +287,8 @@ var userInstructionsStore = Reflux.createStore({
         var inner4 = document.createElement("div");
         inner4.id = "inner4";
         document.getElementById("page4").appendChild(inner4);
-        
-        //should be able to re-use 
+
+        //should be able to re-use
         a.href = "#close";
         a.title = "Close";
         a.className = "close";
@@ -303,7 +303,7 @@ var userInstructionsStore = Reflux.createStore({
 
         //div to centre
         var centre4 = document.createElement("div");
-        centre4.style = "text-align:center;";
+        centre4.style.textAlign = "center";
         centre4.id = "centre4";
         document.getElementById("inner4").appendChild(centre4);
 
@@ -324,7 +324,7 @@ var userInstructionsStore = Reflux.createStore({
         userInstructionsTextElement4.id = "macaronInstruction4";
         userInstructionsTextElement4.innerHTML = "<p>You can make your own vibration pattern by clicking on the shaded area on the left hand side to create points that can be dragged around to invoke changes in amplitude or frequncy.</p>";
         document.getElementById("inner4").appendChild(userInstructionsTextElement4);
-     
+
         //the prev or next button location
         //prev
         var a = document.createElement('a');
@@ -358,7 +358,7 @@ var userInstructionsStore = Reflux.createStore({
 
         var a = document.createElement('a');
         a.href = "#page5";
-   
+
         var userInstructionsElement = document.createElement("div");
         userInstructionsElement.id = "page5";
         userInstructionsElement.className = "modalDialogInstructions";
@@ -371,8 +371,8 @@ var userInstructionsStore = Reflux.createStore({
         var inner5 = document.createElement("div");
         inner5.id = "inner5";
         document.getElementById("page5").appendChild(inner5);
-        
-        //should be able to re-use 
+
+        //should be able to re-use
         a.href = "#close";
         a.title = "Close";
         a.className = "close";
@@ -387,7 +387,7 @@ var userInstructionsStore = Reflux.createStore({
 
         //div to centre
         var centre5 = document.createElement("div");
-        centre5.style = "text-align:center;";
+        centre5.style.textAlign = "center";
         centre5.id = "centre5";
         document.getElementById("inner5").appendChild(centre5);
 
@@ -408,7 +408,7 @@ var userInstructionsStore = Reflux.createStore({
         userInstructionsTextElement5.id = "macaronInstruction5";
         userInstructionsTextElement5.innerHTML = "<p>You can save your own vibration pattern by clicking the Save button in the top right corner. This will save a file that contains your current progress locally onto your computer. If you ever need to go back to a past pattern, just click the Load button to load this file which will revert your pattern.</p>";
         document.getElementById("inner5").appendChild(userInstructionsTextElement5);
-     
+
         //the prev or next button location
         //prev
         var a = document.createElement('a');
@@ -417,7 +417,7 @@ var userInstructionsStore = Reflux.createStore({
         a.className = "prevPageButton";
         a.innerHTML = "Prev";
         document.getElementById("inner5").appendChild(a);
-        
+
 	}
 });
 
