@@ -3,6 +3,8 @@ import Reflux from 'reflux';
 var VTIconStore = require('./vticonstore.js');
 var LogStore = require('./logstore.js');
 
+var WavFileGeneratorMixin = require('./../util/wavfilegenerator.js');
+
 var saveLoadActions = Reflux.createActions(
 	[
 		'save',
@@ -14,6 +16,8 @@ var saveLoadActions = Reflux.createActions(
 var saveLoadStore = Reflux.createStore({
 
 	listenables: [saveLoadActions],
+
+	mixins: [WavFileGeneratorMixin],
 
 	onSave() {
 
@@ -70,7 +74,12 @@ var saveLoadStore = Reflux.createStore({
 		/**
 		 * TODO: Implement WAV download
 		 */
-		var wavBlob = new Blob(["test-WAV"], {type: "audio/wav"});
+
+		// First I'll set up the parameters of a default WAV file.
+
+		var wavBuffer = this.generateWavFile();
+
+		var wavBlob = new Blob([wavBuffer], {type: "audio/wav"});
 		wavBlob.name = wavFileName;
 		var wavURL = URL.createObjectURL(wavBlob);
 
