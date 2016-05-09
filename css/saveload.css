@@ -7,7 +7,7 @@
   display: block;;
   position: absolute;
   width: 400px;
-  height: 200px;
+  height: 250px;
   margin-left: 40%;
   margin-right: auto;
   margin-top: 50px;
@@ -18,6 +18,14 @@
   border-radius: 10px;
   box-shadow: 5px 5px 30px #000000;
 }
+
+/* This will scoot the container left as the window is scaled down */
+@media screen and (max-width: 700px) {
+  .save-link-container {
+    margin-left: 50px;
+  }
+}
+
 
 .links-header {
   position: relative;;
@@ -32,9 +40,9 @@
 
 .download-link {
   position: relative;
-  width: 90%;
+  width: 85%;
   height: 40px;
-  margin-left: 30px;
+  margin-left: 50px;
   margin-top: 20px;
 }
 

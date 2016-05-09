@@ -38,7 +38,7 @@ var saveLoadStore = Reflux.createStore({
 		closeLink.id = "save-link-close-button";
 		closeLink.classList.add("close");
 		closeLink.innerHTML = "X";
-		closeLink.addEventListener("click", function(){closeSaveWindow();});
+		closeLink.addEventListener("click", function() {closeSaveWindow();});
 
 		var linksHeader = document.createElement("H2");
 		linksHeader.id = "save-link-header";
@@ -54,7 +54,7 @@ var saveLoadStore = Reflux.createStore({
 		 *  Creating the JSON file for download
 		 */
 		var dataJSON = JSON.stringify(VTIconStore.store.getInitialState()["main"], null, 2);
-		var fullDataJSON = "data:text/json;charset=utf8," + dataJSON;
+		var fullDataJSON = "data:text/json;charset=utf8, " + dataJSON;
 		var dataBlob = new Blob([fullDataJSON], {type: "text/JSON"});
 		dataBlob.name = jsonFileName;
 		var dataURL = URL.createObjectURL(dataBlob);
@@ -70,12 +70,25 @@ var saveLoadStore = Reflux.createStore({
 		/**
 		 * TODO: Implement WAV download
 		 */
+		var wavBlob = new Blob(["test-WAV"], {type: "audio/wav"});
+		wavBlob.name = wavFileName;
+		var wavURL = URL.createObjectURL(wavBlob);
+
 		var wavDownloadLink = document.createElement("a");
 		wavDownloadLink.id = "wav-download-link";
 		wavDownloadLink.classList.add("download-link");
-		wavDownloadLink.setAttribute("href", " ");
+		wavDownloadLink.setAttribute("value", "Download");
+		wavDownloadLink.setAttribute("href", wavURL);
 		wavDownloadLink.setAttribute("download", wavFileName);
 		wavDownloadLink.innerHTML = "download Waveform File (WAV)";
+
+		/**
+		 * And add the Safari note (hopefully this will be resolved soon...)
+		 */
+		var safariNote = document.createElement("p");
+		safariNote.id = "safari-note";
+		safariNote.classList.add("download-link");
+		safariNote.innerHTML = "* Note: The download links will open in a new tab if you are using the Safari web browser. To download directly, please try again in the Chrome, Firefox, or IE web browsers.";
 
 		/**
 		 * Now just append it all together!
@@ -89,6 +102,7 @@ var saveLoadStore = Reflux.createStore({
 		linksText.appendChild(jsonDownloadLink);
 		linksText.appendChild(spacer);
 		linksText.appendChild(wavDownloadLink);
+		linksText.appendChild(safariNote);
 
 		linksContainer.appendChild(linksText);
 		document.body.appendChild(linksContainer);
