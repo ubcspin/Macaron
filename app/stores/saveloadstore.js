@@ -74,9 +74,6 @@ var saveLoadStore = Reflux.createStore({
 		/**
 		 * TODO: Implement WAV download
 		 */
-
-		// First I'll set up the parameters of a default WAV file.
-
 		var wavBuffer = this.generateWavFile();
 
 		var wavBlob = new Blob([wavBuffer], {type: "audio/wav"});

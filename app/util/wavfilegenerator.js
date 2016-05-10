@@ -15,18 +15,22 @@ var WavFileGeneratorMixin = {
      *  will contain all the info necessary to create a WAV file. Most of the
      *   data is currently hard-coded, but making it as an object will leave
      *    some wiggle-room for future improvements.
+     *
+     * Remember! It's little-endian!
      **/
     var WavBundle = function(trackLength) {
+      this.trackLength = trackLength; // in seconds.
       this.channels = 1; // Standard mono-audio
       this.sampleRate = 44100; //Hz (44100 is pretty universal)
-      this.bitDepth = 16; // Again, pretty standard...
-      this.trackLength = trackLength; // in seconds.
+      this.bitDepth = 8; // Low-fi...
       this.bitRate = this.channels * this.sampleRate * this.bitDepth;
-      this.totalFrames = this.sampleRate * trackLength;
-      this.buffer = new Int8Array(this.totalFrames + 44);
+      this.sampleSize = (this.bitDepth * this.channels) / (8); //bytes
+      this.nSamples = this.sampleRate * this.trackLength;
+      this.totalSize = (this.nSamples * this.sampleSize) + 44;
+      this.buffer = new Int8Array(this.totalSize);
 
       /**
-       * TgenerateWaveHeader makes a new headBuff with a header
+       * generateWaveHeader makes a new this.buffer with a header
        *  for the WAV file in the standard format.
        *
        *  see: http://www.topherlee.com/software/pcm-tut-wavformat.html
@@ -34,92 +38,121 @@ var WavFileGeneratorMixin = {
        **/
       this.generateWavHeader = function() {
 
-        var headBuff = new Int8Array(this.totalFrames + 44);
+        // For testing purposes only...
+        console.log(this.bitRate);
+        console.log(this.sampleSize);
+        console.log(this.nSamples);
+        console.log(this.totalSize);
 
-        headBuff[0]  = 0x52; //R
-        headBuff[1]  = 0x49; //I
-        headBuff[2]  = 0x46; //F
-        headBuff[3]  = 0x46; //F
+        this.buffer[0]  = 0x52; //R
+        this.buffer[1]  = 0x49; //I
+        this.buffer[2]  = 0x46; //F
+        this.buffer[3]  = 0x46; //F
 
-        headBuff[4]  = 0x00; // We'll come back to this later!
-        headBuff[5]  = 0x00;
-        headBuff[6]  = 0x00;
-        headBuff[7]  = 0x00;
+        // This block records the total file size
+        this.buffer[4]  = (0x000000ff & this.totalSize);
+        this.buffer[5]  = (0x0000ff00 & this.totalSize) >>  8;
+        this.buffer[6]  = (0x00ff0000 & this.totalSize) >> 16;
+        this.buffer[7]  = (0xff000000 & this.totalSize) >> 24;
 
-        headBuff[8]  = 0x57; //W
-        headBuff[9]  = 0x41; //A
-        headBuff[10] = 0x56; //V
-        headBuff[11] = 0x45; //E
+        this.buffer[8]  = 0x57; //W
+        this.buffer[9]  = 0x41; //A
+        this.buffer[10] = 0x56; //V
+        this.buffer[11] = 0x45; //E
 
-        headBuff[12] = 0x00; //.
-        headBuff[13] = 0x66; //f
-        headBuff[14] = 0x6d; //m
-        headBuff[15] = 0x74; //t
+        this.buffer[12] = 0x66; //f
+        this.buffer[13] = 0x6d; //m
+        this.buffer[14] = 0x74; //t
+        this.buffer[15] = 0x20; //
 
-        headBuff[16] = 0x00; // This block sets the length of
-        headBuff[17] = 0x01; //  the "format chunk" to 16
-        headBuff[18] = 0x00;
-        headBuff[19] = 0x00;
+        this.buffer[16] = 0x10; // This block sets the length of
+        this.buffer[17] = 0x00; //  the "format chunk" to 16
+        this.buffer[18] = 0x00;
+        this.buffer[19] = 0x00;
 
-        headBuff[20] = 0x00; // Type of format (1 is PCM) - 2 byte integer
-        headBuff[21] = 0x01;
+        this.buffer[20] = 0x01; // Type of format (1 is PCM) - 2 byte integer
+        this.buffer[21] = 0x00;
 
         // This block sets the number of channels
-        headBuff[22] = (0xff00 & this.channels) >> 8;
-        headBuff[23] = 0x00ff & this.channels;
+        this.buffer[22] = (0x00ff & this.channels);
+        this.buffer[23] = (0xff00 & this.channels) >> 8;
 
         // This block sets the sample rate
-        headBuff[24] = (0xff000000 & this.sampleRate) >> 24;
-        headBuff[25] = (0x00ff0000 & this.sampleRate) >> 16;
-        headBuff[26] = (0x0000ff00 & this.sampleRate) >>  8;
-        headBuff[27] =  0x000000ff & this.sampleRate;
+        this.buffer[24] = (0x000000ff & this.sampleRate);
+        this.buffer[25] = (0x0000ff00 & this.sampleRate) >>  8;
+        this.buffer[26] = (0x00ff0000 & this.sampleRate) >> 16;
+        this.buffer[27] = (0xff000000 & this.sampleRate) >> 24;
 
         // Now to set the bitRate
-        headBuff[28] = (0xff000000 & this.bitRate) >> 24;
-        headBuff[29] = (0x00ff0000 & this.bitRate) >> 16;
-        headBuff[30] = (0x0000ff00 & this.bitRate) >>  8;
-        headBuff[31] =  0x000000ff & this.bitRate;
+        this.buffer[28] = (0x000000ff & this.bitRate);
+        this.buffer[29] = (0x0000ff00 & this.bitRate) >>  8;
+        this.buffer[30] = (0x00ff0000 & this.bitRate) >> 16;
+        this.buffer[31] = (0xff000000 & this.bitRate) >> 24;
 
-        // This block is equal to 4 (hard to understand why...)
-        headBuff[32] = 0x01;
-        headBuff[33] = 0x00;
+        // Set block align equal to 4
+        this.buffer[32] = 0x04;
+        this.buffer[33] = 0x00;
 
         // This block sets the number of bits per sample
-        headBuff[34] = (0xff00 & this.bitDepth) >> 8;
-        headBuff[35] = 0x00ff & this.bitDepth;
+        this.buffer[34] = (0x00ff & this.bitDepth);
+        this.buffer[35] = (0xff00 & this.bitDepth) >> 8;
 
-        headBuff[36] =  0x64; //d
-        headBuff[37] =  0x61; //a
-        headBuff[38] =  0x74; //t
-        headBuff[39] =  0x61; //a
+        this.buffer[36] =  0x64; //d
+        this.buffer[37] =  0x61; //a
+        this.buffer[38] =  0x74; //t
+        this.buffer[39] =  0x61; //a
 
         // Size of the "data" section
-        headBuff[40] =  0x00;
-        headBuff[41] =  0x00; //  Come back here when you know the file size!
-        headBuff[42] =  0x00;
-        headBuff[43] =  0x00;
-
-        this.buffer = headBuff;
+        var dSize = (this.nSamples * this.sampleSize); // too long!
+        this.buffer[40] =  (0x000000ff & dSize);
+        this.buffer[41] =  (0x0000ff00 & dSize) >>  8;
+        this.buffer[42] =  (0x00ff0000 & dSize) >> 16;
+        this.buffer[43] =  (0xff000000 & dSize) >> 24;
       }
+
+
+
 
       /**
-        * makeWavContent will generate the actual sound-producing portion of the
-        *  WAV file.
+        * makeWavContent will generate the actual sound-producing
+        *  portion of the WAV file.
         **/
-      this.generateWavContent = function() {
+      this.generateWavContent = function(amp, freq) {
 
-        // STUB
+        var range = Math.pow(2, this.bitDepth - 1)
+        var vol = range * amp;
 
+        // calculate the speaker displacement at each frame
+        //  emulating a sinewave here...
+        for (var i=0; i<=this.nSamples; i=(i+this.sampleSize)) {
+
+          var t = (i / this.sampleRate);
+
+          if ((t % 1) == 0) {console.log(t);}
+
+          var oscOffset = Math.round(vol * Math.sin(2 * Math.PI * t * freq));
+
+          // Now if the value being written is negative, convert it to signed.
+          if (oscOffset < 0) {
+            oscOffset = ~(Math.abs(oscOffset));
+          }
+
+          this.buffer[(i*this.sampleSize)+44] = oscOffset;
+        }
       }
+
+
     } /**  End of WavBundle Constructor  **/
 
 
     /**
-     *  Here's where everything gets called in order to produce the WAV file
+     *  Heres where everything gets called in order to produce the WAV file
      **/
     var wavObj = new WavBundle(3); // a 3 second long clip
     wavObj.generateWavHeader();
-    wavObj.generateWavContent();
+    wavObj.generateWavContent(1, 350); // volume = 1, frequency = 350
+    console.log(wavObj.buffer.length);
+    console.log(wavObj.buffer.byteLength);
     return wavObj.buffer;
 
   }
