@@ -3,8 +3,6 @@ import Reflux from 'reflux';
 var VTIconStore = require('./vticonstore.js');
 var LogStore = require('./logstore.js');
 
-var WavFileGeneratorMixin = require('./../util/wavfilegenerator.js');
-
 var saveLoadActions = Reflux.createActions(
 	[
 		'save',
@@ -16,8 +14,6 @@ var saveLoadActions = Reflux.createActions(
 var saveLoadStore = Reflux.createStore({
 
 	listenables: [saveLoadActions],
-
-	mixins: [WavFileGeneratorMixin],
 
 	onSave() {
 
@@ -144,13 +140,6 @@ var saveLoadStore = Reflux.createStore({
        *   for a reference about what the header should contain.
        **/
       this.generateWavHeader = function() {
-
-        // For testing purposes only...
-        console.log(this.bitRate);
-        console.log(this.sampleSize);
-        console.log(this.nSamples);
-        console.log(this.totalSize);
-
         this.buffer[0]  = 0x52; //R
         this.buffer[1]  = 0x49; //I
         this.buffer[2]  = 0x46; //F
@@ -224,27 +213,61 @@ var saveLoadStore = Reflux.createStore({
         * makeWavContent will generate the actual sound-producing
         *  portion of the WAV file.
         **/
-      this.generateWavContent = function(amp, freq) {
+      this.generateWavContent = function() {
 
-        var range = Math.pow(2, this.bitDepth - 1)
-        var vol = range * amp;
+				var iconStore = VTIconStore.store.getInitialState()["main"];
+				var ampParams = iconStore.parameters.amplitude.data;
+				var freqParams = iconStore.parameters.frequency.data;
+
+        var range = Math.pow(2, this.bitDepth - 1) - 2;
+									// minus 2 to avoid any clipping.
+				console.log(range);
 
         // calculate the speaker displacement at each frame
         //  emulating a sinewave here...
         for (var i=0; i<=this.nSamples; i=(i+this.sampleSize)) {
 
-          var t = (i / this.sampleRate);
+          var t = (i / this.sampleRate) * 1000;
+					var amp = 0.1; // default
 
-          if ((t % 1) == 0) {console.log(t);}
 
-          var oscOffset = Math.round(vol * Math.sin(2 * Math.PI * t * freq));
+					// Find the amplitude at time = t
+					for (var j=0; j<ampParams.length; j++) {
+
+						// t is less than first keyframe
+						if ((j==0) && (t <= ampParams[j].t)) {
+							amp = ampParams[j].value;
+						}
+
+						// t is between two keyframes
+						else if ((t < ampParams[j].t) && (t > ampParams[j-1].t)) {
+							var rise = ampParams[j].value - ampParams[j-1].value;
+							var run  = ampParams[j].t - ampParams[j-1].t;
+							var slope = rise/run;
+							amp = (slope * (t - ampParams[j-1].t)) + ampParams[j-1].value;
+						}
+
+						// t is beyond final keyframe
+						else if ((j == (ampParams.length-1)) && (t > ampParams[j].t)) {
+							amp = ampParams[j].value;
+						}
+					} // End of the amplitude search
+
+
+					// Now determine the frequency based on the time and keyframes!
+					var freq = 270;
+
+					var vol = range * amp;
+					var angle = Math.sin(2 * Math.PI * (t/1000) * freq);
+          var oscOffset = parseInt(Math.round(vol * angle));
 
           // Now if the value being written is negative, convert it to signed.
           if (oscOffset < 0) {
             oscOffset = ~(Math.abs(oscOffset));
           }
 
-          this.buffer[(i*this.sampleSize)+44] = oscOffset;
+					// Range - Offset = WAV encoding of Offset... Weird!
+          this.buffer[(i*this.sampleSize)+44] = range - oscOffset;
         }
       }
 
@@ -255,11 +278,11 @@ var saveLoadStore = Reflux.createStore({
     /**
      *  Heres where everything gets called in order to produce the WAV file
      **/
-    var wavObj = new WavBundle(3); // a 3 second long clip
+		var duration = VTIconStore.store.getInitialState()["main"].duration / 1000;
+
+    var wavObj = new WavBundle(duration); // a 3 second long clip
     wavObj.generateWavHeader();
-    wavObj.generateWavContent(1, 350); // volume = 1, frequency = 350
-    console.log(wavObj.buffer.length);
-    console.log(wavObj.buffer.byteLength);
+    wavObj.generateWavContent(); // volume = 1, frequency = 350
     return wavObj.buffer;
 
   },
