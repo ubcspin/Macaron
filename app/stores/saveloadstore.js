@@ -234,12 +234,12 @@ var saveLoadStore = Reflux.createStore({
 					// Find the amplitude at time = t
 					for (var j=0; j<ampParams.length; j++) {
 
-						// t is less than first keyframe
+						// Case 1: t is less than first keyframe
 						if ((j==0) && (t <= ampParams[j].t)) {
 							amp = ampParams[j].value;
 						}
 
-						// t is between two keyframes
+						// Case 2: t is between two keyframes
 						else if ((t < ampParams[j].t) && (t > ampParams[j-1].t)) {
 							var rise = ampParams[j].value - ampParams[j-1].value;
 							var run  = ampParams[j].t - ampParams[j-1].t;
@@ -247,18 +247,47 @@ var saveLoadStore = Reflux.createStore({
 							amp = (slope * (t - ampParams[j-1].t)) + ampParams[j-1].value;
 						}
 
-						// t is beyond final keyframe
+						// Case 3: t is beyond final keyframe
 						else if ((j == (ampParams.length-1)) && (t > ampParams[j].t)) {
 							amp = ampParams[j].value;
 						}
 					} // End of the amplitude search
 
-
+					var freq = 100;
+					var needsShift = false;
+					var freqKeyframeNo = 0;
 					// Now determine the frequency based on the time and keyframes!
-					var freq = 270;
+					for (var j=0; j<freqParams.length; j++) {
 
+						// Case 1: t is before the first keyframes
+						if ((j==0) && (t <= freqParams[j].t)) {
+							freq = freqParams[j].value;
+						}
+
+						// Case 2: t is between two keyframes
+						else if ((t < freqParams[j].t) && (t > freqParams[j-1].t)) {
+							var rise = freqParams[j].value - freqParams[j-1].value;
+							var run = freqParams[j].t - freqParams[j-1].t;
+							var slope = rise/run;
+							var fExact = freq = (slope * (t - freqParams[j-1].t))
+							fExact = fExact + freqParams[j-1].value;
+							freq = 50 * Math.round(fExact/50);
+							if (freqKeyframeNo != j) {
+								needsShift = true;
+								freqKeyframeNo++;
+							}
+						}
+
+						// Case 3: t is beyond the last keyframe
+						else if ((j == (freqParams.length - 1)) && t > freqParams[j].t) {
+							freq = freqParams[j].value;
+						}
+					} // End of the frequency calculations
+
+					// Now determine any phase shift needed to keep it continuous
+					var phaseShift = 0;
 					var vol = range * amp;
-					var angle = Math.sin(2 * Math.PI * (t/1000) * freq);
+					var angle = Math.sin((2 * Math.PI * (t/1000) * freq) + phaseShift);
           var oscOffset = parseInt(Math.round(vol * angle));
 
           // Now if the value being written is negative, convert it to signed.
