@@ -221,73 +221,24 @@ var saveLoadStore = Reflux.createStore({
 
         var range = Math.pow(2, this.bitDepth - 1) - 2;
 									// minus 2 to avoid any clipping.
-				console.log(range);
+
+				var phaseShift = 0;
 
         // calculate the speaker displacement at each frame
         //  emulating a sinewave here...
         for (var i=0; i<=this.nSamples; i=(i+this.sampleSize)) {
 
-          var t = (i / this.sampleRate) * 1000;
-					var amp = 0.1; // default
+          var t = ((i * 1000) / this.sampleRate);
 
+					var amp = getCurrentAmplitude(t, ampParams);
+					var ft = getCurrentFT(t, freqParams); // Integral of freq over t
+					var needsShift = needsPhaseShift(t, freqParams);
+					if (needsShift) {
+						//phaseShift = computePhaseShift(t, freqParams, phaseShift);
+				  }
 
-					// Find the amplitude at time = t
-					for (var j=0; j<ampParams.length; j++) {
-
-						// Case 1: t is less than first keyframe
-						if ((j==0) && (t <= ampParams[j].t)) {
-							amp = ampParams[j].value;
-						}
-
-						// Case 2: t is between two keyframes
-						else if ((t < ampParams[j].t) && (t > ampParams[j-1].t)) {
-							var rise = ampParams[j].value - ampParams[j-1].value;
-							var run  = ampParams[j].t - ampParams[j-1].t;
-							var slope = rise/run;
-							amp = (slope * (t - ampParams[j-1].t)) + ampParams[j-1].value;
-						}
-
-						// Case 3: t is beyond final keyframe
-						else if ((j == (ampParams.length-1)) && (t > ampParams[j].t)) {
-							amp = ampParams[j].value;
-						}
-					} // End of the amplitude search
-
-					var freq = 100;
-					var needsShift = false;
-					var freqKeyframeNo = 0;
-					// Now determine the frequency based on the time and keyframes!
-					for (var j=0; j<freqParams.length; j++) {
-
-						// Case 1: t is before the first keyframes
-						if ((j==0) && (t <= freqParams[j].t)) {
-							freq = freqParams[j].value;
-						}
-
-						// Case 2: t is between two keyframes
-						else if ((t < freqParams[j].t) && (t > freqParams[j-1].t)) {
-							var rise = freqParams[j].value - freqParams[j-1].value;
-							var run = freqParams[j].t - freqParams[j-1].t;
-							var slope = rise/run;
-							var fExact = freq = (slope * (t - freqParams[j-1].t))
-							fExact = fExact + freqParams[j-1].value;
-							freq = 50 * Math.round(fExact/50);
-							if (freqKeyframeNo != j) {
-								needsShift = true;
-								freqKeyframeNo++;
-							}
-						}
-
-						// Case 3: t is beyond the last keyframe
-						else if ((j == (freqParams.length - 1)) && t > freqParams[j].t) {
-							freq = freqParams[j].value;
-						}
-					} // End of the frequency calculations
-
-					// Now determine any phase shift needed to keep it continuous
-					var phaseShift = 0;
 					var vol = range * amp;
-					var angle = Math.sin((2 * Math.PI * (t/1000) * freq) + phaseShift);
+					var angle = Math.sin((2 * Math.PI * ft) + phaseShift);
           var oscOffset = parseInt(Math.round(vol * angle));
 
           // Now if the value being written is negative, convert it to signed.
@@ -295,12 +246,11 @@ var saveLoadStore = Reflux.createStore({
             oscOffset = ~(Math.abs(oscOffset));
           }
 
+
 					// Range - Offset = WAV encoding of Offset... Weird!
           this.buffer[(i*this.sampleSize)+44] = range - oscOffset;
         }
       }
-
-
     } /**  End of WavBundle Constructor  **/
 
 
@@ -316,6 +266,8 @@ var saveLoadStore = Reflux.createStore({
 
   },
 
+
+
 	onLoadMacaronFile(file) {
 		var reader = new FileReader();
 
@@ -329,6 +281,130 @@ var saveLoadStore = Reflux.createStore({
 	}
 
 });
+
+
+
+/**
+ *  getCurrentAmplitude computes what the amplitude should be at
+ *   time = t based on the keyframes created by the user in the
+ *    "Amplitude" pane of the Macaron editor.
+ **/
+ var getCurrentAmplitude = function(t, ampData) {
+
+	 var amp = 0.1; // default
+	 for (var j=0; j<ampData.length; j++) {
+
+		 // Case 1: t is less than first keyframe
+		 if ((j==0) && (t <= ampData[j].t)) {
+			 amp = ampData[j].value;
+		 }
+
+		 // Case 2: t is between two keyframes
+		 else if ((t < ampData[j].t) && (t > ampData[j-1].t)) {
+			 var rise = ampData[j].value - ampData[j-1].value;
+			 var run  = ampData[j].t - ampData[j-1].t;
+			 var slope = rise/run;
+			 amp = (slope * (t - ampData[j-1].t)) + ampData[j-1].value;
+		 }
+
+		 // Case 3: t is beyond final keyframe
+		 else if ((j == (ampData.length-1)) && (t > ampData[j].t)) {
+			 amp = ampData[j].value;
+		 }
+	 } // End of the amplitude search
+	 return amp;
+ }
+
+
+
+
+ /**
+  *  getCurrentFrequency computes what the current frequency should be at
+	*   time t based on the users keyframes created in the "Frequency"
+	*    pane of the Macaron editor.
+	**/
+var getCurrentFT = function(t, freqData) {
+
+	var ft = 0; // default
+
+	for (var j=0; j<freqData.length; j++) {
+
+		// Case 1: t is before the first keyframes
+		if ((t <= freqData[0].t) && (j ==0)) {
+			ft = freqData[0].value * (t/1000);
+		}
+
+		// Case 2: t is between two keyframes
+		else if ((t < freqData[j].t) && (t >= freqData[j-1].t)) {
+
+			// var fc = freqData[j-1].value; // Carrier frequency
+			// var Df = freqData[j].value - freqData[j-1].value; // Max change in frequency
+			// var Vm0 = (freqData[j].t - freqData[j-1].t) / fc; // Initial V mod
+			// var Vm = t; // mod function of time
+			// var freq = (fc + ((Df/Vm0) * Vm));
+
+			var dfTotal = freqData[j].value - freqData[j-1].value;
+			var dtTotal = freqData[j].t - freqData[j-1].t;
+			var slope = dfTotal/dtTotal;
+			var dt = t - freqData[j-1].t;
+			var df = slope * dt;
+			var intP1 = (dt/1000) * freqData[j-1].value;
+			var intP2 = (dt/1000) * df * 0.5;
+			var ft = intP1 + intP2;
+		}
+
+		// Case 3: t is beyond the last keyframe
+		else if ((j == (freqData.length-1)) && (t > freqData[j].t)) {
+			 ft = freqData[j].value * (t/1000);
+		 }
+
+	} // End of the frequency calculations
+
+	return ft;
+}
+
+
+
+
+
+/**
+ *  needsPhaseShift returns a boolean indicating whether or not the outputted
+ *   waveform has a discontinuity large enough to require some sort of
+ *    transformation. This occurs when there is a change in frequency over time
+ **/
+var needsPhaseShift = function(t, freqData) {
+
+	var needsShift = false; //stub
+
+	for (var j=0; j<freqData.length; j++) {
+		if (freqData[j].t == t) {
+			needsShift = true;
+			alert('it happened...');
+		}
+	}
+
+	return needsShift;
+}
+
+
+
+
+
+/**
+ *  computePhaseShift is only called when the outputted waveform changes
+ *   frequency, and the speaker displacement before and after the frequency
+ *    change do not align. This function will return the value of offset
+ *     that will realign the waveform after a change in frequency.
+ **/
+var computePhaseShift = function(t, freqData, oldPhaseShift) {
+
+	var tOld = t - (1/44100); // Assuming sampleRate = 44100
+	var ftOld = getCurrentFT(tOld, freqData);
+	var ftNew = getCurrentFT(t, freqData);
+	var phaseShift = (ftOld + oldPhaseShift) / ftNew;
+
+	return phaseShift;
+}
 
 
 module.exports  = {
