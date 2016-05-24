@@ -8,6 +8,7 @@ var AnimationStore = require('./stores/animationstore.js');
 var StudyStore = require('./stores/studystore.js');
 var SaveLoadStore = require('./stores/saveloadstore.js');
 var LogStore = require('./stores/logstore.js');
+var MixModeStore = require('./stores/mixmodestore.js');
 
 var UserAgreement = require('./useragreement.jsx');
 var UserInstructions = require('./userinstructions.jsx');
@@ -18,7 +19,7 @@ var EditorHeader = React.createClass({
 	mixins : [
 				Reflux.connect(AnimationStore.store, 'animation'), //emitted updates go to 'animation' key
 				Reflux.connect(StudyStore.store, 'study'), //emitted updates go to 'study' key
-					
+
 			],
 
 	propTypes: {
@@ -30,6 +31,7 @@ var EditorHeader = React.createClass({
 	    	displayInterfaceMode:false,
 	    	displaySaveButton:true,
 	    	displayStartButton:false,
+				displayMixButton:true,
 			uploadFileID:"uploadedFile"
 	    }
 	},
@@ -62,9 +64,13 @@ var EditorHeader = React.createClass({
 		uploadedFiles.value = [];
 	},
 
+	_onMixModeButtonClick : function(e) {
+		MixModeStore.actions.enterMixMode();
+	},
+
 	/**
 	* Rendering
-	* 
+	*
 	*/
 
 	render : function() {
@@ -76,7 +82,7 @@ var EditorHeader = React.createClass({
            display: 'block',
            /*padding: '10px 10px 10px 10px'*/
            height: '25px'
-           
+
 		};
 
 		var animationOptions = this.state.animation.animationOptions;
@@ -146,21 +152,28 @@ var EditorHeader = React.createClass({
 					</span>);
 		}
 
+		var mixButton = <span />
+		if (this.props.displayMixButton)
+		{
+			mixButton = (<a class="btn header" style={buttonStyle} onClick={this._onMixModeButtonClick} >Macaron Mix</a>);
+		}
+
 
 		return (
 			<div className="header" style={headerStyle}>
 				{startButton}
 
-				
+
 				<span className="title unselectable" > Macaron </span>
 				<span className="menu">
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
 					<UserInstructions />
 					<UserAgreement />
+					{mixButton}
 					{saveButton}
 					{loadButton}
-					
+
 
 				</span>
 
