@@ -113,11 +113,7 @@ var saveLoadStore = Reflux.createStore({
 
 
 
-	/**
-	 *  Generate Wave File will use the rad, new AudioContext API supplied in
-	 *   HTML5 to create an audio representation of the user's generated wave
-	 *    form.
-	 **/
+
 	generateWavFile() {
 
 		/**
@@ -127,6 +123,7 @@ var saveLoadStore = Reflux.createStore({
 		 *    some wiggle-room for future improvements.
 		 *
 		 * Remember! It's little-endian!
+		 * @constructor
 		 **/
 		var WavBundle = function(trackLength) {
 			this.trackLength = trackLength; // in seconds.
@@ -217,7 +214,7 @@ var saveLoadStore = Reflux.createStore({
 
 
 			/**
-				* makeWavContent will generate the actual sound-producing
+				* generateWavContent will generate the actual sound-producing
 				*  portion of the WAV file.
 				**/
 			this.generateWavContent = function() {
@@ -311,6 +308,12 @@ var saveLoadStore = Reflux.createStore({
  *  getCurrentAmplitude computes what the amplitude should be at
  *   time = t based on the keyframes created by the user in the
  *    "Amplitude" pane of the Macaron editor.
+ *
+ * @param t a number representing current time in miliseconds.
+ * @param ampData a JSON object created by the VTIconStore file representing
+ *          amplitude keyframes in the Macaron editor.
+ *
+ * @return a number between 0 and 1 representing current, max amplitude.
  **/
  var getCurrentAmplitude = function(t, ampData) {
 
@@ -345,6 +348,12 @@ var saveLoadStore = Reflux.createStore({
   *  getCurrentFrequency computes what the current frequency should be at
 	*   time t based on the users keyframes created in the "Frequency"
 	*    pane of the Macaron editor.
+	*
+	* @param t a number representing current time in miliseconds
+	* @param freqData a JSON object created by the VTIconStore for
+	*          frequency keyframes.
+	*
+	* @return a number representing the intended frequency at time t
 	**/
 var getCurrentFrequency = function(t, freqData) {
 
@@ -376,8 +385,15 @@ var getCurrentFrequency = function(t, freqData) {
  *  getCurrentFT computes the integral of frequency over time from the
  *   previous keyframe out to the current time.
  *
- *  This is needed to exactly compute the displacement of a speaker
+ *  This integral is needed to exactly compute the displacement of a speaker
  *   that is generating a soundwave of changing frequency.
+ *
+ * @param t a number representing current time in miliseconds
+ * @param freqData a JSON object created by the VTIconStore for
+ *          frequency keyframes.
+ *
+ * @return a number representing the integral of frequency over time on the
+ *           interval from the last frequency keyframe to time t.
  **/
 var getCurrentFT = function(t, freqData) {
 
@@ -438,8 +454,15 @@ var getCurrentFT = function(t, freqData) {
 
 /**
  *  the Equalize function will scale the volume to adjust for "sweet-spots"
- *   in a given actuator. This code exactly emulates the algorithm in the
- *    soundgen.jsx file written by Oliver.
+ *   in a given actuator. This code exactly emulates the algorithm in
+ *    soundgen.jsx written by Oliver.
+ *
+ * @param t a number representing current time in miliseconds
+ * @param freqData a JSON object created by the VTIconStore for
+ *          frequency keyframes.
+ * @param volume a number representing the current volume (y range * amplitude)
+ *
+ * @return a number representing the adjusted volume.
  **/
 var equalize = function(t, freqData, volume) {
 
@@ -466,6 +489,11 @@ var equalize = function(t, freqData, volume) {
 /**
  *  isJSONFile determines if the provided file is, in fact, a JSON file
  *   that can be understood by the Macaron app.
+ *
+ * @param r a JS Reader produced by the Filereader API when a file is loaded.
+ * @param fn a string representing the name of the uploaded file.
+ *
+ * @return a boolean, True if file is useable JSON, False otherwise.
  **/
 var isJSONFile = function(r, fn) {
 
@@ -492,6 +520,11 @@ var isJSONFile = function(r, fn) {
  * isWavFile determines whether or not a provided file is actually an
  *  appropriate WAV file (with readable bit-depth, correct file format,
  *   useful number of channels, etc.)
+ *
+ * @param r a JS Reader produced by the Filereader API with a file is loaded.
+ * @param fn a string representing the name of the uploaded file.
+ *
+ * @return a boolean, True if the file is a WAV file, False otherwise.
  **/
 var isWAVFile = function(r, fn) {
 
@@ -524,11 +557,12 @@ var isWAVFile = function(r, fn) {
  *  loadWAVFile takes the contents of a WAV file and loads an approximation
  *   of that file's waveform into the Macaron editor. This function relies
  *    heavily on the code written by the amazing Benson!
+ *
+ * @param r a JS Reader created by the Filereader API when a file is loaded.
  **/
 var loadWAVFile = function(r) {
 
 	var y;  // speaker displacement at time = t
-	var Fs; // not sure yet...
 
 	var sampleRate;
 	var duration;
@@ -547,8 +581,8 @@ var loadWAVFile = function(r) {
 		var waveBuffer = new Array(nFrames);
 		waveBuffer = buff.getChannelData(0); // Yup, just one channel...
 
-		var nPannels = 40; // The number of points at which the input is to
-											 // be estimated. (MUST BE DIVISIBLE BY 20!).
+		var nPannels = 80; // The number of points at which the input is to
+											 // be estimated. (MUST BE DIVISIBLE BY 20).
 		var pannelDuration = (duration * 1000) / nPannels; // in ms
 		var pannelWidth = Math.round(nFrames / nPannels); // in number of frames
 
@@ -564,7 +598,6 @@ var loadWAVFile = function(r) {
 			var aVal = Math.max.apply(null, waveChunk);
 
 			var fVal = findFFTRoot(waveChunk, sampleRate);
-			console.log(fVal);
 
 
 			VTIconStore.actions.newKeyframe("amplitude", tMid, aVal, false, "main");
@@ -577,6 +610,18 @@ var loadWAVFile = function(r) {
 	});
 }
 
+/**
+ *  findFFTRoot computes the Discrete Fourier Transform of the audio data,
+ *   and takes the frequency with the largest weight to be the approximated
+ *    frequency of the entire data chunk. This function relies on the "fft"
+ *     javascript functions found in the Third Party directory.
+ *
+ * @param data an array of y values decoded from a WAV file.
+ * @param sampleRate a number representing the sample rate of the wave data.
+ *
+ * @return a number reresenting a best guess at the frequency
+ *          of the wave in the data.
+ **/
 var findFFTRoot = function(data, sampleRate) {
 	var real = new Array(data.length);
 	var imag = new Array(data.length);
@@ -586,6 +631,7 @@ var findFFTRoot = function(data, sampleRate) {
 	}
 
 	transform(real, imag);
+	// "transform" comes from the fft utility in the thirdparty directory.
 
 	for (var i=0; i<data.length; i++) {
 		real[i] = Math.abs(real[i]);
@@ -597,7 +643,6 @@ var findFFTRoot = function(data, sampleRate) {
 	}
 
 	var fftRootLocation = real.indexOf(Math.max.apply(null, halfReal));
-	console.log(fftRootLocation);
 
 	var Fs = new Array(data.length);
 	for (var i=1; i<=data.length; i++) {
