@@ -565,6 +565,7 @@ var updateDuration = function(dur) {
 	var duration = Math.round(1000 * dur);
 	ScaleStore.actions.setTimelineRange("main", [0,duration]);
 	VTIconStore.actions.setDuration(duration, "main");
+	VTIconStore.actions.selectVTIcon("main");
 }
 
 
@@ -626,6 +627,7 @@ var loadWAVFile = function(r) {
 		VTIconStore.actions.unselectKeyframes("main");
 		VTIconStore.actions.addSelectedKeyframes([0,1], "main");
 		VTIconStore.actions.deleteSelectedKeyframes("main");
+		VTIconStore.actions.selectVTIcon("main");
 	});
 }
 
