@@ -24,7 +24,7 @@ var IconVis = React.createClass({
 		interpolateParameters: React.PropTypes.func.isRequired,
 		name : React.PropTypes.string.isRequired,
 		selection : React.PropTypes.object.isRequired			},
-	
+
 	getDefaultProps: function() {
 	    return {
 	      height: 50,
@@ -85,7 +85,7 @@ var IconVis = React.createClass({
 								});
 		var currentTimePath = currentTimeLineFunc([
 						[scaleX(this.props.currentTime), 0],
-						[scaleX(this.props.currentTime), this.props.height]	
+						[scaleX(this.props.currentTime), this.props.height]
 				]);
 
 		var playheadLine = <path />;
@@ -104,7 +104,7 @@ var IconVis = React.createClass({
 				tLeft = this.props.vticon.selectedTimeRange.time2;
 				tRight = this.props.vticon.selectedTimeRange.time1;
 			}
-			
+
 			var x = scaleX(tLeft);
 			var y = 0;
 			var width = scaleX(tRight) - x;
@@ -112,7 +112,7 @@ var IconVis = React.createClass({
 
 			selectionSquare = <rect
 				x={x}
-				y={y} 
+				y={y}
 				width={width}
 				height={height}
 				fill={this.props.selectionColor}
