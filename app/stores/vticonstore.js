@@ -7,6 +7,7 @@ var vticonActions = Reflux.createActions(
 		'selectVTIcon',
 
 		'setVTIcon',
+		'setDuration',
 
 		'newKeyframe',
 		'newMultipleKeyframes',
@@ -72,36 +73,36 @@ var vticonStore = Reflux.createStore({
 					},
 
 					example: { //right side editor
-						duration: 3000, //ms 
+						duration: 3000, //ms
 
-						selected: true,  
+						selected: true,
 
 						selectedTimeRange: {
-							active:false, 
-							time1:0, 
-							time2:0 
+							active:false,
+							time1:0,
+							time2:0
 						},
 
 						parameters: {
 							amplitude: {
-								valueScale:[0,1], 
+								valueScale:[0,1],
 								data : [
-									{ id: 6, t: 600, value:0.5, selected:false},  
-									{ id: 7, t: 1500, value:1, selected:false},   
-									{ id: 8, t: 3000, value:0, selected:false}]   
+									{ id: 6, t: 600, value:0.5, selected:false},
+									{ id: 7, t: 1500, value:1, selected:false},
+									{ id: 8, t: 3000, value:0, selected:false}]
 							},
 
 							frequency: {
 								valueScale:[50,500], //Hz , was [50,500]
 								data : [
-									{ id: 9, t: 0, value:250, selected:false}, 
-									{ id: 10, t: 1200, value:50, selected:false}, 
-									{ id: 11, t: 1800, value:500, selected:false}] 
-									
+									{ id: 9, t: 0, value:250, selected:false},
+									{ id: 10, t: 1200, value:50, selected:false},
+									{ id: 11, t: 1800, value:500, selected:false}]
+
 							}
 						}
 					}
-						
+
 					};
 
 		this._previousStates = []; //for undo
@@ -116,7 +117,7 @@ var vticonStore = Reflux.createStore({
 				}
 			}
 		}
-		
+
 	},
 
 	getInitialState : function() {
@@ -127,7 +128,7 @@ var vticonStore = Reflux.createStore({
 	/**
 	*
 	* VTIcon Selection
-	* 
+	*
 	*/
 
 	_selectVTIcon(name="") {
@@ -179,7 +180,7 @@ var vticonStore = Reflux.createStore({
 
 		}
 		this.trigger(this._data);
-	
+
 	},
 
 	/*
@@ -187,6 +188,18 @@ var vticonStore = Reflux.createStore({
 	* Keyframe creation
 	*
 	*/
+
+	/*
+	*
+	* Update the duration of the Waveform*
+	*/
+	onSetDuration(newDuration, name) {
+		this._data[name].duration = newDuration;
+		this.trigger(this._data);
+	},
+
+
+
 
 	onNewKeyframe(parameter, t, value, addToSelection=false, name="") {
 		this._saveStateForUndo();
@@ -265,7 +278,7 @@ var vticonStore = Reflux.createStore({
 					}
 				}
 			}
-		} 
+		}
 
 
 		this._setAllKeyframes(false, name=name);
@@ -286,7 +299,7 @@ var vticonStore = Reflux.createStore({
 		}
 
 		this.trigger(this._data);
-		
+
 	},
 
 	_addNewKeyframe(parameter, t, value, addToSelection=false, name="") {
@@ -550,7 +563,7 @@ var vticonStore = Reflux.createStore({
 				var new_id = this._getNewKFUID(p);
 				var new_t = this._data[name].duration/2;
 				//assign a midway value
-				var new_value = (this._data[name].parameters[p].valueScale[0] + this._data[name].parameters[p].valueScale[1])/2; 
+				var new_value = (this._data[name].parameters[p].valueScale[0] + this._data[name].parameters[p].valueScale[1])/2;
 
 				this._data[name].parameters[p].data.push({
 					id:new_id,
@@ -567,7 +580,7 @@ var vticonStore = Reflux.createStore({
 	/**
 	 * KF Guards
 	 */
-	 _isValidKeyframePosition(parameter, t, v, name="") 
+	 _isValidKeyframePosition(parameter, t, v, name="")
 	 {
 	 	name = this._selectVTIcon(name);
 	 	var valid = false;
@@ -619,7 +632,7 @@ var vticonStore = Reflux.createStore({
 		 	}
 
 	 	}
-	 	
+
 
 	 	return state;
 	 },
@@ -671,7 +684,7 @@ var vticonStore = Reflux.createStore({
 	 	if (this._hasStateChanged())
 	 	{
 		 	this._previousStates.push(this._copyState());
-		 	this._nextStates = [];	
+		 	this._nextStates = [];
 	 	}
 	 },
 

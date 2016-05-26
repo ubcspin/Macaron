@@ -2,6 +2,7 @@ import Reflux from 'reflux';
 
 var VTIconStore = require('./vticonstore.js');
 var LogStore = require('./logstore.js');
+var ScaleStore = require('./scalestore.js');
 
 import {transform} from './../../thirdparty/fft.js';
 
@@ -132,7 +133,7 @@ var saveLoadStore = Reflux.createStore({
 			this.bitDepth = 8; // Low-fi...
 			this.bitRate = this.channels * this.sampleRate * this.bitDepth;
 			this.sampleSize = (this.bitDepth * this.channels) / (8); //bytes
-			this.nSamples = this.sampleRate * this.trackLength;
+			this.nSamples = Math.ceil(this.sampleRate * this.trackLength);
 			this.totalSize = (this.nSamples * this.sampleSize) + 44;
 			this.buffer = new Int8Array(this.totalSize);
 
@@ -553,6 +554,22 @@ var isWAVFile = function(r, fn) {
 
 
 
+
+/**
+ *  updateDuration changes the duration settings of the current editor window
+ *   to be the length of the supplied duration parameter.
+ *
+ * @param dur a number representing the new duration of the editor window.
+ **/
+var updateDuration = function(dur) {
+	var duration = Math.round(1000 * dur);
+	ScaleStore.actions.setTimelineRange("main", [0,duration]);
+	VTIconStore.actions.setDuration(duration, "main");
+}
+
+
+
+
 /**
  *  loadWAVFile takes the contents of a WAV file and loads an approximation
  *   of that file's waveform into the Macaron editor. This function relies
@@ -577,6 +594,8 @@ var loadWAVFile = function(r) {
 		duration = buff.duration;
 		nChannels = buff.numberOfChannels;
 		nFrames = buff.length;
+
+		updateDuration(duration);
 
 		var waveBuffer = new Array(nFrames);
 		waveBuffer = buff.getChannelData(0); // Yup, just one channel...
