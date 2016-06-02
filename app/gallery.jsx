@@ -11,10 +11,13 @@ var Gallery = React.createClass({
 				Reflux.connect(ExampleStore.store, 'examples'), //emitted updates go to 'examples' key
 				],
 
+	propTypes: {
+		isMixMode : React.PropTypes.bool
+	},
 	// propTypes: {
 	// 	exampleicon : React.PropTypes.object.isRequired
 	// 		},
-	
+
 	// getDefaultProps: function() {
 	//     return {
 	//       border:2,
@@ -33,14 +36,17 @@ var Gallery = React.createClass({
 
 		var examples = this.state.examples.examples;
 
-		return (
-			<div className="example-gallery">
+
+		if (this.props.isMixMode) {
+			return (<div />)
+		}
+		else {
+			return (<div className="example-gallery">
 				{Object.keys(examples).map( (exName) => (
 						<ExampleSquare exampleName={exName} exampleicon={examples[exName]} />
 					))}
-			</div>
-			)
-
+			</div>)
+		}
 	}
 
 });

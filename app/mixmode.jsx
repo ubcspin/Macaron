@@ -1,11 +1,27 @@
 import React from 'react';
 import Reflux from 'reflux';
-import d3 from 'd3';
 
-var MixMode = React.createClass( {
+var MixMode = React.createClass({
+
+  propTypes: {
+    isMixMode: React.PropTypes.bool
+  },
 
   render : function () {
-    return (<span>test</span>);
+
+    if (this.props.isMixMode) {
+      return (
+        <div><span>Test Mix Mode</span></div>
+      );
+    }
+
+    else {
+      return(
+        <div />
+      );
+    }
   }
-  
+
 });
+
+module.exports = MixMode;

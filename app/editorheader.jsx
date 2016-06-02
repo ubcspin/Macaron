@@ -2,8 +2,6 @@
 import React from 'react';
 import Reflux from 'reflux';
 
-
-
 var AnimationStore = require('./stores/animationstore.js');
 var StudyStore = require('./stores/studystore.js');
 var SaveLoadStore = require('./stores/saveloadstore.js');
@@ -19,11 +17,11 @@ var EditorHeader = React.createClass({
 	mixins : [
 				Reflux.connect(AnimationStore.store, 'animation'), //emitted updates go to 'animation' key
 				Reflux.connect(StudyStore.store, 'study'), //emitted updates go to 'study' key
-
 			],
 
 	propTypes: {
-			},
+		isMixMode: React.PropTypes.bool
+	},
 
 	getDefaultProps: function() {
 	    return {
@@ -32,7 +30,7 @@ var EditorHeader = React.createClass({
 	    	displaySaveButton:true,
 	    	displayStartButton:false,
 				displayMixButton:true,
-			uploadFileID:"uploadedFile"
+				uploadFileID:"uploadedFile"
 	    }
 	},
 
@@ -153,18 +151,24 @@ var EditorHeader = React.createClass({
 		}
 
 		var mixButton = <span />
-		if (this.props.displayMixButton)
-		{
+		if (!this.props.isMixMode) {
 			mixButton = (<a class="btn header" style={buttonStyle} onClick={this._onMixModeButtonClick} >Macaron Mix</a>);
+		} else {
+			mixButton = <a />;
+		}
+
+		var siteTitle = <span />
+		if (this.props.isMixMode) {
+			siteTitle = (<span className="title unselectable" > Macaron Mix </span>);
+		} else {
+			siteTitle = (<span className="title unselectable" > Macaron </span>);
 		}
 
 
 		return (
 			<div className="header" style={headerStyle}>
 				{startButton}
-
-
-				<span className="title unselectable" > Macaron </span>
+				{siteTitle}
 				<span className="menu">
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
@@ -173,15 +177,11 @@ var EditorHeader = React.createClass({
 					{mixButton}
 					{saveButton}
 					{loadButton}
-
-
 				</span>
-
-
 			</div>
-			);
+		);
 	}
-
+	
 });
 
 module.exports = EditorHeader;
