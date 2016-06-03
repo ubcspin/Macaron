@@ -233,117 +233,124 @@ var EditorMode = React.createClass( {
 
   render: function() {
 
-		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime, this.state.playback.playingIcon);
-		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime, this.state.playback.playingIcon);
-
-		var amplitude_for_soundgen = 0;
-		if (this.props.playbackAtEndOfVTIcon){amplitude_for_soundgen = amplitude;}
-
-		var scaleXMain = this.state.scales.main.scaleTimeline;
-		var scaleXExample = this.state.scales.example.scaleTimeline;
-
-		var design_icon = this.state.vticons["main"];
-		var example_icon = this.state.vticons["example"];
+    if (this.props.isMixMode) {
+      return (
+        <div id="editor">
+          <div name="main" id="maineditor" ref="mainEditorRef" />
+          <div name="example" id="exampleditor" ref="exampleEditorRef" />
+        </div>
+      );
+    }
 
 
-		var designStyle = {
-			width:"44%",
-			marginLeft:'auto',
-			marginRight:'auto',
-			display:"block",
-			borderStyle:"solid",
-			borderWidth:0
-		};
-		var exampleStyle = {
-			width:"44%",
-			marginLeft:'auto',
-			marginRight:'auto',
-			display:"block",
-			borderStyle:"solid",
-			borderWidth:0
-		};
+    else {
+
+  		var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime, this.state.playback.playingIcon);
+  		var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime, this.state.playback.playingIcon);
+
+  		var amplitude_for_soundgen = 0;
+  		if (this.props.playbackAtEndOfVTIcon){amplitude_for_soundgen = amplitude;}
+
+  		var scaleXMain = this.state.scales.main.scaleTimeline;
+  		var scaleXExample = this.state.scales.example.scaleTimeline;
+
+  		var design_icon = this.state.vticons["main"];
+  		var example_icon = this.state.vticons["example"];
 
 
-		var exampleEditor = <div />;
-		var exampleGallery = <div />;
+  		var designStyle = {
+  			width:"44%",
+  			marginLeft:'auto',
+  			marginRight:'auto',
+  			display:"block",
+  			borderStyle:"solid",
+  			borderWidth:0
+  		};
+  		var exampleStyle = {
+  			width:"44%",
+  			marginLeft:'auto',
+  			marginRight:'auto',
+  			display:"block",
+  			borderStyle:"solid",
+  			borderWidth:0
+  		};
 
-		if(design_icon.selected) {
-			designStyle.borderColor="black";
-			exampleStyle.borderColor="white";
-			if (this.state.playback.currentTime < this.state.vticons.main.duration)
-			{
-				var amplitude_for_soundgen = amplitude;
-			}
-		}
-		else {
-			designStyle.borderColor="white";
-			exampleStyle.borderColor="black";
-			if (this.state.playback.currentTime < this.state.vticons.example.duration)
-			{
-				var amplitude_for_soundgen = amplitude;
-			}
-		}
 
-		if(this.state.study.currentMode != this.state.study.modes.NO_EXAMPLES) {
-			exampleStyle.float="left";
-			designStyle.float="left";
-			var iconVisSelectable = (this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT);
-			var keyframeSelectable = (this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT);
-			var visualization = ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT)
-								|| (this.state.study.currentMode == this.state.study.modes.HIGHVIS_LOWSELECT));
-			var visualizeTicks = keyframeSelectable;
-			var modifiable = this.props.examplesModifiable;
-			exampleEditor = (
-  			<div name="example" id="exampleeditor" ref="exampleEditorRef" style={exampleStyle}>
-  				<ControlBar
-  					isMixMode={this.props.isMixMode}
-  					name="example"
-  					playing={this.state.playback.playing}
-  					mute={this.state.playback.mute}/>
-  				<PlayHead name="example"
-  					isMixMode={this.props.isMixMode}
-  					displayPlayhead={this.state.vticons["example"].selected}
-  					scaleX={scaleXExample}
-  					currentTime={this.state.playback.currentTime}
-  					duration={example_icon.duration}
-  					keyframeCircleRadius={this.props.keyframeCircleRadius}
-  					playheadFill={this.props.playheadFill}/>
-  				<IconVis name="example"
-  					isMixMode={this.props.isMixMode}
-  					scaleX={scaleXExample}
-  					vticon={example_icon}
-  					currentTime={this.state.playback.currentTime}
-  					keyframeCircleRadius={this.props.keyframeCircleRadius}
-  					playheadFill={this.props.playheadFill}
-  					interpolateParameters={this.interpolateParameters}
-  					interpolateParameter={this.interpolateParameter}
-  					selection={this.state.selection}
-  					selectable={iconVisSelectable} />
-  				{Object.keys(example_icon.parameters).map( (p) => (
-  						<KeyframeEditor
-  							isMixMode={this.props.isMixMode}
-  							name="example"
-  							scaleX={scaleXExample}
-  							currentTime={this.state.playback.currentTime}
-  							parameter={p}
-  							vticon={example_icon}
-  							keyframeCircleRadius={this.props.keyframeCircleRadius}
-  							playheadFill={this.props.playheadFill}
-  							selection={this.state.selection}
-  							selectable={keyframeSelectable}
-  							visualization={visualization}
-  							visualizeTicks={visualizeTicks}
-  							modifiable={modifiable} />
-  					))}
-  				</div>);
-				exampleGallery = (<Gallery isMixMode={this.props.isMixMode} />);
-			}
+  		var exampleEditor = <div />;
+  		var exampleGallery = <div />;
 
-      if (this.props.isMixMode) {
-        return(<div />);
-      }
+  		if(design_icon.selected) {
+  			designStyle.borderColor="black";
+  			exampleStyle.borderColor="white";
+  			if (this.state.playback.currentTime < this.state.vticons.main.duration)
+  			{
+  				var amplitude_for_soundgen = amplitude;
+  			}
+  		}
+  		else {
+  			designStyle.borderColor="white";
+  			exampleStyle.borderColor="black";
+  			if (this.state.playback.currentTime < this.state.vticons.example.duration)
+  			{
+  				var amplitude_for_soundgen = amplitude;
+  			}
+  		}
 
-      else {
+  		if(this.state.study.currentMode != this.state.study.modes.NO_EXAMPLES) {
+  			exampleStyle.float="left";
+  			designStyle.float="left";
+  			var iconVisSelectable = (this.state.study.currentMode == this.state.study.modes.LOWVIS_HIGHSELECT);
+  			var keyframeSelectable = (this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT);
+  			var visualization = ((this.state.study.currentMode == this.state.study.modes.HIGHVIS_HIGHSELECT)
+  								|| (this.state.study.currentMode == this.state.study.modes.HIGHVIS_LOWSELECT));
+  			var visualizeTicks = keyframeSelectable;
+  			var modifiable = this.props.examplesModifiable;
+  			exampleEditor = (
+    			<div name="example" id="exampleeditor" ref="exampleEditorRef" style={exampleStyle}>
+    				<ControlBar
+    					isMixMode={this.props.isMixMode}
+    					name="example"
+    					playing={this.state.playback.playing}
+    					mute={this.state.playback.mute}/>
+    				<PlayHead name="example"
+    					isMixMode={this.props.isMixMode}
+    					displayPlayhead={this.state.vticons["example"].selected}
+    					scaleX={scaleXExample}
+    					currentTime={this.state.playback.currentTime}
+    					duration={example_icon.duration}
+    					keyframeCircleRadius={this.props.keyframeCircleRadius}
+    					playheadFill={this.props.playheadFill}/>
+    				<IconVis name="example"
+    					isMixMode={this.props.isMixMode}
+    					scaleX={scaleXExample}
+    					vticon={example_icon}
+    					currentTime={this.state.playback.currentTime}
+    					keyframeCircleRadius={this.props.keyframeCircleRadius}
+    					playheadFill={this.props.playheadFill}
+    					interpolateParameters={this.interpolateParameters}
+    					interpolateParameter={this.interpolateParameter}
+    					selection={this.state.selection}
+    					selectable={iconVisSelectable} />
+    				{Object.keys(example_icon.parameters).map( (p) => (
+    						<KeyframeEditor
+    							isMixMode={this.props.isMixMode}
+    							name="example"
+    							scaleX={scaleXExample}
+    							currentTime={this.state.playback.currentTime}
+    							parameter={p}
+    							vticon={example_icon}
+    							keyframeCircleRadius={this.props.keyframeCircleRadius}
+    							playheadFill={this.props.playheadFill}
+    							selection={this.state.selection}
+    							selectable={keyframeSelectable}
+    							visualization={visualization}
+    							visualizeTicks={visualizeTicks}
+    							modifiable={modifiable} />
+    					))}
+    				</div>);
+  				exampleGallery = (<Gallery isMixMode={this.props.isMixMode} />);
+  			}
+
         return(
           <div id="editor" >
     				<SoundGen frequency={frequency} amplitude={amplitude_for_soundgen} mute={this.state.playback.mute} />

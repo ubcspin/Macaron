@@ -1,0 +1,163 @@
+/**
+ *  Here's the code that styles the controls at the top of the
+ *   "Macaron Mix" page.
+ **/
+
+#upper-mix-controls-container {
+  display: block;
+  position: relative;
+  width: 800px;
+  height: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #EEEEEE;
+  border-radius: 7px;
+}
+
+#mix-mode {
+  display: block;
+  position: relative;
+  float: left;
+  width: 400px;
+  height: 50px;
+}
+
+#select-mix-mode-title {
+  display: block;
+  position: relative;
+  width: 100%;
+  padding-top: 5px;
+  text-align: center;
+}
+
+#quick-mix {
+   display: block;
+   position: relative;
+   float: left;
+   width: 400px;
+   height: 50px;
+   margin-left: auto;
+   margin-right: auto;
+ }
+
+ #quick-mix-title {
+   display: block;
+   position: relative;
+   width: 100%;
+   padding-top: 5px;
+   text-align: center;
+ }
+
+ #quick-mix-buttons-container {
+   display: block;
+   position: relative;
+   width: 215px;
+   margin-right: auto;
+   margin-left: auto;
+ }
+
+
+
+
+
+
+
+
+#amount-slider-container {
+  display: block;
+  position: relative;
+  width: 800px;
+  height: 120px;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #EEEEEE;
+  border-radius: 8px;
+}
+
+#load-buttons-container {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 25px;
+  padding-top: 10px;
+  overflow: hidden;
+}
+
+#load-signal-1-button {
+  display: block;
+  position: relative;
+  float: left;
+  margin-left: 5%;
+}
+
+#load-signal-2-button {
+  display: block;
+  position: relative;
+  float: right;
+  margin-right: 5%;
+}
+
+#middle-slider-container {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 50px;
+  padding: 0;
+  overflow: hidden;
+}
+
+#wave-1-title {
+  display: block;;
+  position: relative;
+  float: left;
+  width: 10%;
+  height: 25px;
+  margin-top: 10px;
+  margin-left: 2.5%;
+  font-size: 16pt;
+  text-align: right;
+}
+
+#wave-2-title {
+  display: block;
+  position: relative;
+  float: left;
+  width: 10%;
+  height: 25px;
+  margin-top: 10px;
+  margin-left: 2.5%;
+  font-size: 16pt;
+}
+
+#amount-slider {
+  display: block;
+  position: relative;
+  float: left;
+  margin-left: 2.5%;
+  width: 70%;
+}
+
+#mix-value-entries-container {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 25px;
+  overflow: hidden;
+}
+
+#signal-1-amount {
+  display: block;
+  position: relative;
+  float: left;
+  width: 25px;
+  margin-left: 10%;
+}
+
+#signal-2-amount {
+  display: block;
+  position: relative;
+  float: right;
+  width: 25px;
+  margin-right: 10%;
+}

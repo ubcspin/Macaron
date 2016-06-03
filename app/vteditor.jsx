@@ -29,15 +29,6 @@ var StudyStore = require('./stores/studystore.js');
 
 var VTEditor = React.createClass({
 
-	mixins : [
-				Reflux.connect(PlaybackStore.store, 'playback'), //emitted updates go to 'playback' key
-				Reflux.connect(VTIconStore.store, 'vticons'), //emitted updates go to 'vticon' key
-				Reflux.connect(ScaleStore.store, 'scales'), //emitted updates go to 'scales' key
-				Reflux.connect(SelectionStore.store, 'selection'), //emitted updates go to 'selection' key
-				Reflux.connect(AnimationStore.store, 'animation'), //emitted updates go to 'animation' key
-				Reflux.connect(StudyStore.store, 'study') //emitted updates go to 'study' key
-	],
-
 	propTypes: {
 		isMixMode: React.PropTypes.bool
 	},
