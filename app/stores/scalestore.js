@@ -21,16 +21,14 @@ var scaleStore = Reflux.createStore({
 
 	init() {
 		var stub_fn = d3.scale.identity();
-		this._names = ["main", "example"];
+		this._names = ["main", "example", "wave1", "wave2", "mixedWave"];
 
 		this._parameterValues = {};
 		this._duration = {};
 		this._trackrange = {};
 		this._timelinerange = {};
+		this._data = {};
 
-		this._data = {
-
-		};
 		for (var i = 0; i < this._names.length; i++) {
 			this._data[this._names[i]] = {
 				scaleTimeline:stub_fn,
@@ -42,7 +40,7 @@ var scaleStore = Reflux.createStore({
 				topOffsetParameter:{
 					amplitude:0,
 					frequency:0
-				}			
+				}
 			};
 
 		this._parameterValues[this._names[i]] = {};
@@ -51,7 +49,7 @@ var scaleStore = Reflux.createStore({
 		this._timelinerange[this._names[i]] = [0,3000]; //if set here, on init, won't get initial D3 errors
 
 		}
-		
+
 		this.listenTo(VTIconStore.store, this._VTIconUpdate);
 	},
 
@@ -71,7 +69,7 @@ var scaleStore = Reflux.createStore({
 	                .range(this._trackrange[this._names[i]][p]);
 	        }
 		}
-		
+
 		this.trigger(this._data);
 	},
 
@@ -84,7 +82,6 @@ var scaleStore = Reflux.createStore({
 				this._parameterValues[n][p] = vticons[n].parameters[p].valueScale;
 			}
 		}
-		
 	},
 
 	_VTIconUpdate(vticon) {

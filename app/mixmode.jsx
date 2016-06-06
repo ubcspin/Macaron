@@ -232,6 +232,25 @@ var MixMode = React.createClass({
 
   render : function () {
 
+    var scaleXMain = this.state.scales.main.scaleTimeline;
+    var scaleXExample = this.state.scales.example.scaleTimeline;
+
+    var design_icon = this.state.vticons["main"];
+    var example_icon = this.state.vticons["example"];
+
+
+    var designStyle = {
+      display:"block",
+      position:"relative",
+      float:"left",
+      width:"30%",
+      marginLeft:"3%",
+      marginTop:"25px",
+      display:"block",
+      borderStyle:"solid",
+      borderWidth:0
+    };
+
     if (this.props.isMixMode) {
 
       var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime, this.state.playback.playingIcon);
@@ -239,6 +258,56 @@ var MixMode = React.createClass({
 
       var amplitude_for_soundgen = 0;
       if (this.props.playbackAtEndOfVTIcon){amplitude_for_soundgen = amplitude;}
+
+      // return (
+      //   <div id="mixer" >
+      //     <SoundGen frequency={frequency} amplitude={amplitude_for_soundgen} mute={this.state.playback.mute} />
+      //     <AnimationWindow
+      //       name="main"
+      //       animation={this.state.animation.animation}
+      //       animationParameters={this.state.animation.animationParameters} />
+      //     <MixControls />
+      //
+      //     <div id="wave-previews">
+      //
+      //       <div name="wave1" id="wave-previewer-1" ref="wave1EditorRef" style={designStyle}>
+      //         <ControlBar
+    	// 					name="wave1"
+    	// 					playing={this.state.playback.playing}
+    	// 					mute={this.state.playback.mute}/>
+      //         <PlayHead name="wave1"
+    	// 					displayPlayhead={this.state.vticons["main"].selected}
+    	// 					scaleX={scaleXMain}
+    	// 					currentTime={this.state.playback.currentTime}
+    	// 					duration={design_icon.duration}
+    	// 					keyframeCircleRadius={this.props.keyframeCircleRadius}
+    	// 					playheadFill={this.props.playheadFill}/>
+      //         <IconVis name="wave1"
+    	// 					scaleX={scaleXMain}
+    	// 					vticon={design_icon}
+    	// 					currentTime={this.state.playback.currentTime}
+    	// 					keyframeCircleRadius={this.props.keyframeCircleRadius}
+    	// 					playheadFill={this.props.playheadFill}
+    	// 					interpolateParameters={this.interpolateParameters}
+    	// 					interpolateParameter={this.interpolateParameter}
+    	// 					selection={this.state.selection}/>
+    	// 				{Object.keys(design_icon.parameters).map( (p) => (
+    	// 						<KeyframeEditor
+    	// 							name="example"
+    	// 							scaleX={scaleXMain}
+    	// 							currentTime={this.state.playback.currentTime}
+    	// 							parameter={p}
+    	// 							vticon={design_icon}
+    	// 							keyframeCircleRadius={this.props.keyframeCircleRadius}
+    	// 							playheadFill={this.props.playheadFill}
+    	// 							selection={this.state.selection}/>
+    	// 					))}
+      //
+      //       </div>
+      //     </div>
+      //   </div>
+      // );
+
 
       return (
         <div id="mixer" >

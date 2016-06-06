@@ -15,24 +15,26 @@ var MixControls = React.createClass({
 
         <div id="upper-mix-controls-container">
           <div id="mix-mode">
-            <span id="select-mix-mode-title">Here's the mix mode drop down menu:
-              <select id="mix-mode-drop-down" name="mix-mode-selector">
-                <option value="crossfade">Crossfade</option>
-                <option value="dtw">Dynamic Time Warping</option>
-                <option value="other">Something Else</option>
-              </select>
+            <span id="select-mix-mode-title">Select your mixing algorithm:
             </span>
+            <select id="mix-mode-drop-down"
+              name="mix-mode-selector"
+              onChange={MixControlStore.actions.selectAlgorithm}>
+              <option value="crossfade">Crossfade</option>
+              <option value="dynamic time warping">Dynamic Time Warping</option>
+              <option value="other">Something Else</option>
+            </select>
           </div>
 
 
           <div id="quick-mix">
             <span id="quick-mix-title">Quick Mix</span>
             <div id="quick-mix-buttons-container">
-              <button type="button">0%</button>
-              <button type="button">25%</button>
-              <button type="button">50%</button>
-              <button type="button">75%</button>
-              <button type="button">100%</button>
+              <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 0)}>0%</button>
+              <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 25)}>25%</button>
+              <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 50)}>50%</button>
+              <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 75)}>75%</button>
+              <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 100)}>100%</button>
             </div>
           </div>
         </div>
@@ -41,13 +43,15 @@ var MixControls = React.createClass({
         <div id="mix-amount">
           <div id="amount-slider-container">
             <div id="load-buttons-container">
-              <button id="load-signal-1-button" type="button">load waveform 1</button>
-              <button id="load-signal-2-button" type="button">load waveform 2</button>
+              <button id="load-signal-1-button" type="button" onClick={MixControlStore.actions.loadWaveform1}>load waveform 1</button>
+              <input type="file" name="wav1File" id="wav-1-file" ></input>
+              <button id="load-signal-2-button" type="button" onClick={MixControlStore.actions.loadWaveform2}>load waveform 2</button>
+              <input type="file" name="wav2File" id="wav-2-file" ></input>
             </div>
             <div id="middle-slider-container">
-              <span id="wave-1-title">Signal 1</span>
+              <span id="wave-1-title">Wave 1</span>
               <div id="amount-slider"></div>
-              <span id="wave-2-title">Signal 2</span>
+              <span id="wave-2-title">Wave 2</span>
             </div>
             <div id="mix-value-entries-container">
               <input id="signal-1-amount" type="text" name="signal-1-precise-value"></input>

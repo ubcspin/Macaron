@@ -355,18 +355,15 @@ var EditorMode = React.createClass( {
           <div id="editor" >
     				<SoundGen frequency={frequency} amplitude={amplitude_for_soundgen} mute={this.state.playback.mute} />
     				<AnimationWindow
-    						isMixMode={this.props.isMixMode}
     						name="main"
     						animation={this.state.animation.animation}
     						animationParameters={this.state.animation.animationParameters} />
     				<div name="main" id="maineditor" ref="mainEditorRef" style={designStyle}>
     					<ControlBar
-    						isMixMode={this.props.isMixMode}
     						name="main"
     						playing={this.state.playback.playing}
     						mute={this.state.playback.mute}/>
     					<PlayHead name="main"
-    						isMixMode={this.props.isMixMode}
     						displayPlayhead={this.state.vticons["main"].selected}
     						scaleX={scaleXMain}
     						currentTime={this.state.playback.currentTime}
@@ -374,7 +371,6 @@ var EditorMode = React.createClass( {
     						keyframeCircleRadius={this.props.keyframeCircleRadius}
     						playheadFill={this.props.playheadFill}/>
     					<IconVis name="main"
-    						isMixMode={this.props.isMixMode}
     						scaleX={scaleXMain}
     						vticon={design_icon}
     						currentTime={this.state.playback.currentTime}
@@ -385,7 +381,6 @@ var EditorMode = React.createClass( {
     						selection={this.state.selection}/>
     					{Object.keys(design_icon.parameters).map( (p) => (
     							<KeyframeEditor
-    								isMixMode={this.props.isMixMode}
     								name="main"
     								scaleX={scaleXMain}
     								currentTime={this.state.playback.currentTime}
@@ -409,11 +404,11 @@ var EditorMode = React.createClass( {
   componentDidMount: function () {
 
     window.addEventListener('resize', this.handleResize);
-    window.addEventListener('mousemove', this._handleMouseMove);
+    //window.addEventListener('mousemove', this._handleMouseMove);
     window.addEventListener('mouseup', this._handleMouseUp);
     window.addEventListener('keydown', this._handleKeyboard);
-
-    this._updateScales();
+    // TODO
+    //this._updateScales();
     console.log('it mounted!');
 
   },

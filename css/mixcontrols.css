@@ -30,6 +30,11 @@
   text-align: center;
 }
 
+#mix-mode-drop-down {
+  position: relative;
+  margin-left: 120px;
+}
+
 #quick-mix {
    display: block;
    position: relative;
@@ -160,4 +165,12 @@
   float: right;
   width: 25px;
   margin-right: 10%;
+}
+
+#wav-1-file {
+  display: none;
+}
+
+#wav-2-file {
+  display: none;
 }
