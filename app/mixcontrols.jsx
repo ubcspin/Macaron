@@ -43,9 +43,15 @@ var MixControls = React.createClass({
         <div id="mix-amount">
           <div id="amount-slider-container">
             <div id="load-buttons-container">
-              <button id="load-signal-1-button" type="button" onClick={MixControlStore.actions.loadWaveform1}>load waveform 1</button>
+              <button
+                id="load-signal-1-button"
+                type="button"
+                onClick={MixControlStore.actions.loadWaveform1}>load waveform 1</button>
               <input type="file" name="wav1File" id="wav-1-file" ></input>
-              <button id="load-signal-2-button" type="button" onClick={MixControlStore.actions.loadWaveform2}>load waveform 2</button>
+              <button
+                id="load-signal-2-button"
+                type="button"
+                onClick={MixControlStore.actions.loadWaveform2}>load waveform 2</button>
               <input type="file" name="wav2File" id="wav-2-file" ></input>
             </div>
             <div id="middle-slider-container">
