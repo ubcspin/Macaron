@@ -117,7 +117,7 @@ var vticonStore = Reflux.createStore({
 						valueScale:[0,1], //normalized
 						data : [
 							{ id: 6, t: 0, value:0, selected:false},
-							{ id: 7, t: 1500, value:1, selected:false},
+							{ id: 7, t: 2000, value:1, selected:false},
 							{ id: 8, t: 3000, value:0, selected:false}]
 					},
 
@@ -145,7 +145,7 @@ var vticonStore = Reflux.createStore({
 						valueScale:[0,1], //normalized
 						data : [
 							{ id: 6, t: 0, value:1, selected:false},
-							{ id: 7, t: 1500, value:0, selected:false},
+							{ id: 7, t: 1000, value:0, selected:false},
 							{ id: 8, t: 3000, value:1, selected:false}]
 					},
 

@@ -164,6 +164,8 @@ var MixControlStore = Reflux.createStore({
       var freq1 = this._getCurrentFrequency(t, "wave1");
       var freq2 = this._getCurrentFrequency(t, "wave2");
       var freq = ((0.01*amt) * freq1) + ((0.01*(100-amt)) * freq2);
+      console.log(freq1);
+      console.log(freq);
 
       VTIconStore.actions.selectTimeRange(i*windowWidth, (i+1)*windowWidth, "mixedWave");
       VTIconStore.actions.deleteSelectedKeyframes("mixedWave");
@@ -174,7 +176,7 @@ var MixControlStore = Reflux.createStore({
       VTIconStore.actions.unselectKeyframes("mixedWave");
     }
 
-    VTIconStore.actions.addSelectedKeyframes([0,1], "mixedWave");
+    VTIconStore.actions.selectKeyframesInRange(1499,1501,1,"mixedWave");
     VTIconStore.actions.deleteSelectedKeyframes("mixedWave");
 
     console.log(VTIconStore._data);
