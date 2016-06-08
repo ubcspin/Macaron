@@ -28,7 +28,7 @@ var MixControls = React.createClass({
 
 
           <div id="quick-mix">
-            <span id="quick-mix-title">Quick Mix</span>
+            <span id="quick-mix-title">Quick Mix:</span>
             <div id="quick-mix-buttons-container">
               <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 0)}>0%</button>
               <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 25)}>25%</button>

@@ -232,11 +232,13 @@ var MixMode = React.createClass({
 
   render : function () {
 
-    var scaleXMain = this.state.scales.main.scaleTimeline;
-    var scaleXExample = this.state.scales.example.scaleTimeline;
+    var scaleXwave1 = this.state.scales.wave1.scaleTimeline;
+    var scaleXwave2 = this.state.scales.wave2.scaleTimeline;
+    var scaleXmixedWave = this.state.scales.mixedWave.scaleTimeline;
 
-    var design_icon = this.state.vticons["main"];
-    var example_icon = this.state.vticons["example"];
+    var wave1_icon = this.state.vticons["wave1"];
+    var wave2_icon = this.state.vticons["wave2"];
+    var mixedWave_icon = this.state.vticons["mixedWave"];
 
 
     var designStyle = {
@@ -244,11 +246,20 @@ var MixMode = React.createClass({
       position:"relative",
       float:"left",
       width:"30%",
-      marginLeft:"3%",
-      marginTop:"25px",
+      height:"200px",
+      marginLeft:"30px",
       display:"block",
       borderStyle:"solid",
       borderWidth:0
+    };
+
+    var titlesStyles = {
+      position:"relative",
+      width:"1000px",
+      marginLeft:"120px",
+      padding:"10px",
+      fontSize:"14pt",
+      wordSpacing:"350px"
     };
 
     if (this.props.isMixMode) {
@@ -259,56 +270,6 @@ var MixMode = React.createClass({
       var amplitude_for_soundgen = 0;
       if (this.props.playbackAtEndOfVTIcon){amplitude_for_soundgen = amplitude;}
 
-      // return (
-      //   <div id="mixer" >
-      //     <SoundGen frequency={frequency} amplitude={amplitude_for_soundgen} mute={this.state.playback.mute} />
-      //     <AnimationWindow
-      //       name="main"
-      //       animation={this.state.animation.animation}
-      //       animationParameters={this.state.animation.animationParameters} />
-      //     <MixControls />
-      //
-      //     <div id="wave-previews">
-      //
-      //       <div name="wave1" id="wave-previewer-1" ref="wave1EditorRef" style={designStyle}>
-      //         <ControlBar
-    	// 					name="wave1"
-    	// 					playing={this.state.playback.playing}
-    	// 					mute={this.state.playback.mute}/>
-      //         <PlayHead name="wave1"
-    	// 					displayPlayhead={this.state.vticons["main"].selected}
-    	// 					scaleX={scaleXMain}
-    	// 					currentTime={this.state.playback.currentTime}
-    	// 					duration={design_icon.duration}
-    	// 					keyframeCircleRadius={this.props.keyframeCircleRadius}
-    	// 					playheadFill={this.props.playheadFill}/>
-      //         <IconVis name="wave1"
-    	// 					scaleX={scaleXMain}
-    	// 					vticon={design_icon}
-    	// 					currentTime={this.state.playback.currentTime}
-    	// 					keyframeCircleRadius={this.props.keyframeCircleRadius}
-    	// 					playheadFill={this.props.playheadFill}
-    	// 					interpolateParameters={this.interpolateParameters}
-    	// 					interpolateParameter={this.interpolateParameter}
-    	// 					selection={this.state.selection}/>
-    	// 				{Object.keys(design_icon.parameters).map( (p) => (
-    	// 						<KeyframeEditor
-    	// 							name="example"
-    	// 							scaleX={scaleXMain}
-    	// 							currentTime={this.state.playback.currentTime}
-    	// 							parameter={p}
-    	// 							vticon={design_icon}
-    	// 							keyframeCircleRadius={this.props.keyframeCircleRadius}
-    	// 							playheadFill={this.props.playheadFill}
-    	// 							selection={this.state.selection}/>
-    	// 					))}
-      //
-      //       </div>
-      //     </div>
-      //   </div>
-      // );
-
-
       return (
         <div id="mixer" >
           <SoundGen frequency={frequency} amplitude={amplitude_for_soundgen} mute={this.state.playback.mute} />
@@ -317,11 +278,176 @@ var MixMode = React.createClass({
             animation={this.state.animation.animation}
             animationParameters={this.state.animation.animationParameters} />
           <MixControls />
+
+          <div style={titlesStyles}>
+              Wave1 Result Wave2
+          </div>
+
+          <div id="wave-previews">
+
+            <div name="wave1" id="wave-previewer-1" ref="wave1EditorRef" style={designStyle}>
+              <ControlBar
+    						name="wave1"
+    						playing={this.state.playback.playing}
+    						mute={this.state.playback.mute}/>
+              <PlayHead name="wave1"
+    						displayPlayhead={this.state.vticons["wave1"].selected}
+    						scaleX={scaleXwave1}
+    						currentTime={this.state.playback.currentTime}
+    						duration={wave1_icon.duration}
+    						keyframeCircleRadius={this.props.keyframeCircleRadius}
+    						playheadFill={this.props.playheadFill}/>
+              <IconVis name="wave1"
+    						scaleX={scaleXwave1}
+    						vticon={wave1_icon}
+    						currentTime={this.state.playback.currentTime}
+    						keyframeCircleRadius={this.props.keyframeCircleRadius}
+    						playheadFill={this.props.playheadFill}
+    						interpolateParameters={this.interpolateParameters}
+    						interpolateParameter={this.interpolateParameter}
+    						selection={this.state.selection}/>
+    					{Object.keys(wave1_icon.parameters).map( (p) => (
+    							<KeyframeEditor
+    								name="wave1"
+                    height="160"
+                    selectable="true"
+                    modifiable="true"
+                    axisNameWidth="20"
+    								scaleX={scaleXwave1}
+    								currentTime={this.state.playback.currentTime}
+    								parameter={p}
+    								vticon={wave1_icon}
+    								keyframeCircleRadius={this.props.keyframeCircleRadius}
+    								playheadFill={this.props.playheadFill}
+    								selection={this.state.selection}/>
+    						))}
+            </div>
+
+            <div name="mixedWave" id="wave-previewer-mixed" ref="mixedWaveEditorRef" style={designStyle}>
+              <ControlBar
+    						name="mixedWave"
+    						playing={this.state.playback.playing}
+    						mute={this.state.playback.mute}/>
+              <PlayHead name="mixedWave"
+    						displayPlayhead={this.state.vticons["mixedWave"].selected}
+    						scaleX={scaleXmixedWave}
+    						currentTime={this.state.playback.currentTime}
+    						duration={mixedWave_icon.duration}
+    						keyframeCircleRadius={this.props.keyframeCircleRadius}
+    						playheadFill={this.props.playheadFill}/>
+              <IconVis name="mixedWave"
+    						scaleX={scaleXmixedWave}
+    						vticon={mixedWave_icon}
+    						currentTime={this.state.playback.currentTime}
+    						keyframeCircleRadius={this.props.keyframeCircleRadius}
+    						playheadFill={this.props.playheadFill}
+    						interpolateParameters={this.interpolateParameters}
+    						interpolateParameter={this.interpolateParameter}
+    						selection={this.state.selection}/>
+    					{Object.keys(mixedWave_icon.parameters).map( (p) => (
+    							<KeyframeEditor
+    								name="mixedWave"
+                    height="160"
+                    selectable="false"
+                    modifiable="false"
+                    axisNameWidth="20"
+    								scaleX={scaleXmixedWave}
+    								currentTime={this.state.playback.currentTime}
+    								parameter={p}
+    								vticon={mixedWave_icon}
+    								keyframeCircleRadius={this.props.keyframeCircleRadius}
+    								playheadFill={this.props.playheadFill}
+    								selection={this.state.selection}/>
+    						))}
+            </div>
+
+            <div name="wave2" id="wave-previewer-2" ref="wave2EditorRef" style={designStyle}>
+              <ControlBar
+    						name="wave2"
+    						playing={this.state.playback.playing}
+    						mute={this.state.playback.mute}/>
+              <PlayHead name="wave2"
+    						displayPlayhead={this.state.vticons["wave2"].selected}
+    						scaleX={scaleXwave2}
+    						currentTime={this.state.playback.currentTime}
+    						duration={wave2_icon.duration}
+    						keyframeCircleRadius={this.props.keyframeCircleRadius}
+    						playheadFill={this.props.playheadFill}/>
+              <IconVis name="wave2"
+    						scaleX={scaleXwave2}
+    						vticon={wave2_icon}
+    						currentTime={this.state.playback.currentTime}
+    						keyframeCircleRadius={this.props.keyframeCircleRadius}
+    						playheadFill={this.props.playheadFill}
+    						interpolateParameters={this.interpolateParameters}
+    						interpolateParameter={this.interpolateParameter}
+    						selection={this.state.selection}/>
+    					{Object.keys(wave2_icon.parameters).map( (p) => (
+    							<KeyframeEditor
+    								name="wave2"
+                    height="160"
+                    selectable="true"
+                    modifiable="true"
+                    axisNameWidth="20"
+    								scaleX={scaleXwave2}
+    								currentTime={this.state.playback.currentTime}
+    								parameter={p}
+    								vticon={wave2_icon}
+    								keyframeCircleRadius={this.props.keyframeCircleRadius}
+    								playheadFill={this.props.playheadFill}
+    								selection={this.state.selection}/>
+    						))}
+            </div>
+
+
+          </div>
         </div>
       );
+
+
+      // return (
+      //   <div id="mixer" >
+      //     <SoundGen frequency={frequency} amplitude={amplitude_for_soundgen} mute={this.state.playback.mute} />
+      //     <AnimationWindow
+      //       name="main"
+      //       animation={this.state.animation.animation}
+      //       animationParameters={this.state.animation.animationParameters} />
+      //     <MixControls />
+      //   </div>
+      // );
     }
 
     else { return(<div id="mixer" />); }
+  },
+
+  componentDidMount: function () {
+    if (this.props.isMixMode) {
+      this._updateScales();
+      window.addEventListener('resize', this.handleResize);
+    }
+  },
+
+
+  handleResize: function(e) {
+    this._updateScales();
+  },
+
+  _updateScales : function() {
+    for (var n in this.state.scales)
+    {
+      if ((n=="wave1")||(n=="mixedWave")||(n=="wave2")) {
+        ScaleStore.actions.setTimelineRange(n, this._calculateTimelineRange(n));
+        var actualLeft = this.refs[n+"EditorRef"].getDOMNode().offsetLeft;
+        // var actualTop = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
+        ScaleStore.actions.setLeftOffset(n, actualLeft);
+      }
+    }
+  },
+
+  _calculateTimelineRange(name) {
+    var actualWidth = this.refs[name+"EditorRef"].getDOMNode().clientWidth;
+    // var actualHeight = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
+    return [this.props.timelineLeftOffset+this.props.keyframeCircleRadius, actualWidth-this.props.keyframeCircleRadius-this.props.timelineRightOffset];
   }
 
 

@@ -12,10 +12,8 @@ var KeyframeEditor = React.createClass({
 
 	mixins : [
 		TimelineMixin("divWrapper"),
-		Reflux.connect(ScaleStore.store, 'scales') //emitted updates go to 'scales' key			
-		],
-
-
+		Reflux.connect(ScaleStore.store, 'scales') //emitted updates go to 'scales' key
+	],
 
 	propTypes: {
 		name : React.PropTypes.string.isRequired,
@@ -25,8 +23,8 @@ var KeyframeEditor = React.createClass({
 		keyframeCircleRadius: React.PropTypes.number.isRequired,
 		playheadFill: React.PropTypes.string.isRequired,
 		currentTime: React.PropTypes.number.isRequired
-			},
-	
+	},
+
 	getDefaultProps: function() {
 	    return {
 	      height: 190,
@@ -49,12 +47,12 @@ var KeyframeEditor = React.createClass({
 
 
 	componentDidMount: function () {
-    	var parameter_range = [this.props.height-this.props.keyframeCircleRadius, this.props.keyframeCircleRadius+this.props.topBuffer];
+  	var parameter_range = [this.props.height-this.props.keyframeCircleRadius, this.props.keyframeCircleRadius+this.props.topBuffer];
 
-    	this._lastMouseDownTime = 0;
+  	this._lastMouseDownTime = 0;
 
-    	ScaleStore.actions.setTrackrange(this.props.name, this.props.parameter, parameter_range); 
-    	ScaleStore.actions.setTopOffset(this.props.name, this.props.parameter, this.refs.divWrapper.getDOMNode().offsetTop) ;
+  	ScaleStore.actions.setTrackrange(this.props.name, this.props.parameter, parameter_range);
+  	ScaleStore.actions.setTopOffset(this.props.name, this.props.parameter, this.refs.divWrapper.getDOMNode().offsetTop) ;
 	},
 
 
@@ -70,30 +68,30 @@ var KeyframeEditor = React.createClass({
 
 		var scaleY = this.state.scales[this.props.name].scaleParameter[this.props.parameter];
 
-        var scaleX = this.props.scaleX;
-        var height = this.props.height;
+    var scaleX = this.props.scaleX;
+    var height = this.props.height;
 
 
-        var lineGen = d3.svg.line()
-                            .x(function(d)
-                            {
-                                return scaleX(d.t);
-                            })
-                            .y(function(d)
-                            {
-                                return scaleY(d.value);
-                            });
+    var lineGen = d3.svg.line()
+                        .x(function(d)
+                        {
+                            return scaleX(d.t);
+                        })
+                        .y(function(d)
+                        {
+                            return scaleY(d.value);
+                        });
 
-		var divStyle = {
-			height:this.props.height,
-			width:this.props.width,
-			background:this.props.background
+  		var divStyle = {
+  			height:this.props.height,
+  			width:this.props.width,
+  			background:this.props.background
 		};
 
 
 		var firstValue = data[0].value;
 		var lastValue = data[data.length-1].value;
-		
+
 		var fillPath =lineGen(
 				[{t:0, value:valueScale[0]}]
 				.concat([{t:0, value:firstValue}])
@@ -113,7 +111,7 @@ var KeyframeEditor = React.createClass({
 								});
 		var currentTimePath = currentTimeLineFunc([
 						[scaleX(this.props.currentTime), 0],
-						[scaleX(this.props.currentTime), height]	
+						[scaleX(this.props.currentTime), height]
 				]);
 
 		var keyframeCallback = this._onMouseDownKeyframe;
@@ -124,7 +122,7 @@ var KeyframeEditor = React.createClass({
 		var axisTickLength = this.props.axisTickLength;
 		var axisTickLeft = this.props.axisTickLeft;
 
-		
+
 		var selectable = this.props.selectable;
 		//selection square
 		var selectionSquare = <rect />;
@@ -141,9 +139,9 @@ var KeyframeEditor = React.createClass({
 			if(vTop < vBottom) {
 				vTop = this.props.selection.parameters[this.props.parameter].value2;
 				vBottom = this.props.selection.parameters[this.props.parameter].value1;
-			
+
 			}
-			
+
 
 
 
@@ -154,7 +152,7 @@ var KeyframeEditor = React.createClass({
 
 			selectionSquare = <rect
 				x={x}
-				y={y} 
+				y={y}
 				width={width}
 				height={height}
 				fill={this.props.selectionColor}
@@ -221,12 +219,12 @@ var KeyframeEditor = React.createClass({
 		return (
 				<div ref="divWrapper" style={divStyle}>
 					<svg  width="100%" height="100%" onMouseDown={this._onMouseDown} >
-						
+
 						{visPath}
 						{paramLabels}
 
 						{paramTicks}
-						
+
 						{playheadLine}
 
 						{data.map(function(d)
@@ -241,9 +239,6 @@ var KeyframeEditor = React.createClass({
 						}
 
 						{selectionSquare}
-
-
-						
 
 					</svg>
 				</div>
@@ -281,7 +276,7 @@ var KeyframeEditor = React.createClass({
 		VTIconStore.actions.unselectKeyframes();
 		}
 
-		
+
 
 		this._lastMouseDownTime = t;
 
@@ -312,7 +307,7 @@ var KeyframeEditor = React.createClass({
 			}
 
 		}
-		
+
 
 		return false;
 	}
