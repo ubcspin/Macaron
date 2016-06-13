@@ -47,7 +47,12 @@ var EditorHeader = React.createClass({
 	},
 
 	_onSaveClick : function(e) {
-		SaveLoadStore.actions.save();
+		if (this.props.isMixMode) {
+			var editor = "mixedWave";
+		} else {
+			var editor = "main";
+		}
+		SaveLoadStore.actions.save(editor);
 	},
 
 	_onLoadButtonClick : function(e) {
@@ -140,10 +145,9 @@ var EditorHeader = React.createClass({
 		}
 
 		var loadButton = <span />
-		if (this.props.displaySaveButton)
+		if (this.props.displaySaveButton && (!this.props.isMixMode))
 		{
 			// loadButton = (<a class="btn header" style={buttonStyle} onClick={this._onLoadClick} ><i className="fa fa-upload"></i> Load</a>);
-
 			loadButton = (<span>
 					<input type="file" className="hidden" id={this.props.uploadFileID} onChange={this._onLoadClick}></input>
 					<a class="btn header" style={buttonStyle} onClick={this._onLoadButtonClick} ><i className="fa fa-upload"></i>Load</a>
@@ -181,7 +185,7 @@ var EditorHeader = React.createClass({
 			</div>
 		);
 	}
-	
+
 });
 
 module.exports = EditorHeader;

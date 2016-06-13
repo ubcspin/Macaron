@@ -11,7 +11,7 @@ var STEP_AMOUNT = 100; //ms
 var playbackActions = Reflux.createActions(
 	[
 		'setTime',
-		
+
 		'play',
 		'pause',
 		'togglePlaying',
@@ -75,7 +75,7 @@ var playbackStore = Reflux.createStore({
 
 	/**
 	* Non-play/pause Time Actions
-	* 
+	*
 	*/
 
 	onSetTime(newtime){
@@ -104,7 +104,7 @@ var playbackStore = Reflux.createStore({
 
 	/**
 	* Play/Pause Action Functions
-	* 
+	*
 	*/
 
 	onPlay() { this.onSetPlaying(true); },
@@ -133,7 +133,7 @@ var playbackStore = Reflux.createStore({
 
 	/**
 	* Timer functions for updating playback (when playing, etc.)
-	* 
+	*
 	*/
 
 	_startUpdateTimer() {

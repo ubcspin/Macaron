@@ -17,7 +17,7 @@ var saveLoadStore = Reflux.createStore({
 
 	listenables: [saveLoadActions],
 
-	onSave() {
+	onSave(editor) {
 
 
 		// Here you can specify how you'd like the files to be named
@@ -55,7 +55,7 @@ var saveLoadStore = Reflux.createStore({
 		/**
 		 *  Creating the JSON file for download
 		 */
-		var dataJSON = JSON.stringify(VTIconStore.store.getInitialState()["main"], null, 2);
+		var dataJSON = JSON.stringify(VTIconStore.store.getInitialState()[editor], null, 2);
 		var fullDataJSON = "data:text/json;charset=utf8, " + dataJSON;
 		var dataBlob = new Blob([fullDataJSON], {type: "text/JSON"});
 		dataBlob.name = jsonFileName;
@@ -69,7 +69,7 @@ var saveLoadStore = Reflux.createStore({
 		jsonDownloadLink.setAttribute("download", jsonFileName);
 		jsonDownloadLink.innerHTML = "download Macaron file (JSON)";
 
-		var wavBuffer = this.generateWavFile();
+		var wavBuffer = this.generateWavFile(editor);
 
 		var wavBlob = new Blob([wavBuffer], {type: "audio/wav"});
 		wavBlob.name = wavFileName;
@@ -114,7 +114,7 @@ var saveLoadStore = Reflux.createStore({
 
 
 
-	generateWavFile() {
+	generateWavFile(editor) {
 
 		/**
 		 * Here's a constructor for a WavBundle object I've made. This object
@@ -217,9 +217,9 @@ var saveLoadStore = Reflux.createStore({
 				* generateWavContent will generate the actual sound-producing
 				*  portion of the WAV file.
 				**/
-			this.generateWavContent = function() {
+			this.generateWavContent = function(editor) {
 
-				var iconStore = VTIconStore.store.getInitialState()["main"];
+				var iconStore = VTIconStore.store.getInitialState()[editor];
 				var ampParams = iconStore.parameters.amplitude.data;
 				var freqParams = iconStore.parameters.frequency.data;
 
@@ -254,11 +254,11 @@ var saveLoadStore = Reflux.createStore({
 		/**
 		 *  Heres where everything gets called in order to produce the WAV file
 		 **/
-		var duration = VTIconStore.store.getInitialState()["main"].duration / 1000;
+		var duration = VTIconStore.store.getInitialState()[editor].duration / 1000;
 
 		var wavObj = new WavBundle(duration); // a 3 second long clip
 		wavObj.generateWavHeader();
-		wavObj.generateWavContent(); // volume = 1, frequency = 350
+		wavObj.generateWavContent(editor); // volume = 1, frequency = 350
 		return wavObj.buffer;
 
 	},
