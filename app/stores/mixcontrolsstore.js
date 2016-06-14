@@ -28,7 +28,7 @@ var MixControlStore = Reflux.createStore({
       wave1value: 50,
       wave2value: 50,
       slider: {},
-      algorithm: 'direct'
+      algorithm: 'vectorCrossfade'
     };
 
   },
@@ -42,7 +42,6 @@ var MixControlStore = Reflux.createStore({
       MixControlStore._data["wave2value"] = amt2;
       document.getElementById("signal-1-amount").value = amt1.toString() + "%";
       document.getElementById("signal-2-amount").value = amt2.toString() + "%";
-      MixControlStore._mix();
     }
 
     this._data["slider"] = d3.select("#amount-slider")
@@ -55,6 +54,7 @@ var MixControlStore = Reflux.createStore({
       .attr("max", 100)
       .attr("step", 0.1)
       .on("input", sliderActivate)
+      .on("mouseup", function(){MixControlStore._mix();})
       .style({"width": "99%",
               "fill": "orange",
               "stroke": "orange",
@@ -86,6 +86,7 @@ var MixControlStore = Reflux.createStore({
   onSelectAlgorithm: function() {
       var selectedAlgorithm = document.getElementById('mix-mode-drop-down').value;
       this._data.algorithm = selectedAlgorithm;
+      this._mix();
   },
 
   onQuickMix: function(mix) {
@@ -204,8 +205,10 @@ var MixControlStore = Reflux.createStore({
   },
 
   _mix: function() {
-    if (this._data.algorithm == "crossfade") {
-      this._crossfade();
+    if (this._data.algorithm == "lameCrossfade") {
+      this._lameCrossfade();
+    } else if(this._data.algorithm == "vectorCrossfade") {
+      this._vectorCrossfade();
     } else if (this._data.algorithm == "dtw") {
       this._dynamicTimeWarp();
     } else if (this._data.algorithm == "direct") {
@@ -214,7 +217,15 @@ var MixControlStore = Reflux.createStore({
     this.trigger(this._data);
   },
 
-  _crossfade: function() {
+  _vectorCrossfade() {
+    var wave1Amps = VTIconStore.store.getInitialState()["wave1"].parameters.amplitude.data;
+    var wave2Amps = VTIconStore.store.getInitialState()["wave2"].parameters.amplitude.data;
+    for (var i=0; i<wave1Amps.length; i++) {
+      
+    }
+  },
+
+  _lameCrossfade: function() {
     var nKnots = 50;
     var amt = this._data["wave1value"];
     var duration = VTIconStore.store.getInitialState()["mixedWave"].duration;

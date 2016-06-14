@@ -273,7 +273,6 @@ var MixMode = React.createClass({
       } else {
         var amplitude_for_soundgen = amplitude;
       }
-      console.log(amplitude_for_soundgen);
 
       return (
         <div id="mixer" >
