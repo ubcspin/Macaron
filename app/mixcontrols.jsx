@@ -20,9 +20,9 @@ var MixControls = React.createClass({
             <select id="mix-mode-drop-down"
               name="mix-mode-selector"
               onChange={MixControlStore.actions.selectAlgorithm}>
+              <option value="direct">Direct Keyframe Combination</option>
               <option value="crossfade">Crossfade</option>
               <option value="dtw">Dynamic Time Warping</option>
-              <option value="other">Something Else</option>
             </select>
           </div>
 

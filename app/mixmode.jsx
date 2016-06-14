@@ -55,80 +55,81 @@ var MixMode = React.createClass({
 		}; //handled as stores
 	},
 
-	//returns parameter value for a given time
-	interpolateParameter: function(p, t, name) {
-		var param = this.state.vticons[name].parameters[p];
-		var data = param.data;
-		var prev = null;
-		var next = null;
+  //returns parameter value for a given time
+  interpolateParameter: function(p, t, name) {
+    var param = this.state.vticons[name].parameters[p];
+    //console.log(name);
+    var data = param.data;
+    var prev = null;
+    var next = null;
 
-		var rv = null;
+    var rv = null;
 
-		for(var i = 0; i < data.length; i++) {
+    for(var i = 0; i < data.length; i++) {
 
-			if (data[i].t == t)
-			{
-				rv = data[i].value;
-			}
-			else if (data[i].t < t)
-			{
-				if (prev == null || prev.t <= data[i].t) {
-					prev = data[i];
-				}
-			} else {
-				if (next == null || next.t >= data[i].t) {
-					next = data[i];
-				}
-			}
-		}
+      if (data[i].t == t)
+      {
+        rv = data[i].value;
+      }
+      else if (data[i].t < t)
+      {
+        if (prev == null || prev.t <= data[i].t) {
+          prev = data[i];
+        }
+      } else {
+        if (next == null || next.t >= data[i].t) {
+          next = data[i];
+        }
+      }
+    }
 
-		if (rv == null)
-		{
+    if (rv == null)
+    {
 
-			if (next == null && prev == null) {
-			//if no exact match was found
-			if (rv == null)
-			{
-				//error
-				throw "No keyframes found in parameter " + p;
-			}
-			//if an exact match was found, we already stored rv
+      if (next == null && prev == null) {
+      //if no exact match was found
+      if (rv == null)
+      {
+        //error
+        throw "No keyframes found in parameter " + p;
+      }
+      //if an exact match was found, we already stored rv
 
-			} else if (next == null) {
-				//use prev
-				rv = prev.value;
-			} else if (prev == null) {
-				//use next
-				rv = next.value;
-			} else {
-				//TODO: not just linear interpolation
-				if (prev.t == next.t)
-				{
-					rv = prev.value;
-				} else {
-					var dt = next.t-prev.t;
-					var proportionPrev = (t-prev.t)/dt;
-					var dvalue = next.value - prev.value;
-					rv = proportionPrev*dvalue + prev.value;
-				}
-			}
+      } else if (next == null) {
+        //use prev
+        rv = prev.value;
+      } else if (prev == null) {
+        //use next
+        rv = next.value;
+      } else {
+        //TODO: not just linear interpolation
+        if (prev.t == next.t)
+        {
+          rv = prev.value;
+        } else {
+          var dt = next.t-prev.t;
+          var proportionPrev = (t-prev.t)/dt;
+          var dvalue = next.value - prev.value;
+          rv = proportionPrev*dvalue + prev.value;
+        }
+      }
 
-		}
+    }
 
-		return rv;
+    return rv;
 
-	},
+  },
 
-	//returns parameter values as a dictionary for a given time
-	interpolateParameters: function(t, name) {
-		var interpolateParameter = this.interpolateParameter;
-		//map _interpolateParameter to vticon keys
-		return Object.keys(this.state.vticons[name].parameters).reduce( function(obj, p)
-			{
-				obj[p] = interpolateParameter(p, t, name);
-				return obj;
-			}, {});
-	},
+  //returns parameter values as a dictionary for a given time
+  interpolateParameters: function(t, name) {
+    var interpolateParameter = this.interpolateParameter;
+    //map _interpolateParameter to vticon keys
+    return Object.keys(this.state.vticons[name].parameters).reduce( function(obj, p)
+      {
+        obj[p] = interpolateParameter(p, t, name);
+        return obj;
+      }, {});
+  },
 
 	/**
 	* Event handlers for interactions
@@ -267,8 +268,12 @@ var MixMode = React.createClass({
       var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime, this.state.playback.playingIcon);
       var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime, this.state.playback.playingIcon);
 
-      var amplitude_for_soundgen = 0;
-      if (this.props.playbackAtEndOfVTIcon){amplitude_for_soundgen = amplitude;}
+      if (this.state.playback.currentTime > this.state.vticons.mixedWave.duration) {
+        var amplitude_for_soundgen = 0;
+      } else {
+        var amplitude_for_soundgen = amplitude;
+      }
+      console.log(amplitude_for_soundgen);
 
       return (
         <div id="mixer" >

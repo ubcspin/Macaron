@@ -2,7 +2,7 @@
 	SoundGen
 
 	A react component that wraps a sound generator,
-	right now, this is Audiolet. 
+	right now, this is Audiolet.
 
 */
 
@@ -94,4 +94,3 @@ var SoundGen = React.createClass({
 
 
 module.exports = SoundGen;
-
