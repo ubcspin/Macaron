@@ -21,7 +21,7 @@ var MixControls = React.createClass({
               name="mix-mode-selector"
               onChange={MixControlStore.actions.selectAlgorithm}>
               <option value="crossfade">Crossfade</option>
-              <option value="dynamic time warping">Dynamic Time Warping</option>
+              <option value="dtw">Dynamic Time Warping</option>
               <option value="other">Something Else</option>
             </select>
           </div>

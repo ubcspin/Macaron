@@ -27,7 +27,8 @@ var MixControlStore = Reflux.createStore({
     this._data = {
       wave1value: 50,
       wave2value: 50,
-      slider: {}
+      slider: {},
+      algorithm: 'crossfade'
     };
 
   },
@@ -84,7 +85,7 @@ var MixControlStore = Reflux.createStore({
 
   onSelectAlgorithm: function() {
       var selectedAlgorithm = document.getElementById('mix-mode-drop-down').value;
-      alert('you picked something: ' + selectedAlgorithm);
+      this._data.algorithm = selectedAlgorithm;
   },
 
   onQuickMix: function(mix) {
@@ -161,10 +162,10 @@ var MixControlStore = Reflux.createStore({
   					alert('The selected file wasnt one that Macaron recognizes. Please upload an appropriate WAV or JSON file.');
   				}
   			}
-        reader.readAsArrayBuffer(file);
+        reader.readAsText(file);
       }
-
     };
+    this._mix();
   },
 
   onLoadWaveform2: function() {
@@ -196,23 +197,29 @@ var MixControlStore = Reflux.createStore({
   					alert('The selected file wasnt one that Macaron recognizes. Please upload an appropriate WAV or JSON file.');
   				}
   			}
-        reader.readAsArrayBuffer(file);
+        reader.readAsText(file);
       }
-
     };
+    this._mix();
   },
 
   _mix: function() {
+    if (this._data.algorithm == "crossfade") {
+      this._crossfade();
+    } else if (this._data.algorithm == "dtw") {
+      this._dynamicTimeWarp();
+    }
+    this.trigger(this._data);
+  },
+
+  _crossfade: function() {
     var nKnots = 50;
     var amt = this._data["wave1value"];
     var duration = VTIconStore.store.getInitialState()["mixedWave"].duration;
     var windowWidth = duration / nKnots;
-    VTIconStore.actions.newKeyframe("frequency", 1, 400, name="mixedWave");
-
     VTIconStore.actions.selectAllKeyframes("mixedWave");
-
+    VTIconStore.actions.deleteSelectedKeyframes("mixedWave");
     for (var i=0; i<nKnots; i++) {
-
       var t = (i * windowWidth) + (windowWidth / 2);
       var amp1 = this._getCurrentAmplitude(t, "wave1");
       var amp2 = this._getCurrentAmplitude(t, "wave2");
@@ -220,22 +227,15 @@ var MixControlStore = Reflux.createStore({
       var freq1 = this._getCurrentFrequency(t, "wave1");
       var freq2 = this._getCurrentFrequency(t, "wave2");
       var freq = ((0.01*amt) * freq1) + ((0.01*(100-amt)) * freq2);
-
-      VTIconStore.actions.selectTimeRange(i*windowWidth, (i+1)*windowWidth, "mixedWave");
-      VTIconStore.actions.deleteSelectedKeyframes("mixedWave");
-      VTIconStore.actions.unselectKeyframes("mixedWave");
-
       VTIconStore.actions.newKeyframe("amplitude", t, amp, name="mixedWave");
       VTIconStore.actions.newKeyframe("frequency", t, freq, name="mixedWave");
       VTIconStore.actions.unselectKeyframes("mixedWave");
     }
+    VTIconStore.actions.removeDefaultKeyframes(name="mixedWave");
+  },
 
-    VTIconStore.actions.deleteSelectedKeyframes("mixedWave");
-    VTIconStore.actions.selectKeyframesInRange(1499,1501,1,"mixedWave");
-    VTIconStore.actions.deleteSelectedKeyframes("mixedWave");
-
-    console.log(VTIconStore._data);
-
+  _dynamicTimeWarp: function() {
+    alert('sorry, that algorithm isnt ready yet.');
   },
 
 
@@ -304,7 +304,6 @@ var MixControlStore = Reflux.createStore({
   _isJSONFile: function(r, fn) {
 
   	var fileExtOK = (fn.indexOf('.json') >= 0);
-
   	try {
   		var test = JSON.parse(r.result.slice(29));
   		var fileContentOK = true;
@@ -312,8 +311,6 @@ var MixControlStore = Reflux.createStore({
   	catch(err) {
   		var fileContentOK = false;
   	}
-
-  	console.log(fileExtOK); console.log(fileContentOK);
 
   	var fileOK = fileExtOK && fileContentOK;
 

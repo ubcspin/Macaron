@@ -32,7 +32,9 @@ var vticonActions = Reflux.createActions(
 		'undo',
 		'redo',
 
-		'deleteSelectedKeyframes'
+		'deleteSelectedKeyframes',
+
+		'removeDefaultKeyframes'
 	]
 
 );
@@ -789,6 +791,38 @@ var vticonStore = Reflux.createStore({
 	//compares two keyframes
 	_keyframeCompare(a, b) {
 		return (a.t - b.t);
+	},
+
+	onRemoveDefaultKeyframes(name) {
+		var nAmp = this._data[name].parameters.amplitude.data.length;
+		var nF = this._data[name].parameters.frequency.data.length;
+
+		for (var i=0; i<nAmp; i++) {
+			var isT = this._data[name].parameters.amplitude.data[i].t == 1500;
+			var isA = this._data[name].parameters.amplitude.data[i].value == 0.5;
+			if(isT && isA) {
+				var KFRemoved = this._data[name].parameters.amplitude.data.slice(0,i);
+				var part2 = this._data[name].parameters.amplitude.data.slice(i+1);
+				KFRemoved = KFRemoved.concat(part2);
+				this._data[name].parameters.amplitude.data = KFRemoved;
+				break;
+			}
+		}
+
+
+		for (var i=0; i<nF; i++) {
+			var isT = this._data[name].parameters.frequency.data[i].t == 1500;
+			var isF = this._data[name].parameters.frequency.data[i].value == 275;
+			if(isT && isF) {
+				var KFRemoved = this._data[name].parameters.frequency.data.slice(0,i);
+				var part2 = this._data[name].parameters.frequency.data.slice(i+1);
+				KFRemoved = KFRemoved.concat(part2);
+				this._data[name].parameters.frequency.data = KFRemoved;
+				break;
+			}
+		}
+
+		this.trigger(this._data);
 	}
 
 
