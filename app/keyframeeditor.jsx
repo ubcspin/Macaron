@@ -129,6 +129,7 @@ var KeyframeEditor = React.createClass({
 		if(selectable && this.props.vticon.selected && this.props.selection.active) {
 			var tLeft = this.props.selection.time1;
 			var tRight = this.props.selection.time2;
+			//console.log(tLeft);
 			if(tLeft > tRight) {
 				tLeft = this.props.selection.time2;
 				tRight = this.props.selection.time1;

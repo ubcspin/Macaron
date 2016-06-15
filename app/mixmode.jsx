@@ -268,7 +268,7 @@ var MixMode = React.createClass({
       var frequency = this.interpolateParameter('frequency', this.state.playback.currentTime, this.state.playback.playingIcon);
       var amplitude = this.interpolateParameter('amplitude', this.state.playback.currentTime, this.state.playback.playingIcon);
 
-      if (this.state.playback.currentTime > this.state.vticons.mixedWave.duration) {
+      if (this.state.playback.currentTime >= this.state.vticons.mixedWave.duration) {
         var amplitude_for_soundgen = 0;
       } else {
         var amplitude_for_soundgen = amplitude;

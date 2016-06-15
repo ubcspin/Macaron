@@ -42,7 +42,7 @@ var MixControlStore = Reflux.createStore({
       MixControlStore._data["wave2value"] = amt2;
       document.getElementById("signal-1-amount").value = amt1.toString() + "%";
       document.getElementById("signal-2-amount").value = amt2.toString() + "%";
-      MixControlStore._mix();
+      //MixControlStore._mix();
     }
 
     this._data["slider"] = d3.select("#amount-slider")
@@ -55,7 +55,7 @@ var MixControlStore = Reflux.createStore({
       .attr("max", 100)
       .attr("step", 0.1)
       .on("input", sliderActivate)
-      //.on("mouseup", function(){MixControlStore._mix();})
+      .on("mouseup", function(){MixControlStore._mix();})
       .style({"width": "99%",
               "fill": "orange",
               "stroke": "orange",
@@ -247,7 +247,9 @@ var MixControlStore = Reflux.createStore({
           var v2 = (this._data.wave2value/100) * wave2Amps[spot2].value;
           var newValue = v1 + v2;
           VTIconStore.actions.newKeyframe("amplitude", newT, newValue, "mixedWave");
-        } // Sub-case 2: we're between 2 green keyframes.
+        } //Sub-case 2: the next keyframe is the last one.
+        else if (spot2 == wave2Amps.length) {
+        } // Sub-case 3: we're between 2 green keyframes.
         else {
           var newT = wave1Amps[spot1].t;
           var v1 = (this._data.wave1value/100) * wave1Amps[spot1].value;

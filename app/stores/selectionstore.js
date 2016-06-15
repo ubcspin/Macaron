@@ -48,6 +48,7 @@ var selectStore = Reflux.createStore({
 	*/
 
 	onStartSelecting(targetName, time, parameter_value_map, adding=false) {
+		console.log(time);
 		this._data.targetName = targetName;
 		this._data.active = true;
 		this._data.time1 = time;
@@ -98,14 +99,14 @@ var selectStore = Reflux.createStore({
 
 	_updateSelectedKeyframes() {
 		if (this._data.adding) {
-			VTIconStore.actions.addSelectedKeyframesInRange(this._data.time1, this._data.time2, this._data.parameters);	
+			VTIconStore.actions.addSelectedKeyframesInRange(this._data.time1, this._data.time2, this._data.parameters);
 		} else {
-			VTIconStore.actions.selectKeyframesInRange(this._data.time1, this._data.time2, this._data.parameters);	
+			VTIconStore.actions.selectKeyframesInRange(this._data.time1, this._data.time2, this._data.parameters);
 		}
 	},
 
 	_updateSelectedTimeRange() {
-		VTIconStore.actions.selectTimeRange(this._data.time1, this._data.time2);	
+		VTIconStore.actions.selectTimeRange(this._data.time1, this._data.time2);
 	}
 
 });
