@@ -42,6 +42,7 @@ var MixControlStore = Reflux.createStore({
       MixControlStore._data["wave2value"] = amt2;
       document.getElementById("signal-1-amount").value = amt1.toString() + "%";
       document.getElementById("signal-2-amount").value = amt2.toString() + "%";
+      MixControlStore._mix();
     }
 
     this._data["slider"] = d3.select("#amount-slider")
@@ -54,7 +55,7 @@ var MixControlStore = Reflux.createStore({
       .attr("max", 100)
       .attr("step", 0.1)
       .on("input", sliderActivate)
-      .on("mouseup", function(){MixControlStore._mix();})
+      //.on("mouseup", function(){MixControlStore._mix();})
       .style({"width": "99%",
               "fill": "orange",
               "stroke": "orange",
@@ -218,11 +219,87 @@ var MixControlStore = Reflux.createStore({
   },
 
   _vectorCrossfade() {
+    VTIconStore.actions.selectAllKeyframes("mixedWave");
+    VTIconStore.actions.deleteSelectedKeyframes("mixedWave");
+
+    /** First, we'll mix the amplitude patterns with "vector crossfade" **/
     var wave1Amps = VTIconStore.store.getInitialState()["wave1"].parameters.amplitude.data;
     var wave2Amps = VTIconStore.store.getInitialState()["wave2"].parameters.amplitude.data;
-    for (var i=0; i<wave1Amps.length; i++) {
-      
+    var spot1 = 0;
+    var spot2 = 0;
+    while (wave1Amps[spot1] && wave2Amps[spot2]) {
+
+        // Case 1: key-red1 and key-green1 share the same time
+      if (wave1Amps[spot1].t == wave2Amps[spot2].t) {
+        var newT = wave1Amps[spot1].t;
+        var v1 = (this._data.wave1value/100) * wave1Amps[spot1].value;
+        var v2 = (this._data.wave2value/100) * wave2Amps[spot2].value;
+        var newValue = v1 + v2;
+        VTIconStore.actions.newKeyframe("amplitude", newT, newValue, "mixedWave");
+        spot1++; spot2++;
+
+      } // Case 2: key-red1 comes before the next green keyframe
+      else if (wave1Amps[spot1].t < wave2Amps[spot2].t) {
+        // Sub-case 1: we're before the green keyframe, and it's the first one.
+        if (spot2 <= 0) {
+          var newT = wave1Amps[spot1].t;
+          var v1 = (this._data.wave1value/100) * wave1Amps[spot1].value;
+          var v2 = (this._data.wave2value/100) * wave2Amps[spot2].value;
+          var newValue = v1 + v2;
+          VTIconStore.actions.newKeyframe("amplitude", newT, newValue, "mixedWave");
+        } // Sub-case 2: we're between 2 green keyframes.
+        else {
+          var newT = wave1Amps[spot1].t;
+          var v1 = (this._data.wave1value/100) * wave1Amps[spot1].value;
+          var rise = wave2Amps[spot2].value - wave2Amps[spot2-1].value;
+          var run  = wave2Amps[spot2].t - wave2Amps[spot2-1].t;
+          var slope = rise/run;
+          var diffT = newT - wave2Amps[spot2-1].t;
+          var idealValue = (slope * diffT) + wave2Amps[spot2-1].value;
+          var v2 = (this._data.wave2value/100) * idealValue;
+          var newValue = v1 + v2;
+          VTIconStore.actions.newKeyframe("amplitude", newT, newValue, "mixedWave");
+        }
+        spot1++;
+
+      } // Case 3: key-green1 comes before the next red keyframe
+      else if (wave1Amps[spot1].t > wave2Amps[spot2].t) {
+        //Sub-case 1: the next red keyframe is the first one
+        if (spot1 <= 0) {
+          var newT = wave2Amps[spot2].t;
+          var v1 = (this._data.wave1value/100) * wave1Amps[spot1].value;
+          var v2 = (this._data.wave2value/100) * wave2Amps[spot2].value;
+          var newValue = v1 + v2;
+          VTIconStore.actions.newKeyframe("amplitude", newT, newValue, "mixedWave");
+        } //Sub-case 2: we're between two red keyframes
+        else {
+          var newT = wave2Amps[spot2].t;
+          var v2 = (this._data.wave2value/100) * wave2Amps[spot2].value;
+          var rise = wave1Amps[spot1].value - wave1Amps[spot1-1].value;
+          var run = wave1Amps[spot1].t - wave1Amps[spot1-1].t;
+          var slope = rise/run;
+          var diffT = newT - wave1Amps[spot1-1].t;
+          var idealValue = (slope * diffT) + wave1Amps[spot1-1].value;
+          var v1 = (this._data.wave1value/100) * idealValue;
+          var newValue = v1 + v2;
+          VTIconStore.actions.newKeyframe("amplitude", newT, newValue, "mixedWave");
+        }
+        spot2++;
+      }
     }
+
+    /** Then just average the frequency data... **/
+    var wave1Freq = VTIconStore.store.getInitialState()["wave1"].parameters.frequency.data;
+    var wave2Freq = VTIconStore.store.getInitialState()["wave2"].parameters.frequency.data;
+    var n1 = wave1Freq.length; var n2 = wave2Freq.length;
+    var avg1 = 0; var avg2 = 0;
+    for (var i=0; i<n1; i++) { avg1 += (1/n1) * wave1Freq[i].value; }
+    for (var i=0; i<n2; i++) { avg2 += (1/n2) * wave2Freq[i].value; }
+    var newF = ((this._data.wave1value/100)*avg1)+((this._data.wave2value/100)*avg2);
+    VTIconStore.actions.newKeyframe("frequency", 0, newF, "mixedWave");
+    VTIconStore.actions.newKeyframe("frequency", 3000, newF, "mixedWave");
+    VTIconStore.actions.removeDefaultKeyframes("mixedWave");
+    VTIconStore.actions.unselectKeyframes("mixedWave");
   },
 
   _lameCrossfade: function() {
