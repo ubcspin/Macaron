@@ -48,7 +48,7 @@ var selectStore = Reflux.createStore({
 	*/
 
 	onStartSelecting(targetName, time, parameter_value_map, adding=false) {
-		console.log(time);
+		//console.log(time);
 		this._data.targetName = targetName;
 		this._data.active = true;
 		this._data.time1 = time;

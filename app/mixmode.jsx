@@ -428,6 +428,8 @@ var MixMode = React.createClass({
     if (this.props.isMixMode) {
       this._updateScales();
       window.addEventListener('resize', this.handleResize);
+      window.addEventListener('mousemove', this._handleMouseMove);
+      window.addEventListener('mouseup', this._handleMouseUp);
     }
   },
 
