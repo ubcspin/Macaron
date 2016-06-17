@@ -390,8 +390,6 @@ var MixMode = React.createClass({
     							<KeyframeEditor
     								name="wave2"
                     height="160"
-                    selectable="true"
-                    modifiable="true"
                     axisNameWidth="20"
     								scaleX={scaleXwave2}
     								currentTime={this.state.playback.currentTime}

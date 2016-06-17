@@ -267,6 +267,7 @@ var KeyframeEditor = React.createClass({
 
 	        var x = e.clientX - this.state.offsetLeft;
 	        var y = e.clientY - this.state.offsetTop;
+					console.log(scaleY.invert(y));
 
 	        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey, name=this.props.name);
 	        DragStore.actions.startKeyframeDrag(this.props.name, e.shiftKey);

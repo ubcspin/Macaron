@@ -28,9 +28,9 @@ var MixControlStore = Reflux.createStore({
       wave1value: 50,
       wave2value: 50,
       slider: {},
-      algorithm: 'vectorCrossfade'
+      algorithm: 'dtw',
+      nSamples: 40
     };
-
   },
 
   onCreateSlider: function() {
@@ -211,7 +211,7 @@ var MixControlStore = Reflux.createStore({
     } else if(this._data.algorithm == "vectorCrossfade") {
       this._vectorCrossfade();
     } else if (this._data.algorithm == "dtw") {
-      this._dynamicTimeWarp();
+      this._properDynamicTimeWarp();
     } else if (this._data.algorithm == "direct") {
       this._directKeyframeMix();
     }
@@ -247,9 +247,7 @@ var MixControlStore = Reflux.createStore({
           var v2 = (this._data.wave2value/100) * wave2Amps[spot2].value;
           var newValue = v1 + v2;
           VTIconStore.actions.newKeyframe("amplitude", newT, newValue, "mixedWave");
-        } //Sub-case 2: the next keyframe is the last one.
-        else if (spot2 == wave2Amps.length) {
-        } // Sub-case 3: we're between 2 green keyframes.
+        }  //Sub-case 2: we're between 2 green keyframes.
         else {
           var newT = wave1Amps[spot1].t;
           var v1 = (this._data.wave1value/100) * wave1Amps[spot1].value;
@@ -356,8 +354,177 @@ var MixControlStore = Reflux.createStore({
     VTIconStore.actions.removeDefaultKeyframes("mixedWave");
   },
 
-  _dynamicTimeWarp: function() {
-    alert('sorry, that algorithm isnt ready yet.');
+  _scrappyDynamicTimeWarp: function() {
+    alert('sorry, this algorithm isnt ready yet :(');
+
+    var wave1Amps = VTIconStore.store.getInitialState()["wave1"].parameters.amplitude.data;
+    var wave2Amps = VTIconStore.store.getInitialState()["wave2"].parameters.amplitude.data;
+    var n1 = wave1Amps.length; var n2 = wave2Amps.length;
+    var costMatrix = new Array(n1 * n2);
+    for (var i=0; i<n1; i++) {
+      for (var j=0; j<n2; j++) {
+        var ind = this._indexFunction(i, j);
+        var val = Math.abs(wave1Amps[i].value - wave2Amps[j].value);
+        costMatrix[ind] = val;
+      }
+    }
+    console.log(costMatrix);
+  },
+
+  _properDynamicTimeWarp: function() {
+    //alert('sorry, that algorithm isnt ready yet.');
+
+    /** Setting up the variables I'll need farther down **/
+    var wave1Amps = VTIconStore.store.getInitialState()["wave1"].parameters.amplitude.data;
+    var wave2Amps = VTIconStore.store.getInitialState()["wave2"].parameters.amplitude.data;
+    var duration1 = VTIconStore.store.getInitialState()["wave1"].duration;
+    var duration2 = VTIconStore.store.getInitialState()["wave2"].duration;
+    var partitionedAmps1 = new Array(this._data.nSamples);
+    var partitionedAmps2 = new Array(this._data.nSamples);
+    var partitionWidth = Math.round(Math.min(duration1/this._data.nSamples, duration2/this._data.nSamples));
+    var n1 = duration1 / partitionWidth;
+    var n2 = duration2 / partitionWidth;
+
+    var i1 = 0;  var i2 = 0;
+    var t1 = 0;  var t2 = 0;
+    var j1 = 0;  var j2 = 0;
+
+    /** Partitioning the waveforms **/
+    while(t1 <= duration1) {
+      if (t1 >= wave1Amps[i1].t && wave1Amps[i1+1]) { i1++; }
+
+      if (i1 == 0) {
+        partitionedAmps1[j1] = wave1Amps[i1].value;
+      } else if (i1 == wave1Amps.length) {
+        partitionedAmps1[j1] = wave1Amps[wave1Amps.length-1].value;
+      } else {
+        var rise = wave1Amps[i1].value - wave1Amps[i1-1].value;
+        var run = wave1Amps[i1].t - wave1Amps[i1-1].t;
+        var slope = rise / run;
+        var diffT = t1 - wave1Amps[i1-1].t;
+        var sampledValue = wave1Amps[i1-1].value + (slope * diffT);
+        partitionedAmps1[j1] = sampledValue;
+      }
+
+      t1 += partitionWidth; j1++;
+    }
+
+    while (t2 <= duration1) {
+
+      if (t2 >= wave2Amps[i2].t && wave2Amps[i2+1]) { i2++; }
+
+      if (i2 == 0) {
+        partitionedAmps2[j2] = wave2Amps[i2].value;
+      } else if (i2 == wave2Amps.length) {
+        partitionedAmps2[j2] = wave2Amps[wave2Amps.length-1].value;
+      } else {
+        var rise = wave2Amps[i2].value - wave2Amps[i2-1].value;
+        var run = wave2Amps[i2].t - wave2Amps[i2-1].t;
+        var slope = rise / run;
+        var diffT = t2 - wave2Amps[i2-1].t;
+        var sampledValue = wave2Amps[i2-1].value + (slope * diffT);
+        partitionedAmps2[j2] = sampledValue
+      }
+
+      t2 += partitionWidth; j2++;
+    }
+
+    /** Computing the Cost Matrix **/
+    var costMatrix = new Array(n1 * n2);
+
+    for (var i=0; i<n1; i++) {
+      for (var j=0; j<n2; j++) {
+        var costIndex = this._indexFunction(i,j);
+        var cost = this._localCost(partitionedAmps1[i], partitionedAmps2[j]);
+        costMatrix[costIndex] = cost;
+      }
+    }
+
+    console.log(costMatrix);
+
+    /** Finding the optimal path through the cost matrix **/
+    var i = 0; var j = 0;
+    var costSize = n1 + n2;
+    var costNodes = new Array(costSize);
+    costNodes[0] = {i:0, j:0, cost:costMatrix[this._indexFunction(0,0)]};
+    var nNodes = 1;
+
+    while (partitionedAmps1[i+1] != null || partitionedAmps2[j+1] != null) {
+
+      // Case 1: We're at the top of the Cost Matrix
+      if (partitionedAmps1[i+1] == null) {
+        var newNode = {i:i, j:j+1, cost:costMatrix[this._indexFunction(i,j+1)]};
+        costNodes[nNodes] = newNode;
+        j++; nNodes++;
+      }
+
+      // Case 2: We're on the far right of the Cost Matrix
+      else if (partitionedAmps2[j+1] == null) {
+        var newNode = {i:i+1, j:j, cost:costMatrix[this._indexFunction(i+1,j)]};
+        costNodes[nNodes] = newNode;
+        i++; nNodes++;
+      }
+
+      // Case 3: We're somewhere in the middle and need to choose a next step!
+      else {
+        var up    = costMatrix[this._indexFunction(i+1, j)];
+        var right = costMatrix[this._indexFunction(i, j+1)];
+        var diag  = costMatrix[this._indexFunction(i+1, j+1)];
+        var minCost = Math.min(up, right, diag);
+        console.log({u:up, r:right, d:diag});
+
+        if (up == minCost) {
+          costNodes[nNodes] = {i:i+1, j:j, cost:up}
+          i++; nNodes++
+        }
+
+        else if (right == minCost) {
+          costNodes[nNodes] = {i:i, j:j+1, cost: right}
+          j++; nNodes++;
+        }
+
+        else if (diag == minCost) {
+          costNodes[nNodes] = {i:i+1, j:j+1, cost: diag};
+          j++; i++; nNodes++;
+        }
+
+        else {
+          alert('uh oh... cost Matrix problems :(');
+          break;
+        }
+      }
+    }
+    console.log(costNodes);
+
+    /** Use that path through the cost matrix to mix the waves! **/
+    for (var i=0; i<nNodes; i++) {
+
+      var nodeI = costNodes[i];
+
+      // Case 1: it's the first node!
+      if (nodeI.i == 0 && nodeI.j == 0) {
+        // look for similar indices in future nodes?
+      }
+
+      // Case 2: it's the last node!
+      else if (nodeI.i == n1 && nodeI.j == n2) {
+        // look for similar indices in previous nodes?
+      }
+
+      // Case 3: we're in the middle of it all...
+      else {
+        // look for similar nodes everywhere!
+      }
+    }
+
+  },
+
+  _indexFunction: function(i, j) {
+    return (this._data.nSamples * i) + j;
+  },
+
+  _localCost: function(x, y) {
+    return Math.abs(x - y);
   },
 
 
