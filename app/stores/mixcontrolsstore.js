@@ -28,7 +28,7 @@ var MixControlStore = Reflux.createStore({
       wave1value: 50,
       wave2value: 50,
       slider: {},
-      algorithm: 'dtw',
+      algorithm: 'vectorCrossfade',
       nSamples: 40
     };
   },
@@ -227,10 +227,28 @@ var MixControlStore = Reflux.createStore({
     var wave2Amps = VTIconStore.store.getInitialState()["wave2"].parameters.amplitude.data;
     var spot1 = 0;
     var spot2 = 0;
-    while (wave1Amps[spot1] && wave2Amps[spot2]) {
+    while (wave1Amps[spot1] || wave2Amps[spot2]) {
 
-        // Case 1: key-red1 and key-green1 share the same time
-      if (wave1Amps[spot1].t == wave2Amps[spot2].t) {
+      // Case 0.1: We're past the last red keyframe
+      if (!wave1Amps[spot1]) {
+        var newT = wave2Amps[spot2].t;
+        var v1 = (this._data.wave1value/100) * wave1Amps[spot1-1].value;
+        var v2 = (this._data.wave2value/100) * wave2Amps[spot2].value;
+        var newValue = v1 + v2;
+        VTIconStore.actions.newKeyframe("amplitude", newT, newValue, "mixedWave");
+        spot2++;
+      } // Case 0.2: We're past the last green keyframe
+      else if (!wave2Amps[spot2]) {
+        var newT = wave1Amps[spot1].t;
+        var v1 = (this._data.wave1value/100) * wave1Amps[spot1].value;
+        var v2 = (this._data.wave2value/100) * wave2Amps[spot2-1].value;
+        var newValue = v1 + v2;
+        VTIconStore.actions.newKeyframe("amplitude", newT, newValue, "mixedWave");
+        spot1++;
+      }
+
+      // Case 1: key-red1 and key-green1 share the same time
+      else if (wave1Amps[spot1].t == wave2Amps[spot2].t) {
         var newT = wave1Amps[spot1].t;
         var v1 = (this._data.wave1value/100) * wave1Amps[spot1].value;
         var v2 = (this._data.wave2value/100) * wave2Amps[spot2].value;
