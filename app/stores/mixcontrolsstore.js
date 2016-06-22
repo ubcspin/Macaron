@@ -29,7 +29,7 @@ var MixControlStore = Reflux.createStore({
       wave2value: 50,
       slider: {},
       algorithm: 'vectorCrossfade',
-      nSamples: 40
+      nSamples: 20
     };
   },
 
@@ -409,39 +409,42 @@ var MixControlStore = Reflux.createStore({
 
     /** Partitioning the waveforms **/
     while(t1 <= duration1) {
-      if (t1 >= wave1Amps[i1].t && wave1Amps[i1+1]) { i1++; }
+      if (wave1Amps[i1]) {
+        if (t1 >= wave1Amps[i1].t) { i1++; }
+      }
 
-      if (i1 == 0) {
-        partitionedAmps1[j1] = wave1Amps[i1].value;
-      } else if (i1 == wave1Amps.length) {
+      if (!wave1Amps[i1]) {
         partitionedAmps1[j1] = wave1Amps[wave1Amps.length-1].value;
+      } else if (i1 == 0) {
+        partitionedAmps1[j1] = wave1Amps[i1].value;
       } else {
         var rise = wave1Amps[i1].value - wave1Amps[i1-1].value;
         var run = wave1Amps[i1].t - wave1Amps[i1-1].t;
         var slope = rise / run;
         var diffT = t1 - wave1Amps[i1-1].t;
         var sampledValue = wave1Amps[i1-1].value + (slope * diffT);
-        partitionedAmps1[j1] = sampledValue;
+        partitionedAmps1[j1] = +sampledValue.toFixed(3);
       }
 
       t1 += partitionWidth; j1++;
     }
 
-    while (t2 <= duration1) {
+    while (t2 <= duration2) {
+      if (wave2Amps[i2]) {
+        if (t2 >= wave2Amps[i2].t) { i2++; }
+      }
 
-      if (t2 >= wave2Amps[i2].t && wave2Amps[i2+1]) { i2++; }
-
-      if (i2 == 0) {
-        partitionedAmps2[j2] = wave2Amps[i2].value;
-      } else if (i2 == wave2Amps.length) {
+      if (!wave2Amps[i2]) {
         partitionedAmps2[j2] = wave2Amps[wave2Amps.length-1].value;
+      } else if (i2 == 0) {
+        partitionedAmps2[j2] = wave2Amps[i2].value;
       } else {
         var rise = wave2Amps[i2].value - wave2Amps[i2-1].value;
         var run = wave2Amps[i2].t - wave2Amps[i2-1].t;
         var slope = rise / run;
         var diffT = t2 - wave2Amps[i2-1].t;
         var sampledValue = wave2Amps[i2-1].value + (slope * diffT);
-        partitionedAmps2[j2] = sampledValue
+        partitionedAmps2[j2] = +sampledValue.toFixed(3);
       }
 
       t2 += partitionWidth; j2++;
@@ -454,11 +457,10 @@ var MixControlStore = Reflux.createStore({
       for (var j=0; j<n2; j++) {
         var costIndex = this._indexFunction(i,j);
         var cost = this._localCost(partitionedAmps1[i], partitionedAmps2[j]);
+        cost = +cost.toFixed(3);
         costMatrix[costIndex] = cost;
       }
     }
-
-    console.log(costMatrix);
 
     /** Finding the optimal path through the cost matrix **/
     var i = 0; var j = 0;
@@ -467,7 +469,7 @@ var MixControlStore = Reflux.createStore({
     costNodes[0] = {i:0, j:0, cost:costMatrix[this._indexFunction(0,0)]};
     var nNodes = 1;
 
-    while (partitionedAmps1[i+1] != null || partitionedAmps2[j+1] != null) {
+    while ((partitionedAmps1[i+1] != null) || (partitionedAmps2[j+1] != null)) {
 
       // Case 1: We're at the top of the Cost Matrix
       if (partitionedAmps1[i+1] == null) {
