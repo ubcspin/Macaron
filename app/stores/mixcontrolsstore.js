@@ -29,7 +29,7 @@ var MixControlStore = Reflux.createStore({
       wave2value: 50,
       slider: {},
       algorithm: 'vectorCrossfade',
-      nSamples: 20
+      nSamples: 19
     };
   },
 
@@ -400,8 +400,8 @@ var MixControlStore = Reflux.createStore({
     var partitionedAmps1 = new Array(this._data.nSamples);
     var partitionedAmps2 = new Array(this._data.nSamples);
     var partitionWidth = Math.round(Math.min(duration1/this._data.nSamples, duration2/this._data.nSamples));
-    var n1 = duration1 / partitionWidth;
-    var n2 = duration2 / partitionWidth;
+    var n1 = Math.round(duration1 / partitionWidth);
+    var n2 = Math.round(duration2 / partitionWidth);
 
     var i1 = 0;  var i2 = 0;
     var t1 = 0;  var t2 = 0;
@@ -453,8 +453,8 @@ var MixControlStore = Reflux.createStore({
     /** Computing the Cost Matrix **/
     var costMatrix = new Array(n1 * n2);
 
-    for (var i=0; i<n1; i++) {
-      for (var j=0; j<n2; j++) {
+    for (var i=0; i<=n1; i++) {
+      for (var j=0; j<=n2; j++) {
         var costIndex = this._indexFunction(i,j);
         var cost = this._localCost(partitionedAmps1[i], partitionedAmps2[j]);
         cost = +cost.toFixed(3);
@@ -515,6 +515,56 @@ var MixControlStore = Reflux.createStore({
       }
     }
     console.log(costNodes);
+
+    /** Find all edges to form keyframe pairings **/
+    var i = 0; var j = 0; var k = 0;
+    var outputNodes = new Array(nNodes);
+    var nOutNodes = 0;
+
+    while (costNodes[k+1]) {
+
+      // Case 1: there are a few repeat I indices
+      if (costNodes[k].i == costNodes[k+1].i) {
+        var tempK = k;
+        while (costNodes[tempK+1]) {
+          if (costNodes[tempK].i == [tempK+1].i) {
+            tempK++; }
+          else {break;}}
+        var newI = Math.round((tempK - k) / 2);
+        var newJ = costNodes[k].j;
+        var newOutNode = {i:newI, j:newJ};
+        outputNodes[nOutNodes] = newOutNode;
+        nOutNodes++;
+        k = tempK;
+        console.log(tempK);
+        console.log('repeat I');
+      }
+
+      // Case 2: there are a few repeat J indices
+      else if (costNodes[k].j == costNodes[k+1].j) {
+        var tempK = k;
+        while (costNodes[tempK+1]) {
+          if (costNodes[tempK].j == costNodes[tempK+1].j) {
+            tempK++; }
+          else {break;}}
+        var newI = costNodes[k].i;
+        var newJ = Math.round((tempK - k) / 2);
+        var newOutNode = {i:newI, j:newJ};
+        outputNodes[nOutNodes] = newOutNode;
+        nOutNodes++;
+        k = tempK;
+        console.log('repeat J');
+      }
+
+      // Case 3: No repeats
+      else {
+        console.log('a traversal!');
+      }
+
+      k++;
+    }
+
+    console.log(outputNodes);
 
     /** Use that path through the cost matrix to mix the waves! **/
     for (var i=0; i<nNodes; i++) {
