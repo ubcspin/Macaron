@@ -29,7 +29,7 @@ var MixControlStore = Reflux.createStore({
       wave2value: 50,
       slider: {},
       algorithm: 'vectorCrossfade',
-      nSamples: 19
+      nSamples: 40
     };
   },
 
@@ -517,7 +517,7 @@ var MixControlStore = Reflux.createStore({
     console.log(costNodes);
 
     /** Find all edges to form keyframe pairings **/
-    var i = 0; var j = 0; var k = 0;
+    var k = 0;
     var outputNodes = new Array(nNodes);
     var nOutNodes = 0;
 
@@ -525,40 +525,37 @@ var MixControlStore = Reflux.createStore({
 
       // Case 1: there are a few repeat I indices
       if (costNodes[k].i == costNodes[k+1].i) {
-        var tempK = k;
-        while (costNodes[tempK+1]) {
-          if (costNodes[tempK].i == [tempK+1].i) {
-            tempK++; }
-          else {break;}}
-        var newI = Math.round((tempK - k) / 2);
-        var newJ = costNodes[k].j;
-        var newOutNode = {i:newI, j:newJ};
-        outputNodes[nOutNodes] = newOutNode;
+        var newK = k; var done = false;
+        while (costNodes[newK+1] && !done) {
+          if (costNodes[newK+1].i == costNodes[newK].i) { newK++; }
+          else {done = true;}
+        }
+        outputNodes[nOutNodes] = {i:costNodes[k].i, j:costNodes[k].j};
         nOutNodes++;
-        k = tempK;
-        console.log(tempK);
-        console.log('repeat I');
+        outputNodes[nOutNodes] = {i:costNodes[k].i, j:costNodes[newK].j};
+        nOutNodes++;
+        k = newK;
       }
 
       // Case 2: there are a few repeat J indices
       else if (costNodes[k].j == costNodes[k+1].j) {
-        var tempK = k;
-        while (costNodes[tempK+1]) {
-          if (costNodes[tempK].j == costNodes[tempK+1].j) {
-            tempK++; }
-          else {break;}}
-        var newI = costNodes[k].i;
-        var newJ = Math.round((tempK - k) / 2);
-        var newOutNode = {i:newI, j:newJ};
-        outputNodes[nOutNodes] = newOutNode;
+        var newK = k; var done = false;
+        while (costNodes[newK+1] && !done) {
+          if (costNodes[newK+1].j == costNodes[newK].j) { newK++; }
+          else {done = true;}
+        }
+        //var newI = Math.round((costNodes[k].i+costNodes[newK].i)/2);
+        outputNodes[nOutNodes] = {i:costNodes[k].i, j:costNodes[k].j};
         nOutNodes++;
-        k = tempK;
-        console.log('repeat J');
+        outputNodes[nOutNodes] = {i:costNodes[newK].i, j:costNodes[k].j};
+        nOutNodes++;
+        k = newK;
       }
 
       // Case 3: No repeats
       else {
-        console.log('a traversal!');
+        outputNodes[nOutNodes] = {i:costNodes[k].i, j:costNodes[k].j};
+        nOutNodes++;
       }
 
       k++;
@@ -567,25 +564,32 @@ var MixControlStore = Reflux.createStore({
     console.log(outputNodes);
 
     /** Use that path through the cost matrix to mix the waves! **/
-    for (var i=0; i<nNodes; i++) {
-
-      var nodeI = costNodes[i];
-
-      // Case 1: it's the first node!
-      if (nodeI.i == 0 && nodeI.j == 0) {
-        // look for similar indices in future nodes?
-      }
-
-      // Case 2: it's the last node!
-      else if (nodeI.i == n1 && nodeI.j == n2) {
-        // look for similar indices in previous nodes?
-      }
-
-      // Case 3: we're in the middle of it all...
-      else {
-        // look for similar nodes everywhere!
-      }
+    VTIconStore.actions.selectAllKeyframes("mixedWave");
+    VTIconStore.actions.deleteSelectedKeyframes("mixedWave");
+    for (var k=0; k<nOutNodes; k++) {
+      var i = outputNodes[k].i;
+      var j = outputNodes[k].j;
+      var iT = i * partitionWidth;
+      var jT = j * partitionWidth;
+      var iV = partitionedAmps1[i];
+      var jV = partitionedAmps2[j];
+      var newT = (this._data["wave1value"]*iT*0.01) + (this._data["wave2value"]*jT*0.01);
+      var newV = (this._data["wave1value"]*iV*0.01) + (this._data["wave2value"]*jV*0.01);
+      VTIconStore.actions.newKeyframe("amplitude", newT, newV, "mixedWave");
     }
+
+    /** Then just average the frequency data... **/
+    var wave1Freq = VTIconStore.store.getInitialState()["wave1"].parameters.frequency.data;
+    var wave2Freq = VTIconStore.store.getInitialState()["wave2"].parameters.frequency.data;
+    var n1 = wave1Freq.length; var n2 = wave2Freq.length;
+    var avg1 = 0; var avg2 = 0;
+    for (var i=0; i<n1; i++) { avg1 += (1/n1) * wave1Freq[i].value; }
+    for (var i=0; i<n2; i++) { avg2 += (1/n2) * wave2Freq[i].value; }
+    var newF = ((this._data.wave1value/100)*avg1)+((this._data.wave2value/100)*avg2);
+    VTIconStore.actions.newKeyframe("frequency", 0, newF, "mixedWave");
+    VTIconStore.actions.newKeyframe("frequency", 3000, newF, "mixedWave");
+    VTIconStore.actions.removeDefaultKeyframes("mixedWave");
+    VTIconStore.actions.unselectKeyframes("mixedWave");
 
   },
 
