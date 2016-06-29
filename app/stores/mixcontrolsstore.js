@@ -390,7 +390,6 @@ var MixControlStore = Reflux.createStore({
   },
 
   _properDynamicTimeWarp: function() {
-    //alert('sorry, that algorithm isnt ready yet.');
 
     /** Setting up the variables I'll need farther down **/
     var wave1Amps = VTIconStore.store.getInitialState()["wave1"].parameters.amplitude.data;
