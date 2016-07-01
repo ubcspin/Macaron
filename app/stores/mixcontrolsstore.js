@@ -448,6 +448,9 @@ var MixControlStore = Reflux.createStore({
 
       t2 += partitionWidth; j2++;
     }
+    var max1 = Math.max.apply(null, partitionedAmps1);
+    var max2 = Math.max.apply(null, partitionedAmps2);
+    console.log(max1, max2);
 
     /** Computing the Cost Matrix **/
     var costMatrix = new Array(n1 * n2);
@@ -455,7 +458,9 @@ var MixControlStore = Reflux.createStore({
     for (var i=0; i<=n1; i++) {
       for (var j=0; j<=n2; j++) {
         var costIndex = this._indexFunction(i,j);
-        var cost = this._localCost(partitionedAmps1[i], partitionedAmps2[j]);
+        var scaledV1 = partitionedAmps1[i] / max1;
+        var scaledV2 = partitionedAmps2[j] / max2;
+        var cost = this._localCost(scaledV1, scaledV2);
         cost = +cost.toFixed(3);
         costMatrix[costIndex] = cost;
       }
