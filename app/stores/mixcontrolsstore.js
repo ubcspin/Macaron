@@ -570,9 +570,12 @@ var MixControlStore = Reflux.createStore({
     /** Use that path through the cost matrix to mix the waves! **/
     VTIconStore.actions.selectAllKeyframes("mixedWave");
     VTIconStore.actions.deleteSelectedKeyframes("mixedWave");
-    for (var k=0; k<nOutNodes; k++) {
-      var i = outputNodes[k].i;
-      var j = outputNodes[k].j;
+    //for (var k=0; k<nOutNodes; k++) {
+    for (var k=0; k<nNodes; k++) {
+      var i = costNodes[k].i;
+      var j = costNodes[k].j;
+      //var i = outputNodes[k].i;
+      //var j = outputNodes[k].j;
       var iT = i * partitionWidth;
       var jT = j * partitionWidth;
       var iV = partitionedAmps1[i];
