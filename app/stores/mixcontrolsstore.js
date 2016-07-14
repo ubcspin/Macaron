@@ -4,6 +4,7 @@ var VTIconStore = require('./vticonstore.js');
 var DTWMixin = require('./../util/DTWmixin.js');
 var CrossfadeMixin = require('./../util/CrossfadeMixin.js');
 var DirectKeyframeComboMixin = require('./../util/DirectKeyframeCombineMixin.js');
+var SmartMix = require('./../util/smartMix.js');
 
 import {transform} from './../../thirdparty/fft.js';
 
@@ -215,47 +216,19 @@ var MixControlStore = Reflux.createStore({
 
   _mix: function() {
     if (this._data.algorithm == "lameCrossfade") {
-      this._lameCrossfade();
+      CrossfadeMixin.lameCrossfade(this._data["wave1value"], this._data["wave2value"], this._data["nSamples"]);
     } else if(this._data.algorithm == "vectorCrossfade") {
-      this._vectorCrossfade();
+      CrossfadeMixin.vectorCrossfade(this._data["wave1value"], this._data["wave2value"], this._data["nSamples"]);
     } else if (this._data.algorithm == "dtw") {
-      this._properDynamicTimeWarp();
+      DTWMixin.properDynamicTimeWarp(this._data["wave1value"], this._data["wave2value"], this._data["nSamples"]);
     } else if (this._data.algorithm == "direct") {
-      this._directKeyframeMix();
+      DirectKeyframeComboMixin.directKeyframeMix();
+    } else if (this._data.algorithm == "smartmix") {
+      SmartMix.smartMix(this._data["wave1value"], this._data["wave2value"], this._data["nSamples"]);
     }
     this.trigger(this._data);
   },
 
-  _vectorCrossfade() {
-    CrossfadeMixin.vectorCrossfade(this._data["wave1value"], this._data["wave2value"], this._data["nSamples"]);
-  },
-
-  _lameCrossfade: function() {
-    CrossfadeMixin.lameCrossfade(this._data["wave1value"], this._data["wave2value"], this._data["nSamples"]);
-  },
-
-  _directKeyframeMix: function() {
-    DirectKeyframeComboMixin.directKeyframeMix();
-  },
-
-  _scrappyDynamicTimeWarp: function() {
-    DTWMixin.scrappyDynamicTimeWarp(this._data["wave1value"], this._data["wave2value"], this._data["nSamples"]);
-  },
-
-
-  _properDynamicTimeWarp: function() {
-    DTWMixin.properDynamicTimeWarp(this._data["wave1value"], this._data["wave2value"], this._data["nSamples"]);
-  },
-
-
-  _indexFunction: function(i, j) {
-    return (this._data.nSamples * i) + j;
-  },
-
-
-  _localCost: function(x, y) {
-    return Math.abs(x - y);
-  },
 
 
 

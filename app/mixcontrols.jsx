@@ -24,6 +24,7 @@ var MixControls = React.createClass({
               <option value="direct">Direct Keyframe Combination</option>
               <option value="lameCrossfade">Lame Crossfade</option>
               <option value="dtw">Dynamic Time Warping</option>
+              <option value="smartmix">SmartMix &#9786;</option>
             </select>
           </div>
 

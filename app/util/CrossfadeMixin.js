@@ -180,7 +180,7 @@ var VectorCrossfadeMixin = {
   	}
 
 	   return frequency;
-  },
+  }
 
 
 }
