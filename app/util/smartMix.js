@@ -1,8 +1,8 @@
 import React from 'react';
 
-var VTIconStore = require('./../stores/VTIconStore.js');
+var VTIconStore = require('./../stores/vticonstore.js');
 var CrossfadeMixin = require('./CrossfadeMixin.js');
-var DTWMixin = require('./DTWMixin.js');
+var DTWMixin = require('./DTWmixin.js');
 
 var SmartMix = {
 

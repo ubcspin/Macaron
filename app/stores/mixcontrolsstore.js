@@ -225,6 +225,8 @@ var MixControlStore = Reflux.createStore({
       DirectKeyframeComboMixin.directKeyframeMix();
     } else if (this._data.algorithm == "smartmix") {
       SmartMix.smartMix(this._data["wave1value"], this._data["wave2value"], this._data["nSamples"]);
+    } else if (this._data.algorithm == "DTWwFreq") {
+      DTWMixin.dtwWithFreq(this._data["wave1value"], this._data["wave2value"], this._data["nSamples"]);
     }
     this.trigger(this._data);
   },

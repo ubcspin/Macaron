@@ -212,8 +212,290 @@ var DTWMixin = {
     VTIconStore.actions.newKeyframe("frequency", 3000, newF, "mixedWave");
     VTIconStore.actions.removeDefaultKeyframes("mixedWave");
     VTIconStore.actions.unselectKeyframes("mixedWave");
-
   },
+
+  /**
+   * Warning: This function looks pretty messy and intimidating, it follows
+   *  the algorithm in properDynamicTimeWarp very closely, but it's just
+   *   duplicated so that the frequency keyframes are interpolated also.
+   **/
+  dtwWithFreq: function(wave1value, wave2value, nSamples) {
+    /** Setting up the variables I'll need farther down **/
+    var wave1Amps = VTIconStore.store.getInitialState()["wave1"].parameters.amplitude.data;
+    var wave2Amps = VTIconStore.store.getInitialState()["wave2"].parameters.amplitude.data;
+    var wave1Freq = VTIconStore.store.getInitialState()["wave1"].parameters.frequency.data;
+    var wave2Freq = VTIconStore.store.getInitialState()["wave2"].parameters.frequency.data;
+    var duration1 = VTIconStore.store.getInitialState()["wave1"].duration;
+    var duration2 = VTIconStore.store.getInitialState()["wave2"].duration;
+    var partitionedAmps1 = new Array(nSamples);
+    var partitionedAmps2 = new Array(nSamples);
+    var partitionedFreq1 = new Array(nSamples);
+    var partitionedFreq2 = new Array(nSamples);
+    var partitionWidth = Math.round(Math.min(duration1/nSamples, duration2/nSamples));
+    var n1 = Math.round(duration1 / partitionWidth);
+    var n2 = Math.round(duration2 / partitionWidth);
+
+    var i1 = 0;  var i2 = 0;
+    var t1 = 0;  var t2 = 0;
+    var j1 = 0;  var j2 = 0;
+
+    /** Partitioning the waveform amplitude **/
+    while(t1 <= duration1) {
+      if (wave1Amps[i1]) {
+        if (t1 >= wave1Amps[i1].t) { i1++; }
+      }
+
+      if (!wave1Amps[i1]) {
+        partitionedAmps1[j1] = wave1Amps[wave1Amps.length-1].value;
+      } else if (i1 == 0) {
+        partitionedAmps1[j1] = wave1Amps[i1].value;
+      } else {
+        var rise = wave1Amps[i1].value - wave1Amps[i1-1].value;
+        var run = wave1Amps[i1].t - wave1Amps[i1-1].t;
+        var slope = rise / run;
+        var diffT = t1 - wave1Amps[i1-1].t;
+        var sampledValue = wave1Amps[i1-1].value + (slope * diffT);
+        partitionedAmps1[j1] = +sampledValue.toFixed(3);
+      }
+
+      t1 += partitionWidth; j1++;
+    }
+
+    while (t2 <= duration2) {
+      if (wave2Amps[i2]) {
+        if (t2 >= wave2Amps[i2].t) { i2++; }
+      }
+
+      if (!wave2Amps[i2]) {
+        partitionedAmps2[j2] = wave2Amps[wave2Amps.length-1].value;
+      } else if (i2 == 0) {
+        partitionedAmps2[j2] = wave2Amps[i2].value;
+      } else {
+        var rise = wave2Amps[i2].value - wave2Amps[i2-1].value;
+        var run = wave2Amps[i2].t - wave2Amps[i2-1].t;
+        var slope = rise / run;
+        var diffT = t2 - wave2Amps[i2-1].t;
+        var sampledValue = wave2Amps[i2-1].value + (slope * diffT);
+        partitionedAmps2[j2] = +sampledValue.toFixed(3);
+      }
+
+      t2 += partitionWidth; j2++;
+    }
+    var maxAmp1 = Math.max.apply(null, partitionedAmps1);
+    var maxAmp2 = Math.max.apply(null, partitionedAmps2);
+
+    /** Partitioning the waveform frequency **/
+    var i1 = 0;  var i2 = 0;
+    var t1 = 0;  var t2 = 0;
+    var j1 = 0;  var j2 = 0;
+
+    while(t1 <= duration1) {
+      if (wave1Freq[i1]) {
+        if (t1 >= wave1Freq[i1].t) { i1++; }
+      }
+
+      if (!wave1Freq[i1]) {
+        partitionedFreq1[j1] = wave1Freq[wave1Freq.length-1].value;
+      } else if (i1 == 0) {
+        partitionedFreq1[j1] = wave1Freq[i1].value;
+      } else {
+        var rise = wave1Freq[i1].value - wave1Freq[i1-1].value;
+        var run = wave1Freq[i1].t - wave1Freq[i1-1].t;
+        var slope = rise / run;
+        var diffT = t1 - wave1Freq[i1-1].t;
+        var sampledValue = wave1Freq[i1-1].value + (slope * diffT);
+        partitionedFreq1[j1] = +sampledValue.toFixed(3);
+      }
+
+      t1 += partitionWidth; j1++;
+    }
+
+    while (t2 <= duration2) {
+      if (wave2Freq[i2]) {
+        if (t2 >= wave2Freq[i2].t) { i2++; }
+      }
+
+      if (!wave2Freq[i2]) {
+        partitionedFreq2[j2] = wave2Freq[wave2Freq.length-1].value;
+      } else if (i2 == 0) {
+        partitionedFreq2[j2] = wave2Freq[i2].value;
+      } else {
+        var rise = wave2Freq[i2].value - wave2Freq[i2-1].value;
+        var run = wave2Freq[i2].t - wave2Freq[i2-1].t;
+        var slope = rise / run;
+        var diffT = t2 - wave2Freq[i2-1].t;
+        var sampledValue = wave2Freq[i2-1].value + (slope * diffT);
+        partitionedFreq2[j2] = +sampledValue.toFixed(3);
+      }
+
+      t2 += partitionWidth; j2++;
+    }
+    var maxFreq1 = Math.max.apply(null, partitionedFreq1);
+    var maxFreq2 = Math.max.apply(null, partitionedFreq2);
+
+    /** Computing the Amplitude Cost Matrix **/
+    var ampCostMatrix = new Array(n1 * n2);
+
+    for (var i=0; i<=n1; i++) {
+      for (var j=0; j<=n2; j++) {
+        var costIndex = this._indexFunction(i,j,nSamples);
+        var scaledV1 = partitionedAmps1[i] / maxAmp1;
+        var scaledV2 = partitionedAmps2[j] / maxAmp2;
+        var cost = this._localCost(scaledV1, scaledV2);
+        cost = +cost.toFixed(3);
+        ampCostMatrix[costIndex] = cost;
+      }
+    }
+
+    /** Computing the Frequency Cost Matrix **/
+    var freqCostMatrix = new Array(n1 * n2);
+
+    for (var i=0; i<=n1; i++) {
+      for (var j=0; j<=n2; j++) {
+        var costIndex = this._indexFunction(i,j,nSamples);
+        var scaledV1 = partitionedFreq1[i] / maxFreq1;
+        var scaledV2 = partitionedFreq2[j] / maxFreq2;
+        var cost = this._localCost(scaledV1, scaledV2);
+        cost = +cost.toFixed(3);
+        freqCostMatrix[costIndex] = cost;
+      }
+    }
+
+    /** Finding the optimal path through the cost amplitude matrix **/
+    var i = 0; var j = 0;
+    var costSize = n1 + n2;
+    var ampCostNodes = new Array(costSize);
+    ampCostNodes[0] = {i:0, j:0, cost:ampCostMatrix[this._indexFunction(0,0,nSamples)]};
+    var nAmpNodes = 1;
+
+    while ((partitionedAmps1[i+1] != null) || (partitionedAmps2[j+1] != null)) {
+
+      // Case 1: We're at the top of the Cost Matrix
+      if (partitionedAmps1[i+1] == null) {
+        var newNode = {i:i, j:j+1, cost:ampCostMatrix[this._indexFunction(i,j+1,nSamples)]};
+        ampCostNodes[nAmpNodes] = newNode;
+        j++; nAmpNodes++;
+      }
+
+      // Case 2: We're on the far right of the Cost Matrix
+      else if (partitionedAmps2[j+1] == null) {
+        var newNode = {i:i+1, j:j, cost:ampCostMatrix[this._indexFunction(i+1,j,nSamples)]};
+        ampCostNodes[nAmpNodes] = newNode;
+        i++; nAmpNodes++;
+      }
+
+      // Case 3: We're somewhere in the middle and need to choose a next step!
+      else {
+        var up    = ampCostMatrix[this._indexFunction(i+1, j,  nSamples)];
+        var right = ampCostMatrix[this._indexFunction(i,   j+1,nSamples)];
+        var diag  = ampCostMatrix[this._indexFunction(i+1, j+1,nSamples)];
+        var minCost = Math.min(up, right, diag);
+
+        if (up == minCost) {
+          ampCostNodes[nAmpNodes] = {i:i+1, j:j, cost:up}
+          i++; nAmpNodes++
+        }
+
+        else if (right == minCost) {
+          ampCostNodes[nAmpNodes] = {i:i, j:j+1, cost: right}
+          j++; nAmpNodes++;
+        }
+
+        else if (diag == minCost) {
+          ampCostNodes[nAmpNodes] = {i:i+1, j:j+1, cost: diag};
+          j++; i++; nAmpNodes++;
+        }
+
+        else {
+          alert('uh oh... cost Matrix problems :(');
+          break;
+        }
+      }
+    }
+
+    /** Finding the optimal path through the cost amplitude matrix **/
+    var i = 0; var j = 0;
+    var costSize = n1 + n2;
+    var freqCostNodes = new Array(costSize);
+    freqCostNodes[0] = {i:0, j:0, cost:freqCostMatrix[this._indexFunction(0,0,nSamples)]};
+    var nFreqNodes = 1;
+
+    while ((partitionedAmps1[i+1] != null) || (partitionedAmps2[j+1] != null)) {
+
+      // Case 1: We're at the top of the Cost Matrix
+      if (partitionedAmps1[i+1] == null) {
+        var newNode = {i:i, j:j+1, cost:freqCostMatrix[this._indexFunction(i,j+1,nSamples)]};
+        freqCostNodes[nFreqNodes] = newNode;
+        j++; nFreqNodes++;
+      }
+
+      // Case 2: We're on the far right of the Cost Matrix
+      else if (partitionedAmps2[j+1] == null) {
+        var newNode = {i:i+1, j:j, cost:freqCostMatrix[this._indexFunction(i+1,j,nSamples)]};
+        freqCostNodes[nFreqNodes] = newNode;
+        i++; nFreqNodes++;
+      }
+
+      // Case 3: We're somewhere in the middle and need to choose a next step!
+      else {
+        var up    = freqCostMatrix[this._indexFunction(i+1, j,  nSamples)];
+        var right = freqCostMatrix[this._indexFunction(i,   j+1,nSamples)];
+        var diag  = freqCostMatrix[this._indexFunction(i+1, j+1,nSamples)];
+        var minCost = Math.min(up, right, diag);
+
+        if (up == minCost) {
+          freqCostNodes[nFreqNodes] = {i:i+1, j:j, cost:up}
+          i++; nFreqNodes++
+        }
+
+        else if (right == minCost) {
+          freqCostNodes[nFreqNodes] = {i:i, j:j+1, cost: right}
+          j++; nFreqNodes++;
+        }
+
+        else if (diag == minCost) {
+          freqCostNodes[nFreqNodes] = {i:i+1, j:j+1, cost: diag};
+          j++; i++; nFreqNodes++;
+        }
+
+        else {
+          alert('uh oh... cost Matrix problems :(');
+          break;
+        }
+      }
+    }
+
+
+    /** Use that path through the cost matrix to mix the waves! **/
+    VTIconStore.actions.selectAllKeyframes("mixedWave");
+    VTIconStore.actions.deleteSelectedKeyframes("mixedWave");
+    for (var k=0; k<nAmpNodes; k++) {
+      var i = ampCostNodes[k].i;
+      var j = ampCostNodes[k].j;
+      var iT = i * partitionWidth;
+      var jT = j * partitionWidth;
+      var iV = partitionedAmps1[i];
+      var jV = partitionedAmps2[j];
+      var newT = (wave1value*iT*0.01) + (wave2value*jT*0.01);
+      var newV = (wave1value*iV*0.01) + (wave2value*jV*0.01);
+      VTIconStore.actions.newKeyframe("amplitude", newT, newV, "mixedWave");
+    }
+    for (var k=0; k<nFreqNodes; k++) {
+      var i = freqCostNodes[k].i;
+      var j = freqCostNodes[k].j;
+      var iT = i * partitionWidth;
+      var jT = j * partitionWidth;
+      var iV = partitionedFreq1[i];
+      var jV = partitionedFreq2[j];
+      var newT = (wave1value*iT*0.01) + (wave2value*jT*0.01);
+      var newV = (wave1value*iV*0.01) + (wave2value*jV*0.01);
+      VTIconStore.actions.newKeyframe("frequency", newT, newV, "mixedWave");
+    }
+    VTIconStore.actions.removeDefaultKeyframes("mixedWave");
+    VTIconStore.actions.unselectKeyframes("mixedWave");
+  },
+
+
 
   scrappyDynamicTimeWarp: function(wave1value, wave2value, nSamples) {
     alert('sorry, this algorithm isnt ready yet :(');
