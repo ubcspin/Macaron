@@ -36,7 +36,11 @@ var DTWMixin = {
         var run = wave1Amps[i1].t - wave1Amps[i1-1].t;
         var slope = rise / run;
         var diffT = t1 - wave1Amps[i1-1].t;
-        var sampledValue = wave1Amps[i1-1].value + (slope * diffT);
+        // Now avoid a divide by zero error if there are two equal times.
+        if (run) { var sampledValue = wave1Amps[i1-1].value + (slope * diffT); }
+        else { sampledValue = wave1Amps[i1-1].value; }
+
+        sampledValue = Math.min(sampledValue, 1);
         partitionedAmps1[j1] = +sampledValue.toFixed(3);
       }
 
@@ -65,6 +69,7 @@ var DTWMixin = {
     }
     var max1 = Math.max.apply(null, partitionedAmps1);
     var max2 = Math.max.apply(null, partitionedAmps2);
+    console.log(partitionedAmps1); console.log(partitionedAmps2);
     console.log(max1, max2);
 
     /** Computing the Cost Matrix **/
@@ -110,7 +115,6 @@ var DTWMixin = {
         var right = costMatrix[this._indexFunction(i,   j+1,nSamples)];
         var diag  = costMatrix[this._indexFunction(i+1, j+1,nSamples)];
         var minCost = Math.min(up, right, diag);
-        console.log({u:up, r:right, d:diag});
 
         if (up == minCost) {
           costNodes[nNodes] = {i:i+1, j:j, cost:up}
