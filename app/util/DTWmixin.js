@@ -32,6 +32,8 @@ var DTWMixin = {
       } else if (i1 == 0) {
         partitionedAmps1[j1] = wave1Amps[i1].value;
       } else {
+        var tempI = i1;
+        var nextAmp = wave1Amps[tempI].value;
         var rise = wave1Amps[i1].value - wave1Amps[i1-1].value;
         var run = wave1Amps[i1].t - wave1Amps[i1-1].t;
         var slope = rise / run;
@@ -41,6 +43,7 @@ var DTWMixin = {
         else { sampledValue = wave1Amps[i1-1].value; }
 
         sampledValue = Math.min(sampledValue, 1);
+        sampledValue = Math.max(sampledValue, 0);
         partitionedAmps1[j1] = +sampledValue.toFixed(3);
       }
 
@@ -62,6 +65,14 @@ var DTWMixin = {
         var slope = rise / run;
         var diffT = t2 - wave2Amps[i2-1].t;
         var sampledValue = wave2Amps[i2-1].value + (slope * diffT);
+
+        // Now avoid a divide by zero error if there are two equal times.
+        if (run) { var sampledValue = wave2Amps[i2-1].value + (slope * diffT); }
+        else { sampledValue = wave2Amps[i2-1].value; }
+
+        sampledValue = Math.min(sampledValue, 1);
+        sampledValue = Math.max(sampledValue, 0);
+
         partitionedAmps2[j2] = +sampledValue.toFixed(3);
       }
 
