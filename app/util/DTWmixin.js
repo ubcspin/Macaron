@@ -24,26 +24,26 @@ var DTWMixin = {
     /** Partitioning the waveforms **/
     while(t1 <= duration1) {
       if (wave1Amps[i1]) {
-        if (t1 >= wave1Amps[i1].t) { i1++; }
+        while ((t1 >= wave1Amps[i1].t) && (wave1Amps[i1+1])) { i1++; }
       }
 
-      if (!wave1Amps[i1]) {
-        partitionedAmps1[j1] = wave1Amps[wave1Amps.length-1].value;
-      } else if (i1 == 0) {
+      if (i1 == 0) {
         partitionedAmps1[j1] = wave1Amps[i1].value;
-      } else {
-        var tempI = i1;
-        var nextAmp = wave1Amps[tempI].value;
+      } else if (!wave1Amps[i1]) {
+        partitionedAmps1[j1] = wave1Amps[wave1Amps.length-1].value;
+      }  else {
         var rise = wave1Amps[i1].value - wave1Amps[i1-1].value;
         var run = wave1Amps[i1].t - wave1Amps[i1-1].t;
         var slope = rise / run;
         var diffT = t1 - wave1Amps[i1-1].t;
+
         // Now avoid a divide by zero error if there are two equal times.
         if (run) { var sampledValue = wave1Amps[i1-1].value + (slope * diffT); }
         else { sampledValue = wave1Amps[i1-1].value; }
 
-        sampledValue = Math.min(sampledValue, 1);
-        sampledValue = Math.max(sampledValue, 0);
+        sampledValue = Math.max(0, sampledValue);
+        sampledValue = Math.min(1, sampledValue);
+
         partitionedAmps1[j1] = +sampledValue.toFixed(3);
       }
 
@@ -52,7 +52,7 @@ var DTWMixin = {
 
     while (t2 <= duration2) {
       if (wave2Amps[i2]) {
-        if (t2 >= wave2Amps[i2].t) { i2++; }
+        while (t2 >= wave2Amps[i2].t && wave2Amps[i1+1]) { i2++; }
       }
 
       if (!wave2Amps[i2]) {
@@ -70,8 +70,8 @@ var DTWMixin = {
         if (run) { var sampledValue = wave2Amps[i2-1].value + (slope * diffT); }
         else { sampledValue = wave2Amps[i2-1].value; }
 
-        sampledValue = Math.min(sampledValue, 1);
-        sampledValue = Math.max(sampledValue, 0);
+        sampledValue = Math.max(0, sampledValue);
+        sampledValue = Math.min(1, sampledValue);
 
         partitionedAmps2[j2] = +sampledValue.toFixed(3);
       }
@@ -81,7 +81,6 @@ var DTWMixin = {
     var max1 = Math.max.apply(null, partitionedAmps1);
     var max2 = Math.max.apply(null, partitionedAmps2);
     console.log(partitionedAmps1); console.log(partitionedAmps2);
-    console.log(max1, max2);
 
     /** Computing the Cost Matrix **/
     var costMatrix = new Array(n1 * n2);
@@ -257,7 +256,8 @@ var DTWMixin = {
     /** Partitioning the waveform amplitude **/
     while(t1 <= duration1) {
       if (wave1Amps[i1]) {
-        if (t1 >= wave1Amps[i1].t) { i1++; }
+        while (t1 >= wave1Amps[i1].t && wave1Amps[i1+1]) { i1++; }
+        if (t1 >= wave1Amps[i1].t && (i1+1) == wave1Amps.length) { i1++; }
       }
 
       if (!wave1Amps[i1]) {
@@ -270,6 +270,14 @@ var DTWMixin = {
         var slope = rise / run;
         var diffT = t1 - wave1Amps[i1-1].t;
         var sampledValue = wave1Amps[i1-1].value + (slope * diffT);
+
+        // Now avoid a divide by zero error if there are two equal times.
+        if (run) { var sampledValue = wave1Amps[i1-1].value + (slope * diffT); }
+        else { sampledValue = wave1Amps[i1-1].value; }
+
+        sampledValue = Math.max(0, sampledValue);
+        sampledValue = Math.min(1, sampledValue);
+
         partitionedAmps1[j1] = +sampledValue.toFixed(3);
       }
 
@@ -278,7 +286,8 @@ var DTWMixin = {
 
     while (t2 <= duration2) {
       if (wave2Amps[i2]) {
-        if (t2 >= wave2Amps[i2].t) { i2++; }
+        while (t2 >= wave2Amps[i2].t && wave2Amps[i2+1]) { i2++; }
+        if (t2 >= wave2Amps[i2].t && (i2+1) == wave2Amps.length) { i2++; }
       }
 
       if (!wave2Amps[i2]) {
@@ -291,6 +300,14 @@ var DTWMixin = {
         var slope = rise / run;
         var diffT = t2 - wave2Amps[i2-1].t;
         var sampledValue = wave2Amps[i2-1].value + (slope * diffT);
+
+        // Now avoid a divide by zero error if there are two equal times.
+        if (run) { var sampledValue = wave2Amps[i2-1].value + (slope * diffT); }
+        else { sampledValue = wave2Amps[i2-1].value; }
+
+        sampledValue = Math.max(0, sampledValue);
+        sampledValue = Math.min(1, sampledValue);
+
         partitionedAmps2[j2] = +sampledValue.toFixed(3);
       }
 
@@ -298,6 +315,7 @@ var DTWMixin = {
     }
     var maxAmp1 = Math.max.apply(null, partitionedAmps1);
     var maxAmp2 = Math.max.apply(null, partitionedAmps2);
+    console.log(partitionedAmps1); console.log(partitionedAmps2);
 
     /** Partitioning the waveform frequency **/
     var i1 = 0;  var i2 = 0;
@@ -306,7 +324,8 @@ var DTWMixin = {
 
     while(t1 <= duration1) {
       if (wave1Freq[i1]) {
-        if (t1 >= wave1Freq[i1].t) { i1++; }
+        while (t1 >= wave1Freq[i1].t && wave1Freq[i1+1]) { i1++; }
+        if (t1 >= wave1Freq[i1].t && (i1+1) == wave1Freq.length) { i1++; }
       }
 
       if (!wave1Freq[i1]) {
@@ -319,6 +338,11 @@ var DTWMixin = {
         var slope = rise / run;
         var diffT = t1 - wave1Freq[i1-1].t;
         var sampledValue = wave1Freq[i1-1].value + (slope * diffT);
+
+        // Now avoid a divide by zero error if there are two equal times.
+        if (run) { var sampledValue = wave1Freq[i1-1].value + (slope * diffT); }
+        else { sampledValue = wave1Freq[i1-1].value; }
+
         partitionedFreq1[j1] = +sampledValue.toFixed(3);
       }
 
@@ -327,7 +351,8 @@ var DTWMixin = {
 
     while (t2 <= duration2) {
       if (wave2Freq[i2]) {
-        if (t2 >= wave2Freq[i2].t) { i2++; }
+        while (t2 >= wave2Freq[i2].t && wave2Freq[i2+1]) { i2++; }
+        if (t2 >= wave2Freq[i2].t && (i2+1) == wave2Freq.length) { i2++; }
       }
 
       if (!wave2Freq[i2]) {
@@ -340,6 +365,11 @@ var DTWMixin = {
         var slope = rise / run;
         var diffT = t2 - wave2Freq[i2-1].t;
         var sampledValue = wave2Freq[i2-1].value + (slope * diffT);
+
+        // Now avoid a divide by zero error if there are two equal times.
+        if (run) { var sampledValue = wave2Freq[i2-1].value + (slope * diffT); }
+        else { sampledValue = wave2Freq[i2-1].value; }
+
         partitionedFreq2[j2] = +sampledValue.toFixed(3);
       }
 
@@ -347,6 +377,8 @@ var DTWMixin = {
     }
     var maxFreq1 = Math.max.apply(null, partitionedFreq1);
     var maxFreq2 = Math.max.apply(null, partitionedFreq2);
+
+    console.log(partitionedFreq1); console.log(partitionedFreq2);
 
     /** Computing the Amplitude Cost Matrix **/
     var ampCostMatrix = new Array(n1 * n2);
