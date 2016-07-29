@@ -112,8 +112,6 @@ var saveLoadStore = Reflux.createStore({
 	},
 
 
-
-
 	generateWavFile(editor) {
 
 		/**
@@ -219,34 +217,59 @@ var saveLoadStore = Reflux.createStore({
 				**/
 			this.generateWavContent = function(editor) {
 
-				var iconStore = VTIconStore.store.getInitialState()[editor];
-				var ampParams = iconStore.parameters.amplitude.data;
-				var freqParams = iconStore.parameters.frequency.data;
+				var vticon = VTIconStore.store.getInitialState()[editor];
+				console.log(vticon);
+				
+				var range = Math.pow(2, this.bitDepth - 1) - 2; // subtract 2 to avoid any clipping.
 
-				var range = Math.pow(2, this.bitDepth - 1) - 2;
-									// subtract 2 to avoid any clipping.
 
-				// calculate the speaker displacement at each frame
-				//  emulating a sinewave here...
+				//OS: Adapted from waveformpathmixin
+				var dt_in_s = 1.0/this.sampleRate;
+				var phaseIntegral = 0;
 				for (var i=0; i<=this.nSamples; i=(i+this.sampleSize)) {
+					var t_in_ms = ((i * 1000) / this.sampleRate)
+					var t_in_s = t_in_ms/1000;
 
-					var t = ((i * 1000) / this.sampleRate);
+					var amplitude = interpolateParameter("amplitude", t_in_ms, vticon);//paramValues.amplitude;
+					var frequency = interpolateParameter("frequency", t_in_ms, vticon); //paramValues.frequency;
+					
+					if (i == 0) {
+						// phaseIntegral = frequency;
+					} else { 
+						phaseIntegral += (frequency)*dt_in_s;
+					};
+					var v = range* amplitude * Math.sin(2*Math.PI*phaseIntegral);
+				 	this.buffer[(i*this.sampleSize)+44] = v;
 
-					var amp = getCurrentAmplitude(t, ampParams);
-					var ft = getCurrentFT(t, freqParams); // Integral of freq over t
-
-					var vol = range * amp;
-					//vol = equalize(t, freqParams, vol);
-					var angle = Math.sin(2 * Math.PI * ft);
-					var oscOffset = Math.round(vol * angle);
-
-					if (oscOffset < 0) {
-						oscOffset = ~(Math.abs(oscOffset));
-					}
-
-					// Range - Offset = WAV encoding of Offset... Weird!
-					this.buffer[(i*this.sampleSize)+44] = range - oscOffset;
 				}
+
+
+
+				// var ampParams = iconStore.parameters.amplitude.data;
+				// var freqParams = iconStore.parameters.frequency.data;
+
+				// 
+				// // calculate the speaker displacement at each frame
+				// //  emulating a sinewave here...
+				// for (var i=0; i<=this.nSamples; i=(i+this.sampleSize)) {
+
+				// 	var t = ((i * 1000) / this.sampleRate);
+
+				// 	var amp = getCurrentAmplitude(t, ampParams);
+				// 	var ft = getCurrentFT(t, freqParams); // Integral of freq over t
+
+				// 	var vol = range * amp;
+				// 	//vol = equalize(t, freqParams, vol);
+				// 	var angle = Math.sin(2 * Math.PI * ft);
+				// 	var oscOffset = Math.round(vol * angle);
+
+				// 	if (oscOffset < 0) {
+				// 		oscOffset = ~(Math.abs(oscOffset));
+				// 	}
+
+				// 	// Range - Offset = WAV encoding of Offset... Weird!
+				// 	this.buffer[(i*this.sampleSize)+44] = range - oscOffset;
+				// }
 			}
 		} /**  End of WavBundle Constructor  **/
 
@@ -301,6 +324,93 @@ var saveLoadStore = Reflux.createStore({
 	}
 });
 
+
+
+//returns parameter value for a given time
+	//TODO: Copy+Pasted from VTEditor; needs to be unified 
+	// during next refactoring
+	var interpolateParameter = function(p, t, vticon) {
+		var data = vticon.parameters[p].data;
+		var prev = null;
+		var next = null;
+
+		var rv = null;
+
+		for(var i = 0; i < data.length; i++)
+		{
+			
+			if (data[i].t == t)
+			{
+				rv = data[i].value;
+			}
+			else if (data[i].t < t) 
+			{
+				if (prev == null || prev.t <= data[i].t) {
+					prev = data[i];
+				}
+			} else {
+				if (next == null || next.t >= data[i].t) {
+					next = data[i];
+				}
+			}
+		}
+
+		if (rv == null)
+		{
+
+			if (next == null && prev == null) {
+			//if no exact match was found
+			if (rv == null)
+			{
+				//error
+				throw "No keyframes found in parameter " + p;
+			}
+			//if an exact match was found, we already stored rv
+				
+			} else if (next == null) {
+				//use prev
+				rv = prev.value;
+			} else if (prev == null) {
+				//use next
+				rv = next.value;
+			} else {
+				//TODO: not just linear interpolation
+				if (prev.t == next.t) 
+				{
+					rv = prev.value;
+				} else {
+					var dt = next.t-prev.t;
+					var proportionPrev = (t-prev.t)/dt;
+					var dvalue = next.value - prev.value;
+					rv = proportionPrev*dvalue + prev.value;
+					/*
+					console.log("INTERPOLATE");
+					console.log(t);
+					console.log(prev.t, prev.value);
+					console.log(next.t, next.value);
+					console.log(dt, dvalue);
+					console.log(proportionPrev);
+					console.log(rv);*/
+				}
+			}
+
+		}
+	
+		return rv;
+
+	};
+
+	//returns parameter values as a dictionary for a given time
+	//TODO: Copy+Pasted from VTEditor; needs to be unified 
+	// during next refactoring
+	var interpolateParameters = function(t, vticon) {
+		//map _interpolateParameter to vticon keys
+		return Object.keys(vticon.parameters).reduce( function(obj, p) 
+			{
+				obj[p] = interpolateParameter(p, t, vticon);
+				return obj;
+			}, {});
+	};
 
 
 
