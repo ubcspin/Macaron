@@ -226,19 +226,27 @@ var saveLoadStore = Reflux.createStore({
 				var range = Math.pow(2, this.bitDepth - 1) - 2;
 									// subtract 2 to avoid any clipping.
 
+				var phaseIntegral = 0;
+				var dt_in_s = 1.0/this.sampleRate;
+
 				// calculate the speaker displacement at each frame
 				//  emulating a sinewave here...
-				for (var i=0; i<=this.nSamples; i=(i+this.sampleSize)) {
+				for (var i=0; i<=this.nSamples; i=i+1) {
 
 					var t = ((i * 1000) / this.sampleRate);
 
 					var amp = getCurrentAmplitude(t, ampParams);
-					var ft = getCurrentFT(t, freqParams); // Integral of freq over t
+					var freq = getCurrentFrequency(t, freqParams); // instantaneous freq over t
 
-					var vol = range * amp;
-					//vol = equalize(t, freqParams, vol);
-					var angle = Math.sin(2 * Math.PI * ft);
-					var oscOffset = Math.round(vol * angle);
+					if (i == 0) {
+						// phaseIntegral = frequency;
+					} else { 
+						phaseIntegral += (freq)*dt_in_s;
+					};
+
+
+					var v = amp* Math.sin(2 * Math.PI * phaseIntegral);
+					var oscOffset = Math.round(range * v);
 
 					if (oscOffset < 0) {
 						oscOffset = ~(Math.abs(oscOffset));
