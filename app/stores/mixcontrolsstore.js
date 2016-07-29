@@ -169,7 +169,10 @@ var MixControlStore = Reflux.createStore({
   				var waveData = reader.result;
   				if (MixControlStore._isJSONFile(reader, reader.filename)) {
   					VTIconStore.actions.setVTIcon(JSON.parse(waveData.slice(29)), "wave1");
-  				} else {
+            // TODO Comment this conditional out to read only JSON files with the header!
+  				} else if (reader.filename.indexOf('.json') >= 0) {
+            VTIconStore.actions.setVTIcon(JSON.parse(waveData), "wave1");
+          } else {
   					alert('The selected file wasnt one that Macaron recognizes. Please upload an appropriate WAV or JSON file.');
   				}
   			}
@@ -202,9 +205,12 @@ var MixControlStore = Reflux.createStore({
   		else {
   			reader.onload = function(e) {
   				var waveData = reader.result;
-  				if (MixControlStore._isJSONFile(reader, reader.filename)) {
-  					VTIconStore.actions.setVTIcon(JSON.parse(waveData.slice(29)), "wave2");
-  				} else {
+          if (MixControlStore._isJSONFile(reader, reader.filename)) {
+  					VTIconStore.actions.setVTIcon(JSON.parse(waveData.slice(29)), "wave1");
+            // TODO Comment this conditional out to read only JSON files with the header!
+  				} else if (reader.filename.indexOf('.json') >= 0) {
+            VTIconStore.actions.setVTIcon(JSON.parse(waveData), "wave1");
+          } else {
   					alert('The selected file wasnt one that Macaron recognizes. Please upload an appropriate WAV or JSON file.');
   				}
   			}
