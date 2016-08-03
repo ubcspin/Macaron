@@ -34,9 +34,9 @@ var MixControls = React.createClass({
             <span id="quick-mix-title">Quick Mix:</span>
             <div id="quick-mix-buttons-container">
               <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 0)}>0%</button>
-              <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 25)}>25%</button>
+              <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 75)}>25%</button>
               <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 50)}>50%</button>
-              <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 75)}>75%</button>
+              <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 25)}>75%</button>
               <button type="button" onClick={MixControlStore.actions.quickMix.bind(this, 100)}>100%</button>
             </div>
           </div>

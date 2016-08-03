@@ -235,12 +235,13 @@ var saveLoadStore = Reflux.createStore({
 
 					var t = ((i * 1000) / this.sampleRate);
 
-					var amp = getCurrentAmplitude(t, ampParams);
+					var preAmp = getCurrentAmplitude(t, ampParams);
+					var amp = equalize(t, freqParams, preAmp);
 					var freq = getCurrentFrequency(t, freqParams); // instantaneous freq over t
 
 					if (i == 0) {
 						// phaseIntegral = frequency;
-					} else { 
+					} else {
 						phaseIntegral += (freq)*dt_in_s;
 					};
 

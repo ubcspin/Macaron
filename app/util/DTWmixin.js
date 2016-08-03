@@ -21,21 +21,23 @@ var DTWMixin = {
     var t1 = 0;  var t2 = 0;
     var j1 = 0;  var j2 = 0;
 
-    /** Partitioning the waveforms **/
+    /** Partitioning the waveform amplitude **/
     while(t1 <= duration1) {
       if (wave1Amps[i1]) {
-        while ((t1 >= wave1Amps[i1].t) && (wave1Amps[i1+1])) { i1++; }
+        while (t1 >= wave1Amps[i1].t && wave1Amps[i1+1]) { i1++; }
+        if (t1 >= wave1Amps[i1].t && (i1+1) == wave1Amps.length) { i1++; }
       }
 
-      if (i1 == 0) {
-        partitionedAmps1[j1] = wave1Amps[i1].value;
-      } else if (!wave1Amps[i1]) {
+      if (!wave1Amps[i1]) {
         partitionedAmps1[j1] = wave1Amps[wave1Amps.length-1].value;
-      }  else {
+      } else if (i1 == 0) {
+        partitionedAmps1[j1] = wave1Amps[i1].value;
+      } else {
         var rise = wave1Amps[i1].value - wave1Amps[i1-1].value;
         var run = wave1Amps[i1].t - wave1Amps[i1-1].t;
         var slope = rise / run;
         var diffT = t1 - wave1Amps[i1-1].t;
+        var sampledValue = wave1Amps[i1-1].value + (slope * diffT);
 
         // Now avoid a divide by zero error if there are two equal times.
         if (run) { var sampledValue = wave1Amps[i1-1].value + (slope * diffT); }
@@ -52,7 +54,8 @@ var DTWMixin = {
 
     while (t2 <= duration2) {
       if (wave2Amps[i2]) {
-        while (t2 >= wave2Amps[i2].t && wave2Amps[i1+1]) { i2++; }
+        while (t2 >= wave2Amps[i2].t && wave2Amps[i2+1]) { i2++; }
+        if (t2 >= wave2Amps[i2].t && (i2+1) == wave2Amps.length) { i2++; }
       }
 
       if (!wave2Amps[i2]) {
