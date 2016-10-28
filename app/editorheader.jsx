@@ -52,7 +52,7 @@ var EditorHeader = React.createClass({
 		} else {
 			var editor = "main";
 		}
-		SaveLoadStore.actions.save(editor);
+		SaveLoadStore.actions.bufferAndPlay(editor);
 	},
 
 	_onLoadButtonClick : function(e) {

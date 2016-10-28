@@ -8,7 +8,8 @@ import {transform} from './../../thirdparty/fft.js';
 var saveLoadActions = Reflux.createActions(
 	[
 		'save',
-		'loadMacaronFile'
+		'loadMacaronFile',
+		'bufferAndPlay'
 	]
 );
 
@@ -307,7 +308,102 @@ var saveLoadStore = Reflux.createStore({
 
 			reader.readAsText(file); //assumes 'utf8'
 		}
+	},
+	
+	onBufferAndPlay(editor){
+
+		// https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer
+
+
+
+		var trackLength = 3; //s
+		var channels = 1; // Standard mono-audio
+		var sampleRate = 44100; //Hz (44100 is pretty universal)
+		var bitDepth = 8; // Low-fi...
+		var bitRate = channels * sampleRate * bitDepth;
+		var sampleSize = (bitDepth * channels) / (8); //bytes
+		var nSamples = sampleRate * trackLength;
+		var totalSize = (nSamples * sampleSize) + 44;
+
+		var iconStore = VTIconStore.store.getInitialState()[editor];
+		var ampParams = iconStore.parameters.amplitude.data;
+		var freqParams = iconStore.parameters.frequency.data;
+
+		var range = Math.pow(2, bitDepth - 1) - 2;
+							// subtract 2 to avoid any clipping.
+
+		var phaseIntegral = 0;
+		var dt_in_s = 1.0/sampleRate;
+
+		var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+		var source = audioCtx.createBufferSource();
+		var myAudioBuffer = audioCtx.createBuffer(channels, totalSize, sampleRate);
+		var buffer = myAudioBuffer.getChannelData(0);
+
+		// calculate the speaker displacement at each frame
+		//  emulating a sinewave here...
+		for (var i=0; i<=nSamples; i=i+1) {
+
+			var t = ((i * 1000) / sampleRate);
+
+			var preAmp = getCurrentAmplitude(t, ampParams);
+			var amp = equalize(t, freqParams, preAmp);
+			var freq = getCurrentFrequency(t, freqParams); // instantaneous freq over t
+
+			if (i == 0) {
+				// phaseIntegral = frequency;
+			} else {
+				phaseIntegral += (freq)*dt_in_s;
+			}
+
+
+			var v = amp* Math.sin(2 * Math.PI * phaseIntegral);
+			var oscOffset = Math.round(range * v);
+
+			if (oscOffset < 0) {
+				oscOffset = ~(Math.abs(oscOffset));
+			}
+
+			// Range - Offset = WAV encoding of Offset... Weird!
+			buffer[(i*sampleSize)] = v; /*needs to be in range  -1 to 1 to work for AudioBufferSourceNode*/
+		}
+
+		var source = audioCtx.createBufferSource();
+		source.buffer = myAudioBuffer;
+		source.connect(audioCtx.destination);
+		source.start();
+
+		//START WRITING TO SCRIPTPROCESSORNODE
+
+		// var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+		// // Create a ScriptProcessorNode with a bufferSize of 131092 and a single input and output channel
+		// var scriptNode = audioCtx.createScriptProcessor(131092, 1, 1);
+		// console.log(scriptNode.bufferSize);
+
+		// // Give the node a function to process audio events
+		// scriptNode.onaudioprocess = function(audioProcessingEvent) {
+		//   // ignore input buffer
+		//   // var inputBuffer = audioProcessingEvent.inputBuffer;
+
+		//   // The output buffer contains the samples that will be modified and played
+		//   var outputBuffer = audioProcessingEvent.outputBuffer;
+
+		//   // Loop through the output channels (in this case there is only one)
+		//   for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+		//     var outputData = outputBuffer.getChannelData(channel);
+
+		//     // Loop through the 4096 samples
+		//     for (var sample = 0; sample < buffer.length; sample++) {
+		//       // make output equal to the same as the input
+		//       outputData[sample] = buffer[sample];
+		//     }
+		//   }
+		// }
+
+		// scriptNode.connect(audioCtx.destination);
+		// scriptNode.start();
 	}
+
 });
 
 
