@@ -39,7 +39,7 @@ var versionHistory = React.createClass({
             var jsonData = require('json!../package.json');
             var currentVersion = JSON.parse(JSON.stringify(jsonData));
             currentVersion = "v" + currentVersion.version;
-            versionHistoryButton = (<a className="btn" style={buttonStyle} onClick={this._onHistoryVersionClick()} ><i className="fa fa-versionHistory"></i>{currentVersion}</a>);
+            versionHistoryButton = (<a className="btn no-underline" style={buttonStyle} onClick={this._onHistoryVersionClick()} ><i className="fa fa-versionHistory"></i>{currentVersion}</a>);
         }
 
         return (
