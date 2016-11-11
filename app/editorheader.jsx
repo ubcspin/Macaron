@@ -11,6 +11,7 @@ var LogStore = require('./stores/logstore.js');
 
 var UserAgreement = require('./useragreement.jsx');
 var UserInstructions = require('./userinstructions.jsx');
+var VersionHistory = require('./versionHistory.jsx');
 
 
 var EditorHeader = React.createClass({
@@ -152,7 +153,10 @@ var EditorHeader = React.createClass({
 				{startButton}
 
 				
-				<span className="title unselectable" > Macaron </span>
+				<span className="title unselectable" >
+					Macaron
+					<VersionHistory/>
+				</span>
 				<span className="menu">
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
