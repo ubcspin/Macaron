@@ -160,7 +160,7 @@ var userInstructionsStore = Reflux.createStore({
         //The actual instruction text location
         var userInstructionsTextElement2 = document.createElement("userAgreementTextElement2");
         userInstructionsTextElement2.id = "macaronInstruction2";
-        userInstructionsTextElement2.innerHTML = "<p>The examples on the left are a <b>design gallery</b>. You can look at these examples, select, copy and paste them into your editor on the left. Note that examples are currently not editable.</p>";
+        userInstructionsTextElement2.innerHTML = "<p>The examples on the right are a <b>design gallery</b>. You can look at these examples, select, copy and paste them into your editor on the left. Note that examples are currently not editable.</p>";
         document.getElementById("inner2").appendChild(userInstructionsTextElement2);
 
         //the prev or next button location
