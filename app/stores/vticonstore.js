@@ -572,7 +572,7 @@ var vticonStore = Reflux.createStore({
 	/**
 	 * KF Guards
 	 */
-	 _isValidKeyframePosition(parameter, t, v, name="") //Dilorom for keep param values on canvas
+	 _isValidKeyframePosition(parameter, t, v, name="")
 	 {
 	 	name = this._selectVTIcon(name);
 	 	var valid = false;
@@ -716,7 +716,7 @@ var vticonStore = Reflux.createStore({
 		return (a.t - b.t);
 	},
 
-	// Dilorom  
+	// Dilorom **Moving all amplitude keyframes with button/slider 
 	onChangeAmplitude(dv) {
 		var dv = 0.1;
 		var valid_change = false;
@@ -734,7 +734,7 @@ var vticonStore = Reflux.createStore({
 			this.trigger(this._data);
 		}
 	},
-
+//** Moving all frequency keyframes with button/slider 
 	onChangeFrequency(df) {
 		var df = 50;
 		var valid_change = false;
