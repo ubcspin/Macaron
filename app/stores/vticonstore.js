@@ -572,7 +572,7 @@ var vticonStore = Reflux.createStore({
 	/**
 	 * KF Guards
 	 */
-	 _isValidKeyframePosition(parameter, t, v, name="") 
+	 _isValidKeyframePosition(parameter, t, v, name="") //Dilorom for keep param values on canvas
 	 {
 	 	name = this._selectVTIcon(name);
 	 	var valid = false;
@@ -716,35 +716,43 @@ var vticonStore = Reflux.createStore({
 		return (a.t - b.t);
 	},
 
-	
-	//Hasti   // Dilorom  
+	// Dilorom  
 	onChangeAmplitude(dv) {
-		// this._data[name].parameters[p].data[i].t += dt;
-		// this._data[name].parameters[p].data[i].value += dv[p];
-
 		var dv = 0.1;
+		var valid_change = false;
 		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
-			this._data["main"].parameters["amplitude"].data[ii].value += dv;
-			console.log(ii);
+			if (this._isValidKeyframePosition("amplitude",
+				this._data["main"].parameters["amplitude"].data[ii].t, 
+				this._data["main"].parameters["amplitude"].data[ii].value+dv, name="main")) {
+				this._data["main"].parameters["amplitude"].data[ii].value += dv;
+				valid_change = true;
+			} else {
+				console.log("amplitude invalid move");
+			}
 		}
-		this.trigger(this._data);
+		if (valid_change == true) {
+			this.trigger(this._data);
+		}
 	},
 
-
 	onChangeFrequency(df) {
-		// this._data[name].parameters[p].data[i].t += dt;
-		// this._data[name].parameters[p].data[i].value += dv[p];
-
 		var df = 50;
+		var valid_change = false;
 		for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
-			this._data["main"].parameters["frequency"].data[ii].value += df;
-			//console.log(ii);
+			if (this._isValidKeyframePosition("frequency",
+				this._data["main"].parameters["frequency"].data[ii].t, 
+				this._data["main"].parameters["frequency"].data[ii].value+df, name="main")) {
+				this._data["main"].parameters["frequency"].data[ii].value += df;
+				valid_change = true;
+			} else {
+				console.log("frequency invalid move");
+			}
 		}
-		this.trigger(this._data);
+		if (valid_change == true) {
+			this.trigger(this._data);
+		}
 	}
-
-
-	//Hasti   //Dilorom
+//Dilorom
 
 	});
 

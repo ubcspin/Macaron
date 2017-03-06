@@ -149,7 +149,7 @@ var EditorHeader = React.createClass({
 		var startButton = <span />
 		if (this.props.displayStartButton)
 		{
-			startButton = (<button onClick={this._onStartClick}>Start</button>);
+			startButton = (<button onClick={this._onStartClick}>Start666666</button>);
 		}
 
 		var saveButton = <span />
@@ -171,6 +171,7 @@ var EditorHeader = React.createClass({
 			{
 				moveFreqButton = (<a class="btn header" style={buttonStyle} onClick={this._onMoveClick}>Change_Freq</a>);
 			}	
+		
 		//dilorom
 
 		var loadButton = <span />
