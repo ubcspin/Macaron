@@ -34,8 +34,13 @@ var vticonActions = Reflux.createActions(
 
 		'deleteSelectedKeyframes',
 		//hasti Dilorom
-		'changeAmplitude',
-		'changeFrequency'
+		'increaseAmplitude',
+		'decreaseAmplitude',
+		'inFreq',
+		'decFreq',
+		'energy',
+		'pulse',
+		// 'jumpHistory'
 
 		//hasti Dilorom
 	]
@@ -75,6 +80,9 @@ var vticonStore = Reflux.createStore({
 							}
 						}
 					},
+					
+
+				
 
 					example: { //right side editor
 						duration: 3000, //ms 
@@ -121,6 +129,11 @@ var vticonStore = Reflux.createStore({
 				}
 			}
 		}
+
+		// for keeping all amplitude changes
+		this._ampArray = [];
+		//dilorom//
+		this._freqArray = [];
 		
 	},
 
@@ -716,16 +729,24 @@ var vticonStore = Reflux.createStore({
 		return (a.t - b.t);
 	},
 
-	// Dilorom **Moving all amplitude keyframes with button/slider 
-	onChangeAmplitude(dv) {
+	// Dilorom **Moving all amplitude keyframes with button/slider
+	onIncreaseAmplitude(dv) {
 		var dv = 0.1;
 		var valid_change = false;
+		
 		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
 			if (this._isValidKeyframePosition("amplitude",
 				this._data["main"].parameters["amplitude"].data[ii].t, 
 				this._data["main"].parameters["amplitude"].data[ii].value+dv, name="main")) {
-				this._data["main"].parameters["amplitude"].data[ii].value += dv;
-				valid_change = true;
+					if (ii == 0) {				
+						// save this change in amplitude history
+						this._ampArray.push(JSON.parse(JSON.stringify(this._data["main"].parameters["amplitude"].data)))
+						console.log("added changes to the _ampArray, this._ampArray.length =", this._ampArray.length)
+						console.log(this._ampArray)
+					}
+
+					this._data["main"].parameters["amplitude"].data[ii].value += dv;
+					valid_change = true;
 			} else {
 				console.log("amplitude invalid move");
 			}
@@ -735,22 +756,208 @@ var vticonStore = Reflux.createStore({
 		}
 	},
 //** Moving all frequency keyframes with button/slider 
-	onChangeFrequency(df) {
-		var df = 50;
+	onDecreaseAmplitude(df) {
+		// // old behaviour: start
+		// var df = 50;
+		// var f1, f2;
+
+		// var valid_change = false;
+		// for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
+
+		// 	// f1 = this._data["main"].parameters["frequency"].data[ii].value;
+		// 	// 	f2 = f1 + f1/5 + 5;
+		// 	// 	this._data["main"].parameters["frequency"].data[ii].value = f2;
+		// 	// if (this._isValidKeyframePosition("frequency",
+		// 	// 	this._data["main"].parameters["frequency"].data[ii].t, f2, name="main")) {
+
+		// 	if (this._isValidKeyframePosition("frequency",
+		// 		this._data["main"].parameters["frequency"].data[ii].t, 
+		// 		this._data["main"].parameters["frequency"].data[ii].value+df, name="main")) {
+		// 		this._data["main"].parameters["frequency"].data[ii].value += df;
+		// 		valid_change = true; 
+		// 	} else {
+		// 		console.log("frequency invalid move");
+		// 	}
+		// }
+		// if (valid_change == true) {
+		// 	this.trigger(this._data);
+		// }
+		// // old behaviour: end
+
+		var dv = 0.1;
 		var valid_change = false;
-		for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
-			if (this._isValidKeyframePosition("frequency",
-				this._data["main"].parameters["frequency"].data[ii].t, 
-				this._data["main"].parameters["frequency"].data[ii].value+df, name="main")) {
-				this._data["main"].parameters["frequency"].data[ii].value += df;
-				valid_change = true;
+
+		// TODO(dilorom): this function is exactly same as onIncreaseAmplitude() except this has "-dv" instead of "+dv". These two functions should be merged to avoid code repetition (and ease maintanence)
+		
+		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
+			if (this._isValidKeyframePosition("amplitude",
+				this._data["main"].parameters["amplitude"].data[ii].t, 
+				this._data["main"].parameters["amplitude"].data[ii].value-dv, name="main")) {
+					if (ii == 0) {
+						// save this change in amplitude history
+						this._ampArray.push(JSON.parse(JSON.stringify(this._data["main"].parameters["amplitude"].data)))
+						console.log("added changes to the _ampArray, this._ampArray.length =", this._ampArray.length)
+						console.log(this._ampArray)
+					}
+
+					this._data["main"].parameters["amplitude"].data[ii].value -= dv;
+					valid_change = true;
 			} else {
-				console.log("frequency invalid move");
+				console.log("amplitude invalid move");
 			}
 		}
 		if (valid_change == true) {
 			this.trigger(this._data);
 		}
+	},
+
+	_jumpHistory() {
+		if (this._ampArray.length > 0) {
+			this._data["main"].parameters["amplitude"].data = this._ampArray.pop()
+			console.log("assigned older values to 'data' array, this._ampArray.length =", this._ampArray.length)
+			console.log(this._ampArray)
+			this.trigger(this._data);
+		} else {
+			console.log("no more history to jump back, this._ampArray.length =", this._ampArray.length)
+		}
+	},
+	
+
+//Increasing Frequency
+	onInFreq(df) {
+
+		this._jumpHistory()
+		// // calling onJumpHistory() to test history functionality. Enable the commented block below to restore the expected behavior of "increase frequency".
+		// if (this._ampArray.length > 0) {
+		// 	this._data["main"].parameters["amplitude"].data = this._ampArray.pop()
+		// 	console.log("assigned older values to 'data' array, this._ampArray.length =", this._ampArray.length)
+		// 	console.log(this._ampArray)
+		// 	this.trigger(this._data);
+		// } else {
+		// 	console.log("no more history to jump back, this._ampArray.length =", this._ampArray.length)
+		// }
+
+		
+		// var df = 50;
+		// var valid_change = false;
+		
+		// for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
+		// 	if (this._isValidKeyframePosition("frequency",
+		// 		this._data["main"].parameters["frequency"].data[ii].t, 
+		// 		this._data["main"].parameters["frequency"].data[ii].value+df, name="main")) {
+		// 			if (ii == 0) {				
+		// 				// save this change in frequency history
+		// 				this._freqArray.push(JSON.parse(JSON.stringify(this._data["main"].parameters["frequency"].data)))
+		// 				console.log("added changes to the _freqArray, this._freqArray.length =", this._freqArray.length)
+		// 				console.log(this._freqArray)
+		// 			}
+
+		// 			this._data["main"].parameters["frequency"].data[ii].value += df;
+		// 			valid_change = true;
+		// 	} else {
+		// 		console.log("frequency invalid move");
+		// 	}
+		// }
+		// if (valid_change == true) {
+		// 	this.trigger(this._data);
+		// }
+	},
+
+	//decreasing freq//
+	onDecFreq() {
+		var df = 50;
+		
+		if (this._freqArray.length > 0) {
+			this._data["main"].parameters["frequency"].data = this._freqArray.pop()
+			console.log("assigned older values to 'data' array, this._freqArray.length =", this._freqArray.length)
+			console.log(this._freqArray)
+			this.trigger(this._data);
+		} else {
+			
+
+			console.log("no more history to jump back, this._freqArray.length =", this._freqArray.length)
+		}
+		
+	},
+
+
+//Energy f2 = f1 + f1/5 + 5 
+	onEnergy() {
+		
+		var f1, f2;
+		var valid_change = true;
+		for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
+			f1 = this._data["main"].parameters["frequency"].data[ii].value;
+		
+				/*f2 = f1 + f1/5 + 5;
+				this._data["main"].parameters["frequency"].data[ii].value = f2;*/
+				
+			if (this._isValidKeyframePosition("frequency",this._data["main"].parameters["frequency"].data[ii].t, f1, name="main")) {
+				f2 = f1 + f1/5 + 5;
+				this._data["main"].parameters["frequency"].data[ii].value = f2;
+				console.log(f2);
+
+				valid_change = false;
+			} else {
+				console.log("increase frequency for implimenting Energy is not valid");
+			}
+		}
+		if (valid_change == true) {
+			this.trigger(this._data);
+		} 
+		
+//decrease all freq key frames until the 0 point
+		/*var df = 50;
+		var valid_change = false;
+		for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
+			if (this._isValidKeyframePosition("frequency",
+		 		this._data["main"].parameters["frequency"].data[ii].t, 
+		 		this._data["main"].parameters["frequency"].data[ii].value+df, name="main")) {
+		 		this._data["main"].parameters["frequency"].data[ii].value -= df;
+		 		valid_change = true; 
+		 	} else {
+		 		console.log("frequency invalid move");
+		 	}
+		 }
+		 if (valid_change == true) {
+		 	this.trigger(this._data);
+		 } */
+
+
+
+
+
+	},
+	onPulse() {
+
+		var pulse_start, pulse_end;
+		var time_start, time_end;
+		var amp_length = this._data["main"].parameters["amplitude"].data.length;
+		console.log(amp_length)
+
+		// see if amplitude=0 for more than 30 msec
+		// see if amplitude does not change for more than 30 msec
+		// we start loop from 1, instead of 0, since we can not check element 0 with its predecessor array[-1]
+		for (var ii = 1; ii < amp_length; ii++) {
+			time_start = this._data["main"].parameters["amplitude"].data[ii-1].t;
+			time_end = this._data["main"].parameters["amplitude"].data[ii].t;
+
+			pulse_start = this._data["main"].parameters["amplitude"].data[ii-1].value;
+			pulse_end = this._data["main"].parameters["amplitude"].data[ii].value;
+
+			// check if time difference is > 30 ms
+			if (time_end - time_start > 30) {
+				console.log("time difference is > 30 ms")
+				// console.log(pulse_start, pulse_end)
+				if (pulse_start == 0) {
+					console.log("amplitude is 0 more than 30 ms at point ", ii);
+				} else {
+					console.log("amplitude is not 0 at point ", ii);
+				}
+			}
+		}
+
+		
 	}
 //Dilorom
 

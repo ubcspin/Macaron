@@ -38,6 +38,11 @@ var EditorHeader = React.createClass({
            //dilorom
 	    	displayChangeAmpButton:true,
 	    	displayMoveFreqButton:true,
+	    	displayEnergyButton:true,
+	    	displayPulseButton:true,
+	    	displayInFreqButton:true,
+	    	displayDecFreqButton:true,
+	    	
 	    	//dilorom
 
 	    	displayStartButton:false,
@@ -62,16 +67,33 @@ var EditorHeader = React.createClass({
 	},
 
 	//dilorom
+
+	_onEnergyClick : function(e) {
+		VTIconStore.actions.energy();
+	},
+	_onPulseClick : function(e) {
+		//console.log("pulse");
+		VTIconStore.actions.pulse();
+	},
+
 	_onChangeClick : function(e) {
-		VTIconStore.actions.changeAmplitude();
+		VTIconStore.actions.increaseAmplitude();
 		//console.log("hello");
 	},
 
 	_onMoveClick : function(e) {
-		VTIconStore.actions.changeFrequency();
+		VTIconStore.actions.decreaseAmplitude();
 		//console.log("hello");
 	},
-
+	_onInFreqClick : function(e) {
+		VTIconStore.actions.inFreq();
+		//console.log("InFreq");
+	},
+	_onDecFreqClick : function(e) {
+		VTIconStore.actions.decFreq();
+		//console.log("Decfreq");
+	},
+	
 	//dilorom
 
 	_onLoadButtonClick : function(e) {
@@ -115,7 +137,7 @@ var EditorHeader = React.createClass({
 			marginLeft:'0.5em',
 			marginRight:'0.5em',
 			className:'unselectable',
-			fontSize:16 //was 12
+			fontSize:12
 		};
 
 		//The UBC Logo to be placed next to the title
@@ -160,17 +182,41 @@ var EditorHeader = React.createClass({
 		}
           
           //dilorom
+         var energyButton = <span />
+		if (this.props.displayEnergyButton)
+		{
+			energyButton = (<a class="btn header" style={buttonStyle} onClick={this._onEnergyClick}>Energy</a>);
+			
+		}
+
+		var pulseButton = <span />
+			if (this.props.displayPulseButton)
+			{
+				pulseButton = (<a class="btn header" style={buttonStyle} onClick={this._onPulseClick}>Pulse</a>);
+			}
+
+
 	     var changeAmpButton = <span />
 			if (this.props.displayChangeAmpButton)
 			{
-				changeAmpButton = (<a class="btn header" style={buttonStyle} onClick={this._onChangeClick}>Change_Amp</a>);
+				changeAmpButton = (<a class="btn header" style={buttonStyle} onClick={this._onChangeClick}>Inc_Amp</a>);
 			}
 
 		var moveFreqButton = <span />
 			if (this.props.displayMoveFreqButton)
 			{
-				moveFreqButton = (<a class="btn header" style={buttonStyle} onClick={this._onMoveClick}>Change_Freq</a>);
-			}	
+				moveFreqButton = (<a class="btn header" style={buttonStyle} onClick={this._onMoveClick}>Dec_Amp</a>);
+			}
+		var inFreqButton = <span />
+			if (this.props.displayInFreqButton)
+			{
+				inFreqButton = (<a class="btn header" style={buttonStyle} onClick={this._onInFreqClick}>In_Freq</a>);
+			}
+		var decFreqButton = <span />
+			if (this.props.displayDecFreqButton)
+			{
+				decFreqButton = (<a class="btn header" style={buttonStyle} onClick={this._onDecFreqClick}>Dec_Freq</a>);
+			}		
 		
 		//dilorom
 
@@ -185,6 +231,8 @@ var EditorHeader = React.createClass({
 					</span>);
 		}
 
+		
+
 
 		return (
 			<div className="header" style={headerStyle}>
@@ -195,7 +243,9 @@ var EditorHeader = React.createClass({
 					VibTune
 					<VersionHistory/>
 				</span>
+
 				<span className="menu">
+				
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
 					<UserInstructions />
@@ -204,7 +254,13 @@ var EditorHeader = React.createClass({
 					{loadButton}
 					{changeAmpButton} 
 					{moveFreqButton}
-
+					{inFreqButton}
+					{decFreqButton}
+					{energyButton}
+					{pulseButton}
+					
+				
+				
 				</span>
 
 
