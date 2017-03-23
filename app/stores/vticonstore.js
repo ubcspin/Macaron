@@ -130,10 +130,13 @@ var vticonStore = Reflux.createStore({
 			}
 		}
 
-		// for keeping all amplitude changes
+		// to keep track of all amplitude changes
 		this._ampArray = [];
 		//dilorom//
 		this._freqArray = [];
+
+		// to remember previous position of the amplitude slider
+		this._prevAmpPos = 0
 		
 	},
 
@@ -730,32 +733,68 @@ var vticonStore = Reflux.createStore({
 	},
 
 	// Dilorom **Moving all amplitude keyframes with button/slider
-	onIncreaseAmplitude(dv) {
-		var dv = 0.1;
-		var valid_change = false;
+	// TODO: rename this function to ampChange() (or something similar) as it takes care of both amplitude increase and decrease
+	onIncreaseAmplitude(currentAmpPos) {
+		var currAmpVal = parseFloat(currentAmpPos);
+		var prevAmpVal = parseFloat(this._prevAmpPos);
+		var dv = currAmpVal - prevAmpVal;
+		console.log("current = %f, previous = %f, dv = %f", currAmpVal, prevAmpVal, dv);
+		this._prevAmpPos = currAmpVal;
+
+		var tobeAmpVal = 0, overflows = [], underflows = [];
+		var currDataArray = JSON.parse(JSON.stringify(this._data["main"].parameters["amplitude"].data))
 		
+		var valid_change = false;
+
 		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
 			if (this._isValidKeyframePosition("amplitude",
 				this._data["main"].parameters["amplitude"].data[ii].t, 
 				this._data["main"].parameters["amplitude"].data[ii].value+dv, name="main")) {
-					if (ii == 0) {				
-						// save this change in amplitude history
-						this._ampArray.push(JSON.parse(JSON.stringify(this._data["main"].parameters["amplitude"].data)))
-						console.log("added changes to the _ampArray, this._ampArray.length =", this._ampArray.length)
-						console.log(this._ampArray)
-					}
-
 					this._data["main"].parameters["amplitude"].data[ii].value += dv;
 					valid_change = true;
 			} else {
 				console.log("amplitude invalid move");
+
+				// get highest and lowest valid amplitude values to detect overflows and underflows
+		 		var min = Math.min(this._data["main"].parameters["amplitude"].valueScale[0], 
+		 			this._data["main"].parameters["amplitude"].valueScale[1]);
+		 		var max = Math.max(this._data["main"].parameters["amplitude"].valueScale[0], 
+		 			this._data["main"].parameters["amplitude"].valueScale[1]);
+
+				// check if new value is overflow or underflow. For overflow assign max, otherwise min.
+				// overflow = the new value is greater than highest valid amplitude
+				// underflow = the new value is lower than lowest valid amplitude
+				tobeAmpVal = this._data["main"].parameters["amplitude"].data[ii].value+dv;
+
+				if (tobeAmpVal >= max) { // this is overflow
+					this._data["main"].parameters["amplitude"].data[ii].value = max;
+					overflows.push(ii);
+				} else { // this is underflow
+					this._data["main"].parameters["amplitude"].data[ii].value = min;	
+					underflows.push(ii);
+				}
 			}
 		}
 		if (valid_change == true) {
 			this.trigger(this._data);
+
+			// save this change in amplitude history since we had at least one valid keyframe value change
+			this._ampArray.push(currDataArray)
+			console.log("saved changes to _ampArray, this._ampArray.length =", this._ampArray.length)
+			// console.log(this._ampArray)
+		}
+
+		// print overflows and underflows for debugging
+		if (overflows.length > 0) {
+			console.log("overflows at keyframes: %s", overflows.join(","));
+		}
+		if (underflows.length > 0) {
+			console.log("underflows at keyframes: %s", underflows.join(","));
 		}
 	},
-//** Moving all frequency keyframes with button/slider 
+
+	//** Moving all frequency keyframes with button/slider
+	// TODO: delete this function as it is not needed anymore. onIncreaseAmplitude() is taking care of both increase and decrease (in amplitude)
 	onDecreaseAmplitude(df) {
 		// // old behaviour: start
 		// var df = 50;

@@ -29,6 +29,11 @@ var EditorHeader = React.createClass({
 	propTypes: {
 			},
 
+	getInitialState : function () {
+		return 
+			{value: 0.5}; 
+	},
+
 	getDefaultProps: function() {
 	    return {
 	    	displayAnimation:false,
@@ -42,7 +47,7 @@ var EditorHeader = React.createClass({
 	    	displayPulseButton:true,
 	    	displayInFreqButton:true,
 	    	displayDecFreqButton:true,
-	    	
+	    	displaySlider:true,
 	    	//dilorom
 
 	    	displayStartButton:false,
@@ -92,6 +97,11 @@ var EditorHeader = React.createClass({
 	_onDecFreqClick : function(e) {
 		VTIconStore.actions.decFreq();
 		//console.log("Decfreq");
+	},
+	_onSliderChange : function(e) {
+		console.log("from _onSliderChange = ", e.target.value);
+		VTIconStore.actions.increaseAmplitude(e.target.value);
+		//this.setState({value: e.target.value});
 	},
 	
 	//dilorom
@@ -216,7 +226,30 @@ var EditorHeader = React.createClass({
 			if (this.props.displayDecFreqButton)
 			{
 				decFreqButton = (<a class="btn header" style={buttonStyle} onClick={this._onDecFreqClick}>Dec_Freq</a>);
-			}		
+			}
+		var slider = <span />
+			if (this.props.displaySlider)
+			{
+				slider = (
+					<input id="typeinp" type="range"  min="-1" max="1" value={this.state.value} onChange={this._onSliderChange} step="0.1"/>
+				);
+			}
+
+
+			// var stateOfMatter;
+			// if (this.state.value <= 0) {
+   //          stateOfMatter = 'less than 0';
+   //          console.log(stateOfMatter);
+          
+	  //       } else if (this.state.value >= 0) {
+	  //           stateOfMatter = 'greater than 0';
+	  //           console.log(stateOfMatter);
+	            
+	        
+	  //       } else {
+	  //           stateOfMatter = 'between 0 and 1';
+	  //           console.log(stateOfMatter);
+	  //       }
 		
 		//dilorom
 
@@ -231,7 +264,7 @@ var EditorHeader = React.createClass({
 					</span>);
 		}
 
-		
+
 
 
 		return (
@@ -245,21 +278,24 @@ var EditorHeader = React.createClass({
 				</span>
 
 				<span className="menu">
-				
+					
+
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
 					<UserInstructions />
 					<UserAgreement />
 					{saveButton}
 					{loadButton}
-					{changeAmpButton} 
+					{changeAmpButton}
 					{moveFreqButton}
+					{slider}
 					{inFreqButton}
 					{decFreqButton}
 					{energyButton}
 					{pulseButton}
-					
-				
+					{this.state.value}
+
+
 				
 				</span>
 
