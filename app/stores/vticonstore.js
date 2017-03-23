@@ -747,12 +747,17 @@ var vticonStore = Reflux.createStore({
 		var valid_change = false;
 
 		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
+			tobeAmpVal = this._data["main"].parameters["amplitude"].data[ii].value+dv;
+			// change keyframe position if new value is valid 
 			if (this._isValidKeyframePosition("amplitude",
 				this._data["main"].parameters["amplitude"].data[ii].t, 
-				this._data["main"].parameters["amplitude"].data[ii].value+dv, name="main")) {
+				tobeAmpVal, name="main")) {
 					this._data["main"].parameters["amplitude"].data[ii].value += dv;
 					valid_change = true;
 			} else {
+				// keyframe position is not valid, assign highest value (max) if overflow and assign lowest value (min) if underflow
+				// overflow = the new value is greater than highest valid amplitude
+				// underflow = the new value is lower than lowest valid amplitude
 				console.log("amplitude invalid move");
 
 				// get highest and lowest valid amplitude values to detect overflows and underflows
@@ -762,10 +767,6 @@ var vticonStore = Reflux.createStore({
 		 			this._data["main"].parameters["amplitude"].valueScale[1]);
 
 				// check if new value is overflow or underflow. For overflow assign max, otherwise min.
-				// overflow = the new value is greater than highest valid amplitude
-				// underflow = the new value is lower than lowest valid amplitude
-				tobeAmpVal = this._data["main"].parameters["amplitude"].data[ii].value+dv;
-
 				if (tobeAmpVal >= max) { // this is overflow
 					this._data["main"].parameters["amplitude"].data[ii].value = max;
 					overflows.push(ii);
@@ -775,9 +776,11 @@ var vticonStore = Reflux.createStore({
 				}
 			}
 		}
-		if (valid_change == true) {
-			this.trigger(this._data);
 
+		// update keyframe values if there was a valid
+		this.trigger(this._data);
+
+		if (valid_change == true) {
 			// save this change in amplitude history since we had at least one valid keyframe value change
 			this._ampArray.push(currDataArray)
 			console.log("saved changes to _ampArray, this._ampArray.length =", this._ampArray.length)

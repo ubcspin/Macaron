@@ -31,7 +31,7 @@ var EditorHeader = React.createClass({
 
 	getInitialState : function () {
 		return 
-			{value: 0.5}; 
+			{value: 0}; 
 	},
 
 	getDefaultProps: function() {
@@ -99,7 +99,7 @@ var EditorHeader = React.createClass({
 		//console.log("Decfreq");
 	},
 	_onSliderChange : function(e) {
-		console.log("from _onSliderChange = ", e.target.value);
+		//console.log("from _onSliderChange = ", e.target.value);
 		VTIconStore.actions.increaseAmplitude(e.target.value);
 		//this.setState({value: e.target.value});
 	},
@@ -235,21 +235,6 @@ var EditorHeader = React.createClass({
 				);
 			}
 
-
-			// var stateOfMatter;
-			// if (this.state.value <= 0) {
-   //          stateOfMatter = 'less than 0';
-   //          console.log(stateOfMatter);
-          
-	  //       } else if (this.state.value >= 0) {
-	  //           stateOfMatter = 'greater than 0';
-	  //           console.log(stateOfMatter);
-	            
-	        
-	  //       } else {
-	  //           stateOfMatter = 'between 0 and 1';
-	  //           console.log(stateOfMatter);
-	  //       }
 		
 		//dilorom
 
