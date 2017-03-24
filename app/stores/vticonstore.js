@@ -130,13 +130,17 @@ var vticonStore = Reflux.createStore({
 			}
 		}
 
-		// to keep track of all amplitude changes
+		// DILOORM ** --to keep track of all amplitude changes
 		this._ampArray = [];
-		//dilorom//
+		
 		this._freqArray = [];
 
 		// to remember previous position of the amplitude slider
-		this._prevAmpPos = 0
+		this._prevAmpPos = 0;
+
+		//saving initial keyframes values in this array
+		this._initialAmpVal = [];
+		
 		
 	},
 
@@ -732,28 +736,44 @@ var vticonStore = Reflux.createStore({
 		return (a.t - b.t);
 	},
 
-	// Dilorom **Moving all amplitude keyframes with button/slider
+	// Dilorom **  Moving all amplitude keyframes with slider
 	// TODO: rename this function to ampChange() (or something similar) as it takes care of both amplitude increase and decrease
 	onIncreaseAmplitude(currentAmpPos) {
 		var currAmpVal = parseFloat(currentAmpPos);
 		var prevAmpVal = parseFloat(this._prevAmpPos);
-		var dv = currAmpVal - prevAmpVal;
+		
+        console.log('zero = ' , this._initialAmpVal);
+
+		//var dv = currAmpVal - prevAmpVal;
+		var dv = currAmpVal;
 		console.log("current = %f, previous = %f, dv = %f", currAmpVal, prevAmpVal, dv);
-		this._prevAmpPos = currAmpVal;
+		//this._prevAmpPos = currAmpVal;
 
 		var tobeAmpVal = 0, overflows = [], underflows = [];
 		var currDataArray = JSON.parse(JSON.stringify(this._data["main"].parameters["amplitude"].data))
 		
 		var valid_change = false;
+		//saving initial keyframes values
+		if (this._initialAmpVal.length ==0){
+			this._initialAmpVal = JSON.parse(JSON.stringify(this._data["main"].parameters["amplitude"].data))
+		console.log('boshlangich' , this._initialAmpVal);
+		}
 
 		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
-			tobeAmpVal = this._data["main"].parameters["amplitude"].data[ii].value+dv;
+
+			//tobeAmpVal = this._data["main"].parameters["amplitude"].data[ii].value+dv;
+			tobeAmpVal = this._initialAmpVal[ii].value + dv;
+			//console.log('tttttt' , tobeAmpVal);
+
 			// change keyframe position if new value is valid 
 			if (this._isValidKeyframePosition("amplitude",
 				this._data["main"].parameters["amplitude"].data[ii].t, 
 				tobeAmpVal, name="main")) {
-					this._data["main"].parameters["amplitude"].data[ii].value += dv;
-					valid_change = true;
+
+					//this._data["main"].parameters["amplitude"].data[ii].value += dv;
+					this._data["main"].parameters["amplitude"].data[ii].value = this._initialAmpVal[ii].value + dv;
+					
+					// valid_change = true;
 			} else {
 				// keyframe position is not valid, assign highest value (max) if overflow and assign lowest value (min) if underflow
 				// overflow = the new value is greater than highest valid amplitude
@@ -773,7 +793,7 @@ var vticonStore = Reflux.createStore({
 				} else { // this is underflow
 					this._data["main"].parameters["amplitude"].data[ii].value = min;	
 					underflows.push(ii);
-				}
+				} 
 			}
 		}
 
@@ -794,38 +814,12 @@ var vticonStore = Reflux.createStore({
 		if (underflows.length > 0) {
 			console.log("underflows at keyframes: %s", underflows.join(","));
 		}
+
 	},
 
 	//** Moving all frequency keyframes with button/slider
 	// TODO: delete this function as it is not needed anymore. onIncreaseAmplitude() is taking care of both increase and decrease (in amplitude)
 	onDecreaseAmplitude(df) {
-		// // old behaviour: start
-		// var df = 50;
-		// var f1, f2;
-
-		// var valid_change = false;
-		// for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
-
-		// 	// f1 = this._data["main"].parameters["frequency"].data[ii].value;
-		// 	// 	f2 = f1 + f1/5 + 5;
-		// 	// 	this._data["main"].parameters["frequency"].data[ii].value = f2;
-		// 	// if (this._isValidKeyframePosition("frequency",
-		// 	// 	this._data["main"].parameters["frequency"].data[ii].t, f2, name="main")) {
-
-		// 	if (this._isValidKeyframePosition("frequency",
-		// 		this._data["main"].parameters["frequency"].data[ii].t, 
-		// 		this._data["main"].parameters["frequency"].data[ii].value+df, name="main")) {
-		// 		this._data["main"].parameters["frequency"].data[ii].value += df;
-		// 		valid_change = true; 
-		// 	} else {
-		// 		console.log("frequency invalid move");
-		// 	}
-		// }
-		// if (valid_change == true) {
-		// 	this.trigger(this._data);
-		// }
-		// // old behaviour: end
-
 		var dv = 0.1;
 		var valid_change = false;
 
@@ -869,40 +863,6 @@ var vticonStore = Reflux.createStore({
 	onInFreq(df) {
 
 		this._jumpHistory()
-		// // calling onJumpHistory() to test history functionality. Enable the commented block below to restore the expected behavior of "increase frequency".
-		// if (this._ampArray.length > 0) {
-		// 	this._data["main"].parameters["amplitude"].data = this._ampArray.pop()
-		// 	console.log("assigned older values to 'data' array, this._ampArray.length =", this._ampArray.length)
-		// 	console.log(this._ampArray)
-		// 	this.trigger(this._data);
-		// } else {
-		// 	console.log("no more history to jump back, this._ampArray.length =", this._ampArray.length)
-		// }
-
-		
-		// var df = 50;
-		// var valid_change = false;
-		
-		// for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
-		// 	if (this._isValidKeyframePosition("frequency",
-		// 		this._data["main"].parameters["frequency"].data[ii].t, 
-		// 		this._data["main"].parameters["frequency"].data[ii].value+df, name="main")) {
-		// 			if (ii == 0) {				
-		// 				// save this change in frequency history
-		// 				this._freqArray.push(JSON.parse(JSON.stringify(this._data["main"].parameters["frequency"].data)))
-		// 				console.log("added changes to the _freqArray, this._freqArray.length =", this._freqArray.length)
-		// 				console.log(this._freqArray)
-		// 			}
-
-		// 			this._data["main"].parameters["frequency"].data[ii].value += df;
-		// 			valid_change = true;
-		// 	} else {
-		// 		console.log("frequency invalid move");
-		// 	}
-		// }
-		// if (valid_change == true) {
-		// 	this.trigger(this._data);
-		// }
 	},
 
 	//decreasing freq//
@@ -930,9 +890,6 @@ var vticonStore = Reflux.createStore({
 		var valid_change = true;
 		for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
 			f1 = this._data["main"].parameters["frequency"].data[ii].value;
-		
-				/*f2 = f1 + f1/5 + 5;
-				this._data["main"].parameters["frequency"].data[ii].value = f2;*/
 				
 			if (this._isValidKeyframePosition("frequency",this._data["main"].parameters["frequency"].data[ii].t, f1, name="main")) {
 				f2 = f1 + f1/5 + 5;
@@ -947,28 +904,6 @@ var vticonStore = Reflux.createStore({
 		if (valid_change == true) {
 			this.trigger(this._data);
 		} 
-		
-//decrease all freq key frames until the 0 point
-		/*var df = 50;
-		var valid_change = false;
-		for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
-			if (this._isValidKeyframePosition("frequency",
-		 		this._data["main"].parameters["frequency"].data[ii].t, 
-		 		this._data["main"].parameters["frequency"].data[ii].value+df, name="main")) {
-		 		this._data["main"].parameters["frequency"].data[ii].value -= df;
-		 		valid_change = true; 
-		 	} else {
-		 		console.log("frequency invalid move");
-		 	}
-		 }
-		 if (valid_change == true) {
-		 	this.trigger(this._data);
-		 } */
-
-
-
-
-
 	},
 	onPulse() {
 
