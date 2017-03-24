@@ -130,7 +130,10 @@ var vticonStore = Reflux.createStore({
 			}
 		}
 
-		// DILOORM ** --to keep track of all amplitude changes
+		/**
+		** DILOORM 
+		**/
+		// --to keep track of all amplitude changes
 		this._ampArray = [];
 		
 		this._freqArray = [];
@@ -140,7 +143,6 @@ var vticonStore = Reflux.createStore({
 
 		//saving initial keyframes values in this array
 		this._initialAmpVal = [];
-		
 		
 	},
 
@@ -645,7 +647,6 @@ var vticonStore = Reflux.createStore({
 
 	 	}
 	 	
-
 	 	return state;
 	 },
 
@@ -736,7 +737,9 @@ var vticonStore = Reflux.createStore({
 		return (a.t - b.t);
 	},
 
+	/*
 	// Dilorom **  Moving all amplitude keyframes with slider
+	**/
 	// TODO: rename this function to ampChange() (or something similar) as it takes care of both amplitude increase and decrease
 	onIncreaseAmplitude(currentAmpPos) {
 		var currAmpVal = parseFloat(currentAmpPos);
