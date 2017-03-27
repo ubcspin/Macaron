@@ -38,6 +38,7 @@ var vticonActions = Reflux.createActions(
 		'decreaseAmplitude',
 		'inFreq',
 		'decFreq',
+		'freq_slider',
 		'energy',
 		'pulse',
 		// 'jumpHistory'
@@ -140,9 +141,11 @@ var vticonStore = Reflux.createStore({
 
 		// to remember previous position of the amplitude slider
 		this._prevAmpPos = 0;
+		this._prevFreqPos = 0;
 
 		//saving initial keyframes values in this array
 		this._initialAmpVal = [];
+		this._initialFreqVal = [];
 		
 	},
 
@@ -868,8 +871,98 @@ var vticonStore = Reflux.createStore({
 		this._jumpHistory()
 	},
 
-	//decreasing freq//
-	onDecFreq() {
+	
+
+
+	onFreq_slider(currentFreqPos) {
+		var currFreqVal = parseFloat(currentFreqPos);
+		var prevFreqVal = parseFloat(this._prevFreqPos);
+		
+        console.log('zero = ' , this._initialFreqVal);
+
+		var df = currFreqVal;
+		console.log("current = %f, previous = %f, dv = %f", currFreqVal, prevFreqVal, df);
+		
+		var tobeFreqVal = 0, overflows = [], underflows = [];
+		var currFreqDataArray = JSON.parse(JSON.stringify(this._data["main"].parameters["frequency"].data))
+		
+		var valid_change = false;
+		//saving initial keyframes values
+		if (this._initialFreqVal.length ==0) {
+			this._initialFreqVal = JSON.parse(JSON.stringify(this._data["main"].parameters["frequency"].data))
+			console.log('boshlangich' , this._initialFreqVal);
+		}
+
+		for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
+
+			
+			tobeFreqVal = this._initialFreqVal[ii].value + df;
+			//console.log('tttttt' , tobeFreqVal);
+
+			// change keyframe position if new value is valid 
+			if (this._isValidKeyframePosition("frequency",
+				this._data["main"].parameters["frequency"].data[ii].t, 
+				tobeFreqVal, name="main")) {
+
+					
+					this._data["main"].parameters["frequency"].data[ii].value = this._initialFreqVal[ii].value + df;
+					
+			} else {
+				// keyframe position is not valid, assign highest value (max) if overflow and assign lowest value (min) if underflow
+				// overflow = the new value is greater than highest valid amplitude
+				// underflow = the new value is lower than lowest valid amplitude
+				console.log("frequency invalid move");
+
+				// get highest and lowest valid frequency values to detect overflows and underflows
+		 		var min = Math.min(this._data["main"].parameters["frequency"].valueScale[0], 
+		 			this._data["main"].parameters["frequency"].valueScale[1]);
+		 		var max = Math.max(this._data["main"].parameters["frequency"].valueScale[0], 
+		 			this._data["main"].parameters["frequency"].valueScale[1]);
+
+				// check if new value is overflow or underflow. For overflow assign max, otherwise min.
+				if (tobeFreqVal >= max) { // this is overflow
+					this._data["main"].parameters["frequency"].data[ii].value = max;
+					overflows.push(ii);
+				} else { // this is underflow
+					this._data["main"].parameters["frequency"].data[ii].value = min;	
+					underflows.push(ii);
+				} 
+			}
+		}
+
+		// update keyframe values if there was a valid
+		this.trigger(this._data);
+
+		if (valid_change == true) {
+			// save this change in frequency history since we had at least one valid keyframe value change
+			this._freqArray.push(currFreqDataArray)
+			console.log("saved changes to _ampArray, this._freqArray.length =", this._freqArray.length)
+			// console.log(this._ampArray)
+		}
+
+		// print overflows and underflows for debugging
+		if (overflows.length > 0) {
+			console.log("overflows at keyframes: %s", overflows.join(","));
+		}
+		if (underflows.length > 0) {
+			console.log("underflows at keyframes: %s", underflows.join(","));
+		}
+
+	},
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/*{
 		var df = 50;
 		
 		if (this._freqArray.length > 0) {
@@ -883,7 +976,7 @@ var vticonStore = Reflux.createStore({
 			console.log("no more history to jump back, this._freqArray.length =", this._freqArray.length)
 		}
 		
-	},
+	},*/
 
 
 //Energy f2 = f1 + f1/5 + 5 

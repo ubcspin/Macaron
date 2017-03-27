@@ -185,15 +185,15 @@ user-select: none;
 }
 
 
-/* start defining CSS for slide (type=range) */
+/*Dilorom *** start defining CSS for slide (type=range) */
 
 input[type=range] {
     /*removes default webkit styles*/
     -webkit-appearance: none;
-    
+
     /*fix for FF unable to apply focus style bug */
     border: 1px solid white;
-    
+    margin:10px;
     /*required for proper track sizing in FF*/
     width: 100px;
 }
