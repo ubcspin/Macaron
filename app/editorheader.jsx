@@ -43,12 +43,13 @@ var EditorHeader = React.createClass({
            //dilorom
 	    	displayChangeAmpButton:true,
 	    	displayMoveFreqButton:true,
-	    	displayEnergyButton:true,
+	    	displayEnergySlider:true,
 	    	displayPulseButton:true,
 	    	displayInFreqButton:true,
 	    	displayDecFreqButton:true,
 	    	displaySlider:true,
 		    displaySlider_F:true,
+		    displaySideNavButton:true,
 	    	//dilorom
 
 	    	displayStartButton:false,
@@ -74,8 +75,8 @@ var EditorHeader = React.createClass({
 
 	//dilorom
 
-	_onEnergyClick : function(e) {
-		VTIconStore.actions.energy();
+	_onEnergyChange : function(e) {
+		VTIconStore.actions.energy(e.target.value);
 	},
 	_onPulseClick : function(e) {
 		//console.log("pulse");
@@ -109,7 +110,17 @@ var EditorHeader = React.createClass({
 		VTIconStore.actions.freq_slider(e.target.value);
 		//this.setState({value: e.target.value});
 	},
-	
+	_onSideNavButtonClick : function(e) {
+		function openNav() {
+	    document.getElementById("mySidenav").style.width = "250px";
+	    document.getElementById("main").style.marginLeft = "250px";
+		}
+
+		function closeNav() {
+	    document.getElementById("mySidenav").style.width = "0";
+	    document.getElementById("main").style.marginLeft= "0";
+		}
+	},
 	//dilorom
 
 	_onLoadButtonClick : function(e) {
@@ -198,11 +209,12 @@ var EditorHeader = React.createClass({
 		}
           
           //dilorom
-         var energyButton = <span />
-		if (this.props.displayEnergyButton)
+         var energySlider = <span />
+		if (this.props.displayEnergySlider)
 		{
-			//energyButton = (<a class="btn header" style={buttonStyle} onClick={this._onEnergyClick}>Energy</a>);
-			
+			energySlider = (
+					<input id="typeinp" type="range"  min="-500" max="500" value={this.state.value} onChange={this._onEnergyChange} step="50"/>
+				);
 		}
 
 		var pulseButton = <span />
@@ -290,7 +302,7 @@ var EditorHeader = React.createClass({
 					{slider_F}
 
 					{decFreqButton}
-					{energyButton}
+					{energySlider}
 					{pulseButton}
 					{this.state.value}
 
