@@ -10,6 +10,7 @@ var MixModeStore = require('./stores/mixmodestore.js');
 
 var UserAgreement = require('./useragreement.jsx');
 var UserInstructions = require('./userinstructions.jsx');
+var VersionHistory = require('./versionHistory.jsx');
 
 
 var EditorHeader = React.createClass({
@@ -156,14 +157,14 @@ var EditorHeader = React.createClass({
 
 		var mixButton = <span />
 		if (!this.props.isMixMode) {
-			mixButton = (<a class="btn header" style={buttonStyle} onClick={this._onMixModeButtonClick} >Macaron Mix</a>);
+			mixButton = (<a class="btn header" style={buttonStyle} onClick={this._onMixModeButtonClick} >MacaronMix</a>);
 		} else {
 			mixButton = <a />;
 		}
 
 		var siteTitle = <span />
 		if (this.props.isMixMode) {
-			siteTitle = (<span className="title unselectable" > Macaron Mix </span>);
+			siteTitle = (<span className="title unselectable" > MacaronMix </span>);
 		} else {
 			siteTitle = (<span className="title unselectable" > Macaron </span>);
 		}
@@ -173,10 +174,10 @@ var EditorHeader = React.createClass({
 			<div className="header" style={headerStyle}>
 				{startButton}
 				{siteTitle}
+				<VersionHistory/>
 				<span className="menu">
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
-					<UserInstructions />
 					<UserAgreement />
 					{mixButton}
 					{saveButton}

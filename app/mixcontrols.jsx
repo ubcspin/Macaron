@@ -22,9 +22,7 @@ var MixControls = React.createClass({
               onChange={MixControlStore.actions.selectAlgorithm}>
               <option value="vectorCrossfade">Vector Crossfade</option>
               <option value="direct">Direct Keyframe Combination</option>
-              <option value="lameCrossfade">Lame Crossfade</option>
               <option value="dtw">Dynamic Time Warping</option>
-              <option value="smartmix">SmartMix &#9786;</option>
               <option value="DTWwFreq">DTW (with frequency)</option>
             </select>
           </div>
