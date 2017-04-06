@@ -220,14 +220,14 @@ var EditorHeader = React.createClass({
 		var pulseButton = <span />
 			if (this.props.displayPulseButton)
 			{
-				//pulseButton = (<a class="btn header" style={buttonStyle} onClick={this._onPulseClick}>Pulse</a>);
+				pulseButton = (<a class="btn header" style={buttonStyle} onClick={this._onPulseClick}>Pulse</a>);
 			}
 
 
 	     var changeAmpButton = <span />
 			if (this.props.displayChangeAmpButton)
 			{
-				changeAmpButton = (<a class="btn header" style={buttonStyle} onClick={this._onChangeClick}>Inc_Amp</a>);
+				//changeAmpButton = (<a class="btn header" style={buttonStyle} onClick={this._onChangeClick}>Inc_Amp</a>);
 			}
 
 		var moveFreqButton = <span />
@@ -295,15 +295,11 @@ var EditorHeader = React.createClass({
 					<UserAgreement />
 					{saveButton}
 					{loadButton}
-					{changeAmpButton}
-					{moveFreqButton}
-					{slider}
-					{inFreqButton}
-					{slider_F}
-
-					{decFreqButton}
-					{energySlider}
 					{pulseButton}
+					{slider}
+					{slider_F}
+					{energySlider}
+					
 					{this.state.value}
 
 

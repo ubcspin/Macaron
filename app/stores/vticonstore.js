@@ -866,21 +866,14 @@ var vticonStore = Reflux.createStore({
 		this._jumpHistory()
 	},
 
-	
-
 
 	onFreq_slider(currentFreqPos) {
 
 		var currFreqVal = parseFloat(currentFreqPos);
-		
-        console.log('zero = ' , this._initialFreqVal);
-
 		var df = currFreqVal;
-		console.log("current = %f, dv = %f", currFreqVal, df);
-		
+		console.log("current = %f, df = %f", currFreqVal, df);
 		var tobeFreqVal = 0, overflows = [], underflows = [];
 		var currFreqDataArray = JSON.parse(JSON.stringify(this._data["main"].parameters["frequency"].data))
-		
 		var valid_change = false;
 		//saving initial keyframes values
 		if (this._initialFreqVal.length ==0) {
@@ -889,8 +882,6 @@ var vticonStore = Reflux.createStore({
 		}
 
 		for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
-
-			
 			tobeFreqVal = this._initialFreqVal[ii].value + df;
 			//console.log('tttttt' , tobeFreqVal);
 
@@ -947,37 +938,25 @@ var vticonStore = Reflux.createStore({
 
 //Energy f2 = f1 + f1/5 + 5 
 	onEnergy(currentFreqPos) {
-
 		var currFreqVal = parseFloat(currentFreqPos);
-		
-        console.log('zero = ' , this._initialFreqVal);
-
 		var df = currFreqVal + (currFreqVal)/5 +5;
-		//var df = currFreqVal;
-
-		console.log("current = %f, previous = %f, dv = %f", currFreqVal, df);
-		
+		console.log("current = %f, df(f1 + f1/5 + 5) = %f", currFreqVal, df);
 		var tobeFreqVal = 0, overflows = [], underflows = [];
 		var currFreqDataArray = JSON.parse(JSON.stringify(this._data["main"].parameters["frequency"].data))
-		
 		var valid_change = false;
+
 		//saving initial keyframes values
 		if (this._initialFreqVal.length ==0) {
 			this._initialFreqVal = JSON.parse(JSON.stringify(this._data["main"].parameters["frequency"].data))
 			console.log('boshlangich' , this._initialFreqVal);
 		}
-
 		for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
-
-			
 			tobeFreqVal = this._initialFreqVal[ii].value + df;
-			//console.log('tttttt' , tobeFreqVal);
 
 			// change keyframe position if new value is valid 
 			if (this._isValidKeyframePosition("frequency",
 				this._data["main"].parameters["frequency"].data[ii].t, 
 				tobeFreqVal, name="main")) {
-
 				this._data["main"].parameters["frequency"].data[ii].value = this._initialFreqVal[ii].value + df;
 					
 			} else {
@@ -1016,36 +995,225 @@ var vticonStore = Reflux.createStore({
 	},
 
 	onPulse() {
+		var MockArray = [
+			[0, 2],
+			[1, 1],
+			[2, 1],
+			[3, 3],
+		];
+		// var MockArray = [
+		// 				[0, 0.00000002],
+		// 				[347.1, 0.072],
+		// 				[638.4, 0.188],
+		// 				[873.9, 0.333],
+		// 				[1028.9, 0.494],
+		// 				[1140.4, 0.683],
+		// 				[1221, 1],
+		// 				[1239.6, 0.0002],
+		// 				[1591.1, 0.0002],
+		// 				[1938.3, 0.072],
+		// 				[2229.6, 0.188],
+		// 				[2465.1, 0.333],
+		// 				[2620.1, 0.494],
+		// 				[2731.6, 0.683],
+		// 				[2812.2, 1],
+		// 				[2830, 0.00002]
+		// 				];
+		//console.log("MockArray = ", MockArray);
 
-		var pulse_start, pulse_end;
-		var time_start, time_end;
+		// for(var i = 0; i < MockArray.length; i++) {
+		// 	var MockArray = MockArray[i];
+		// 	for(var j = 0; j < MockArray.length; j++) {
+		//     	console.log("MockArray[" + i + "][" + j + "] = " + MockArray[j]);
+		//     }
+		// }
+		
+		// TODO(dilorom): replace MockArray with an actual one when function logic is complete
+		var keyframes = MockArray;
+
+		// print for debugging
+		for (var ii = 0; ii < keyframes.length; ii++) {
+			console.log("keyframes[" + ii + "] = " + keyframes[ii]);
+		}
+
+		if (keyframes.length <= 1) {
+			console.log('too few keyframes (length = %d). No pulses. Terminating.', keyframes.length)
+			return
+		}
+
+		var pulseArray = [];
+		var tempArray = [];
+		var t1 = 0; // t1 is pulse start
+		var t2 = 0; // t2 is pulse end
+
+		// iterate through keyframes to find pulse-start (t1) and pulse-end (t2)
+		var kfIndex = 0;
+		while (kfIndex < keyframes.length) {
+			// for (var ii = 0; ii < keyframes.length; ii++) {
+		 	// console.log("keyframes[" + ii + "] = " + keyframes[ii]);
+
+			t1 = this._pulseStart(kfIndex, keyframes);
+			if (t1 == -1) {
+				console.log("got -1 from _pulseStart. This means no more pulses")
+				break;
+			} else {
+				console.log("returned from _pulseStart = %d", t1)
+			}
+			t2 = this._pulseEnd(t1, keyframes);
+
+			// add [t1, t2] to the pulseArray
+			tempArray.push(t1);
+			tempArray.push(t2);
+			pulseArray.push(tempArray);
+			tempArray = [];
+
+			// assign t2 to kfIndex so that next iteration will start considering keyframes after current t2
+			kfIndex = t2;
+			// break;
+		}
+
+		for (var ii = 0; ii < pulseArray.length; ii++) {
+			console.log("pulseArray[%d] = [%d, %d]", ii, pulseArray[ii][0], pulseArray[ii][1])
+		}
+		
+	},
+
+	//this function detects pulse start
+	_pulseStart(currIndex, keyframes) {
+		// console.log("this is pulseStart function");
+		// the first keyframe is always t1
+	 	if (currIndex == 0) {
+			console.log("returning the first keyframe as t1");
+			return currIndex;
+		}
+		// t1 can never be the last keyframe. Return error if called with the last keyframe
+	 	if (currIndex == keyframes.length-1) {
+			console.log("_pulseStart is called for the last keyframe (index=%d). Returning -1 to indicate there is no more pulse.", currIndex);
+			return -1;
+		}
+
+		var thres = 0.001; // threshold to decide equality of two coordinates
+		// var t1 = currIndex;
+		var delta = 0;
+		for (var ii = currIndex; ii < keyframes.length-1; ii++) {
+			delta = Math.abs(keyframes[ii][1] - keyframes[ii+1][1])
+			console.log("delta = %f", delta)
+			if (delta <= thres) {
+				console.log("pulseStart returning %d since keyframes[%d][1]=%d and keyframes[%d][1]=%d difference is within threshold %f",
+					ii, ii, keyframes[ii][1], (ii+1), keyframes[ii+1][1], thres);
+				return ii;
+			} else {
+				console.log("delta = %f, moving on to the next keyframe", delta)
+			}
+		}
+	},
+	
+	//this function detects pulse end
+	_pulseEnd(currIndex, keyframes) {
+		console.log("you are calling pulseEnd function!!!");
+		// the last keyframe is always t2
+	 	if (currIndex == keyframes.length - 1) {
+			console.log("returning the last keyframe as t2")
+			return currIndex;
+		}
+		
+		// if the next keyframe is last, then that is t2
+		if (currIndex+1 == keyframes.length - 1) {
+			console.log("returning the next keyframe as t2")
+			return currIndex+1;
+		}
+
+		var thres = 0.001; // threshold to decide equality of two coordinates
+		var delta = 0;
+		var ii = 0;
+		for (ii = currIndex+1; ii < keyframes.length-1; ii++) {
+			delta = Math.abs(keyframes[ii][1] - keyframes[ii+1][1])
+			console.log("delta = %f", delta)
+			if (delta <= thres) {
+				console.log("pulseEnd returning %d since keyframes[%d][1]=%d and keyframes[%d][1]=%d difference is within threshold %f",
+					ii, ii, keyframes[ii][1], (ii+1), keyframes[ii+1][1], thres);
+				return ii;
+			} else {
+				console.log("delta = %f, moving on to the next keyframe", delta)
+			}
+		}
+
+		console.log("no conditions matched, therefore the last keyframe (index=%d) is t2", ii)
+		return ii;
+	}
+
+
+
+		/*
+		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) 
+			t1 = findPulseStart(ii, keyframes);
+			t2 = findPulseEnd(ii, keyframes);
+			p[j] = [t1, t2]; */
+
+
+		/*var pulse_start, pulse_end;
+		var t1, t2;
 		var amp_length = this._data["main"].parameters["amplitude"].data.length;
 		console.log(amp_length)
-
 		// see if amplitude=0 for more than 30 msec
 		// see if amplitude does not change for more than 30 msec
 		// we start loop from 1, instead of 0, since we can not check element 0 with its predecessor array[-1]
 		for (var ii = 1; ii < amp_length; ii++) {
-			time_start = this._data["main"].parameters["amplitude"].data[ii-1].t;
-			time_end = this._data["main"].parameters["amplitude"].data[ii].t;
+			t1 = this._data["main"].parameters["amplitude"].data[ii-1].t;
+			t2 = this._data["main"].parameters["amplitude"].data[ii].t;
 
 			pulse_start = this._data["main"].parameters["amplitude"].data[ii-1].value;
 			pulse_end = this._data["main"].parameters["amplitude"].data[ii].value;
 
-			// check if time difference is > 30 ms
-			if (time_end - time_start > 30) {
-				console.log("time difference is > 30 ms")
-				// console.log(pulse_start, pulse_end)
-				if (pulse_start == 0) {
-					console.log("amplitude is 0 more than 30 ms at point ", ii);
-				} else {
-					console.log("amplitude is not 0 at point ", ii);
-				}
+			// check if amp = 0 and time difference is > 30 ms
+			//a_2 > a_1+a_1/5 and t2<t1+30 msec
+			if (t2 - t1 > 30) {
+				//console.log("time difference is > 30 ms")
+				if (pulse_end <= 0.01 && pulse_start <= 0.01) {
+					console.log("amp = 0 more than 30 ms at the point ", ii);
+					console.log("t1 =" , t1);
+					console.log("t2 =", t2);
+					console.log("pulse_start =", pulse_start, "pulse_end =", pulse_end);
+
+					if (t2 < t1 + 30 && pulse_end > pulse_start + (pulse_start)/5) {
+					console.log("a_2 > a_1+a_1/5 and t2<t1+30 rules work here", ii);
+					console.log("t1 =" , t1);
+					console.log("t2 =", t2);
+					console.log("pulse_start =", pulse_start, "pulse_end =", pulse_end);
+					}
+					
+				} 
+			} else {
+					console.log("Pulse is NOT detected");
 			}
 		}
 
 		
+	}*/
+	
+	/*findPulseStart() {
+		var a = 0.01;
+		for (var m = i; m < this._data["main"].parameters["amplitude"].data.length; m++) {
+			t1 = i;
+			if (this._data["main"].parameters["frequency"].data[m + 1] -t1 <a) {
+				return t1;
+			}
+
+		}
+
+
 	}
+	findPulseEnd(i, keyframes) {
+		var m = 0;
+		for (var m = i; m < this._data["main"].parameters["amplitude"].data.length; m++) {
+			if (amp == 0) {
+				return m;
+			}
+		}
+
+
+
+	}*/
 //Dilorom
 
 	});

@@ -21,7 +21,19 @@ body {
  /*{
     font-family: "Lato", sans-serif;
 }*/
-
+main {
+    height: 100%;
+    background: green;
+}
+.half {
+    height: 50%;
+}
+.half:first-child {
+    background: #4ee878;
+}
+.half:last-child {
+    background: #4ee878;
+}
 .sidenav {
     height: 100%;
     width: 0;
