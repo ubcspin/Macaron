@@ -141,8 +141,9 @@ var EditorHeader = React.createClass({
 	render : function() {
 
 		var headerStyle = {
-			fontSize:30,
-			cursor:'pointer'
+			fontSize:15,
+			cursor:'pointer',
+			color: "#4c4c4c"
 		};
 
 		var blockStyle = {
@@ -279,11 +280,28 @@ var EditorHeader = React.createClass({
 
 		return (
 			<div className="header">
-				<span id="mySidenav" className="sidenav">
+				
+
+				{startButton}
+				<span className="title unselectable" >
+					VibTune
+					<VersionHistory/>
+				</span>
+				<span className="menu">
+					{animationOptionDisplay}
+					{interfaceModeDisplay}
+					<UserInstructions />
+					<UserAgreement />
+					{saveButton}
+					{loadButton}
+					{pulseButton}
+					{this.state.value}
+
+					<span id="mySidenav" className="sidenav">
 					<section className="half">
-						<li className="dropdown-header">ENGINEERING</li>
 						<a href="javascript:void(0)" className="closebtn" onClick={this._closeNav}>&times;</a>
 						<table>
+							<tr><p>ENGINEERING</p></tr>
 							<tr>
 								<td>Amplitude</td>
 								<td>{slider}</td>
@@ -312,15 +330,15 @@ var EditorHeader = React.createClass({
 					</section>
 					
 					<section className="half">
-						<li className="dropdown-header">EMOTION</li>
 						<table>
+							<tr><p>EMOTION</p></tr>
 							<tr>
 								<td>Agitation</td>
 								<td>slider</td>
 							</tr>
 							<tr>
 								<td>Liveliness</td>
-								<td>slider</td>
+								<td>{energySlider}</td>
 							</tr>
 							<tr>
 								<td>Strangeness</td>
@@ -329,25 +347,16 @@ var EditorHeader = React.createClass({
 						</table>
 					</section>
 				</span>
+
 				<span id="main">
-					<span style={headerStyle} onClick={this._openNav}>&#9776; </span>
+					<span style={headerStyle} onClick={this._openNav}>Emotion Filters</span>
+				</span>
 				</span>
 
-				{startButton}
-				<span className="title unselectable" >
-					VibTune
-					<VersionHistory/>
-				</span>
-				<span className="menu">
-					{animationOptionDisplay}
-					{interfaceModeDisplay}
-					<UserInstructions />
-					<UserAgreement />
-					{saveButton}
-					{loadButton}
-					{pulseButton}
-					{this.state.value}
-				</span>
+
+
+
+
 			</div>
 		);
 	}
