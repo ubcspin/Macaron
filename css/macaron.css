@@ -21,6 +21,7 @@ body {
  /*{
     font-family: "Lato", sans-serif;
 }*/
+
 main {
     height: 100%;
     background: green;
@@ -76,6 +77,23 @@ main {
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
+}
+
+table {
+    font-family: "Lato", sans-serif;
+    border-collapse: collapse;
+    width: 50%;
+}
+
+td, th {
+    font-size:20px;
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 10px;
+}
+
+tr:nth-child(even) {
+    
 }
 /*Dilorom*/
 

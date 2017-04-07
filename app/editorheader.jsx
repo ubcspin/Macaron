@@ -110,16 +110,14 @@ var EditorHeader = React.createClass({
 		VTIconStore.actions.freq_slider(e.target.value);
 		//this.setState({value: e.target.value});
 	},
-	_onSideNavButtonClick : function(e) {
-		function openNav() {
-	    document.getElementById("mySidenav").style.width = "250px";
-	    document.getElementById("main").style.marginLeft = "250px";
-		}
+	_openNav : function(e) {
+		document.getElementById("mySidenav").style.width = "250px";
+		document.getElementById("main").style.marginLeft = "250px";
+	},
 
-		function closeNav() {
-	    document.getElementById("mySidenav").style.width = "0";
-	    document.getElementById("main").style.marginLeft= "0";
-		}
+	_closeNav : function(e) {
+		document.getElementById("mySidenav").style.width = "0";
+		document.getElementById("main").style.marginLeft= "0";
 	},
 	//dilorom
 
@@ -143,6 +141,8 @@ var EditorHeader = React.createClass({
 	render : function() {
 
 		var headerStyle = {
+			fontSize:30,
+			cursor:'pointer'
 		};
 
 		var blockStyle = {
@@ -224,7 +224,7 @@ var EditorHeader = React.createClass({
 			}
 
 
-	     var changeAmpButton = <span />
+	    var changeAmpButton = <span />
 			if (this.props.displayChangeAmpButton)
 			{
 				//changeAmpButton = (<a class="btn header" style={buttonStyle} onClick={this._onChangeClick}>Inc_Amp</a>);
@@ -259,7 +259,7 @@ var EditorHeader = React.createClass({
 					<input id="typeinp" type="range"  min="-500" max="500" value={this.state.value} onChange={this._onSlider_FChange} step="50"/>
 				);
 			}
-
+			
 		
 		//dilorom
 
@@ -278,17 +278,47 @@ var EditorHeader = React.createClass({
 
 
 		return (
-			<div className="header" style={headerStyle}>
-				{startButton}
+			<div className="header">
+				<span id="mySidenav" className="sidenav">
+					<section className="half">
+						<li className="dropdown-header">Engineering parameters</li>
+						<a href="javascript:void(0)" className="closebtn" onClick={this._closeNav}>&times;</a>
+						<table>
+							<tr>
+								<td>Amplitude</td>
+								<td>{slider}</td>
+							</tr>
+							<tr>
+								<td>Frequency</td>
+								<td>{slider_F}</td>
+							</tr>
+						</table>
+					</section>
+					
+					<section className="half">
+						<li className="dropdown-header">Emotion parameters</li>
+						<table>
+							<tr>
+								<td>Liveliness</td>
+								<td>slider</td>
+							</tr>
+							<tr>
+								<td>Strangeness</td>
+								<td>slider</td>
+							</tr>
+						</table>
+					</section>
+				</span>
+				<span id="main">
+					<span style={headerStyle} onClick={this._openNav}>&#9776; Nav_bar </span>
+				</span>
 
-				
+				{startButton}
 				<span className="title unselectable" >
 					VibTune
 					<VersionHistory/>
 				</span>
-
 				<span className="menu">
-
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
 					<UserInstructions />
@@ -296,23 +326,11 @@ var EditorHeader = React.createClass({
 					{saveButton}
 					{loadButton}
 					{pulseButton}
-					{slider}
-					{slider_F}
 					{energySlider}
-					
 					{this.state.value}
-
-
-					
-
-
-
-				
 				</span>
-
-
 			</div>
-			);
+		);
 	}
 
 });

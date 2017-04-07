@@ -995,30 +995,30 @@ var vticonStore = Reflux.createStore({
 	},
 
 	onPulse() {
-		var MockArray = [
+		/*var MockArray = [
 			[0, 2],
 			[1, 1],
 			[2, 1],
 			[3, 3],
-		];
-		// var MockArray = [
-		// 				[0, 0.00000002],
-		// 				[347.1, 0.072],
-		// 				[638.4, 0.188],
-		// 				[873.9, 0.333],
-		// 				[1028.9, 0.494],
-		// 				[1140.4, 0.683],
-		// 				[1221, 1],
-		// 				[1239.6, 0.0002],
-		// 				[1591.1, 0.0002],
-		// 				[1938.3, 0.072],
-		// 				[2229.6, 0.188],
-		// 				[2465.1, 0.333],
-		// 				[2620.1, 0.494],
-		// 				[2731.6, 0.683],
-		// 				[2812.2, 1],
-		// 				[2830, 0.00002]
-		// 				];
+		];*/
+		 var MockArray = [
+						[0, 0.00000002],
+						[347.1, 0.072],
+		 				[638.4, 0.188],
+		 				[873.9, 0.333],
+		 				[1028.9, 0.494],
+		 				[1140.4, 0.683],
+						[1221, 1],
+		  				[1239.6, 0.0002],
+		 				[1591.1, 0.0002],
+		 				[1938.3, 0.072],
+		 				[2229.6, 0.188],
+		 				[2465.1, 0.333],
+		 				[2620.1, 0.494],
+		 				[2731.6, 0.683],
+		 				[2812.2, 1],
+		 				[2830, 0.00002]
+		 				];
 		//console.log("MockArray = ", MockArray);
 
 		// for(var i = 0; i < MockArray.length; i++) {
@@ -1110,7 +1110,7 @@ var vticonStore = Reflux.createStore({
 	
 	//this function detects pulse end
 	_pulseEnd(currIndex, keyframes) {
-		console.log("you are calling pulseEnd function!!!");
+		//console.log("you are calling pulseEnd function!!!");
 		// the last keyframe is always t2
 	 	if (currIndex == keyframes.length - 1) {
 			console.log("returning the last keyframe as t2")
@@ -1141,15 +1141,6 @@ var vticonStore = Reflux.createStore({
 		console.log("no conditions matched, therefore the last keyframe (index=%d) is t2", ii)
 		return ii;
 	}
-
-
-
-		/*
-		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) 
-			t1 = findPulseStart(ii, keyframes);
-			t2 = findPulseEnd(ii, keyframes);
-			p[j] = [t1, t2]; */
-
 
 		/*var pulse_start, pulse_end;
 		var t1, t2;
@@ -1191,35 +1182,9 @@ var vticonStore = Reflux.createStore({
 		
 	}*/
 	
-	/*findPulseStart() {
-		var a = 0.01;
-		for (var m = i; m < this._data["main"].parameters["amplitude"].data.length; m++) {
-			t1 = i;
-			if (this._data["main"].parameters["frequency"].data[m + 1] -t1 <a) {
-				return t1;
-			}
-
-		}
-
-
-	}
-	findPulseEnd(i, keyframes) {
-		var m = 0;
-		for (var m = i; m < this._data["main"].parameters["amplitude"].data.length; m++) {
-			if (amp == 0) {
-				return m;
-			}
-		}
-
-
-
-	}*/
 //Dilorom
 
 	});
-
-
-
 
 module.exports = {
 	actions:vticonActions,
