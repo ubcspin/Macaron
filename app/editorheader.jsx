@@ -281,7 +281,7 @@ var EditorHeader = React.createClass({
 			<div className="header">
 				<span id="mySidenav" className="sidenav">
 					<section className="half">
-						<li className="dropdown-header">Engineering parameters</li>
+						<li className="dropdown-header">ENGINEERING</li>
 						<a href="javascript:void(0)" className="closebtn" onClick={this._closeNav}>&times;</a>
 						<table>
 							<tr>
@@ -292,25 +292,45 @@ var EditorHeader = React.createClass({
 								<td>Frequency</td>
 								<td>{slider_F}</td>
 							</tr>
+							<tr>
+								<td>Energy</td>
+								<td>{energySlider}</td>
+							</tr>
+							<tr>
+								<td>Tempo</td>
+								<td>slider</td>
+							</tr>
+							<tr>
+								<td>Discontinuity</td>
+								<td>slider</td>
+							</tr>
+							<tr>
+								<td>Irregularity</td>
+								<td>Slider</td>
+							</tr>
 						</table>
 					</section>
 					
 					<section className="half">
-						<li className="dropdown-header">Emotion parameters</li>
+						<li className="dropdown-header">EMOTION</li>
 						<table>
+							<tr>
+								<td>Agitation</td>
+								<td>slider</td>
+							</tr>
 							<tr>
 								<td>Liveliness</td>
 								<td>slider</td>
 							</tr>
 							<tr>
 								<td>Strangeness</td>
-								<td>slider</td>
+								<td>Button</td>
 							</tr>
 						</table>
 					</section>
 				</span>
 				<span id="main">
-					<span style={headerStyle} onClick={this._openNav}>&#9776; Nav_bar </span>
+					<span style={headerStyle} onClick={this._openNav}>&#9776; </span>
 				</span>
 
 				{startButton}
@@ -326,7 +346,6 @@ var EditorHeader = React.createClass({
 					{saveButton}
 					{loadButton}
 					{pulseButton}
-					{energySlider}
 					{this.state.value}
 				</span>
 			</div>

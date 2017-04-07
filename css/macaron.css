@@ -30,10 +30,10 @@ main {
     height: 50%;
 }
 .half:first-child {
-    background: #4ee878;
+    background:#454444;
 }
 .half:last-child {
-    background: #4ee878;
+    background:#454444;
 }
 .sidenav {
     height: 100%;
@@ -42,23 +42,23 @@ main {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #4ee878;
+    background-color:#454444;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
 }
 
 .sidenav a {
-    padding: 8px 8px 8px 32px;
+    padding: 5px 5px 5px 22px;
     text-decoration: none;
     font-size: 25px;
-    color: #f1f1f1;
+    color: #ffffff;
     display: block;
     transition: 0.3s
 }
 
 .sidenav a:hover, .offcanvas a:focus{
-    color: #000000;
+    color: #eeeeee;
 }
 
 .sidenav .closebtn {
@@ -66,6 +66,7 @@ main {
     top: 0;
     right: 25px;
     font-size: 36px;
+    color: #ffffff;
     margin-left: 50px;
 }
 
@@ -81,14 +82,15 @@ main {
 
 table {
     font-family: "Lato", sans-serif;
-    border-collapse: collapse;
+    border: 1px #454444;
+    border-collapse: none;
     width: 50%;
 }
 
 td, th {
     font-size:20px;
-    border: 1px solid #dddddd;
-    text-align: center;
+    border: 1px solid #454444;
+    text-align: left;
     padding: 10px;
 }
 
