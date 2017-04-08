@@ -743,7 +743,7 @@ var vticonStore = Reflux.createStore({
 	/*
 	// Dilorom **  Moving all amplitude keyframes with slider
 	**/
-	// TODO: rename this function to ampChange() (or something similar) as it takes care of both amplitude increase and decrease
+	// It takes care of both amplitude increase and decrease
 	onIncreaseAmplitude(currentAmpPos) {
 		var currAmpVal = parseFloat(currentAmpPos);
 		
@@ -763,18 +763,14 @@ var vticonStore = Reflux.createStore({
 		}
 
 		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
-
 			tobeAmpVal = this._initialAmpVal[ii].value + dv;
-			//console.log('tttttt' , tobeAmpVal);
 
 			// change keyframe position if new value is valid 
 			if (this._isValidKeyframePosition("amplitude",
 				this._data["main"].parameters["amplitude"].data[ii].t, 
 				tobeAmpVal, name="main")) {
-
-					this._data["main"].parameters["amplitude"].data[ii].value = this._initialAmpVal[ii].value + dv;
+				this._data["main"].parameters["amplitude"].data[ii].value = this._initialAmpVal[ii].value + dv;
 					
-					// valid_change = true;
 			} else {
 				// keyframe position is not valid, assign highest value (max) if overflow and assign lowest value (min) if underflow
 				// overflow = the new value is greater than highest valid amplitude
@@ -818,36 +814,6 @@ var vticonStore = Reflux.createStore({
 
 	},
 
-	//** Moving all frequency keyframes with button/slider
-	// TODO: delete this function as it is not needed anymore. onIncreaseAmplitude() is taking care of both increase and decrease (in amplitude)
-	onDecreaseAmplitude(df) {
-		var dv = 0.1;
-		var valid_change = false;
-
-		// TODO(dilorom): this function is exactly same as onIncreaseAmplitude() except this has "-dv" instead of "+dv". These two functions should be merged to avoid code repetition (and ease maintanence)
-		
-		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
-			if (this._isValidKeyframePosition("amplitude",
-				this._data["main"].parameters["amplitude"].data[ii].t, 
-				this._data["main"].parameters["amplitude"].data[ii].value-dv, name="main")) {
-					if (ii == 0) {
-						// save this change in amplitude history
-						this._ampArray.push(JSON.parse(JSON.stringify(this._data["main"].parameters["amplitude"].data)))
-						console.log("added changes to the _ampArray, this._ampArray.length =", this._ampArray.length)
-						console.log(this._ampArray)
-					}
-
-					this._data["main"].parameters["amplitude"].data[ii].value -= dv;
-					valid_change = true;
-			} else {
-				console.log("amplitude invalid move");
-			}
-		}
-		if (valid_change == true) {
-			this.trigger(this._data);
-		}
-	},
-
 	_jumpHistory() {
 		if (this._ampArray.length > 0) {
 			this._data["main"].parameters["amplitude"].data = this._ampArray.pop()
@@ -860,7 +826,7 @@ var vticonStore = Reflux.createStore({
 	},
 	
 
-//Increasing Frequency
+//using this function for calling _jumpHistory: it may need later on
 	onInFreq(df) {
 
 		this._jumpHistory()
@@ -883,13 +849,11 @@ var vticonStore = Reflux.createStore({
 
 		for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
 			tobeFreqVal = this._initialFreqVal[ii].value + df;
-			//console.log('tttttt' , tobeFreqVal);
 
 			// change keyframe position if new value is valid 
 			if (this._isValidKeyframePosition("frequency",
 				this._data["main"].parameters["frequency"].data[ii].t, 
 				tobeFreqVal, name="main")) {
-					
 					this._data["main"].parameters["frequency"].data[ii].value = this._initialFreqVal[ii].value + df;
 					
 			} else {
@@ -936,7 +900,7 @@ var vticonStore = Reflux.createStore({
 	},
 
 
-//Energy f2 = f1 + f1/5 + 5 
+//Energy slider f2 = f1 + f1/5 + 5 
 	onEnergy(currentFreqPos) {
 		var currFreqVal = parseFloat(currentFreqPos);
 		var df = currFreqVal + (currFreqVal)/5 +5;
@@ -993,14 +957,9 @@ var vticonStore = Reflux.createStore({
 		}
 
 	},
-
+//Pulse function is not fully developed yet, i'm working on ^_^
 	onPulse() {
-		/*var MockArray = [
-			[0, 2],
-			[1, 1],
-			[2, 1],
-			[3, 3],
-		];*/
+		
 		 var MockArray = [
 						[0, 0.00000002],
 						[347.1, 0.072],
@@ -1142,46 +1101,6 @@ var vticonStore = Reflux.createStore({
 		return ii;
 	}
 
-		/*var pulse_start, pulse_end;
-		var t1, t2;
-		var amp_length = this._data["main"].parameters["amplitude"].data.length;
-		console.log(amp_length)
-		// see if amplitude=0 for more than 30 msec
-		// see if amplitude does not change for more than 30 msec
-		// we start loop from 1, instead of 0, since we can not check element 0 with its predecessor array[-1]
-		for (var ii = 1; ii < amp_length; ii++) {
-			t1 = this._data["main"].parameters["amplitude"].data[ii-1].t;
-			t2 = this._data["main"].parameters["amplitude"].data[ii].t;
-
-			pulse_start = this._data["main"].parameters["amplitude"].data[ii-1].value;
-			pulse_end = this._data["main"].parameters["amplitude"].data[ii].value;
-
-			// check if amp = 0 and time difference is > 30 ms
-			//a_2 > a_1+a_1/5 and t2<t1+30 msec
-			if (t2 - t1 > 30) {
-				//console.log("time difference is > 30 ms")
-				if (pulse_end <= 0.01 && pulse_start <= 0.01) {
-					console.log("amp = 0 more than 30 ms at the point ", ii);
-					console.log("t1 =" , t1);
-					console.log("t2 =", t2);
-					console.log("pulse_start =", pulse_start, "pulse_end =", pulse_end);
-
-					if (t2 < t1 + 30 && pulse_end > pulse_start + (pulse_start)/5) {
-					console.log("a_2 > a_1+a_1/5 and t2<t1+30 rules work here", ii);
-					console.log("t1 =" , t1);
-					console.log("t2 =", t2);
-					console.log("pulse_start =", pulse_start, "pulse_end =", pulse_end);
-					}
-					
-				} 
-			} else {
-					console.log("Pulse is NOT detected");
-			}
-		}
-
-		
-	}*/
-	
 //Dilorom
 
 	});

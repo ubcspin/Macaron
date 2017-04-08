@@ -41,14 +41,10 @@ var EditorHeader = React.createClass({
 	    	displaySaveButton:true,
            
            //dilorom
-	    	displayChangeAmpButton:true,
-	    	displayMoveFreqButton:true,
-	    	displayEnergySlider:true,
-	    	displayPulseButton:true,
-	    	displayInFreqButton:true,
-	    	displayDecFreqButton:true,
 	    	displaySlider:true,
 		    displaySlider_F:true,
+		    displayEnergySlider:true,
+	    	displayPulseButton:true,
 		    displaySideNavButton:true,
 	    	//dilorom
 
@@ -75,31 +71,6 @@ var EditorHeader = React.createClass({
 
 	//dilorom
 
-	_onEnergyChange : function(e) {
-		VTIconStore.actions.energy(e.target.value);
-	},
-	_onPulseClick : function(e) {
-		//console.log("pulse");
-		VTIconStore.actions.pulse();
-	},
-
-	_onChangeClick : function(e) {
-		VTIconStore.actions.increaseAmplitude();
-		//console.log("hello");
-	},
-
-	_onMoveClick : function(e) {
-		VTIconStore.actions.decreaseAmplitude();
-		//console.log("hello");
-	},
-	_onInFreqClick : function(e) {
-		VTIconStore.actions.inFreq();
-		//console.log("InFreq");
-	},
-	_onDecFreqClick : function(e) {
-		VTIconStore.actions.decFreq();
-		//console.log("Decfreq");
-	},
 	_onSliderChange : function(e) {
 		//console.log("from _onSliderChange = ", e.target.value);
 		VTIconStore.actions.increaseAmplitude(e.target.value);
@@ -110,6 +81,16 @@ var EditorHeader = React.createClass({
 		VTIconStore.actions.freq_slider(e.target.value);
 		//this.setState({value: e.target.value});
 	},
+
+	_onEnergyChange : function(e) {
+		VTIconStore.actions.energy(e.target.value);
+	},
+
+	_onPulseClick : function(e) {
+		//console.log("pulse");
+		VTIconStore.actions.pulse();
+	},
+
 	_openNav : function(e) {
 		document.getElementById("mySidenav").style.width = "250px";
 		document.getElementById("main").style.marginLeft = "250px";
@@ -217,34 +198,10 @@ var EditorHeader = React.createClass({
 					<input id="typeinp" type="range"  min="-500" max="500" value={this.state.value} onChange={this._onEnergyChange} step="50"/>
 				);
 		}
-
 		var pulseButton = <span />
 			if (this.props.displayPulseButton)
 			{
 				pulseButton = (<a class="btn header" style={buttonStyle} onClick={this._onPulseClick}>Pulse</a>);
-			}
-
-
-	    var changeAmpButton = <span />
-			if (this.props.displayChangeAmpButton)
-			{
-				//changeAmpButton = (<a class="btn header" style={buttonStyle} onClick={this._onChangeClick}>Inc_Amp</a>);
-			}
-
-		var moveFreqButton = <span />
-			if (this.props.displayMoveFreqButton)
-			{
-				//moveFreqButton = (<a class="btn header" style={buttonStyle} onClick={this._onMoveClick}>Dec_Amp</a>);
-			}
-		var inFreqButton = <span />
-			if (this.props.displayInFreqButton)
-			{
-				//inFreqButton = (<a class="btn header" style={buttonStyle} onClick={this._onInFreqClick}>In_Freq</a>);
-			}
-		var decFreqButton = <span />
-			if (this.props.displayDecFreqButton)
-			{
-				//decFreqButton = (<a class="btn header" style={buttonStyle} onClick={this._onDecFreqClick}>Dec_Freq</a>);
 			}
 		var slider = <span />
 			if (this.props.displaySlider)
@@ -259,8 +216,7 @@ var EditorHeader = React.createClass({
 				slider_F = (
 					<input id="typeinp" type="range"  min="-500" max="500" value={this.state.value} onChange={this._onSlider_FChange} step="50"/>
 				);
-			}
-			
+			}	
 		
 		//dilorom
 
@@ -274,9 +230,6 @@ var EditorHeader = React.createClass({
 					<a class="btn header" style={buttonStyle} onClick={this._onLoadButtonClick} ><i className="fa fa-upload"></i>Load</a>
 					</span>);
 		}
-
-
-
 
 		return (
 			<div className="header">
@@ -352,11 +305,6 @@ var EditorHeader = React.createClass({
 					<span style={headerStyle} onClick={this._openNav}>Emotion Filters</span>
 				</span>
 				</span>
-
-
-
-
-
 			</div>
 		);
 	}
