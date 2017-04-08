@@ -62,7 +62,9 @@ main {
     color: #0000ff;
 }
 .sidenav p {
-    font-size: 18px;
+    background: #d8d8d8;
+    font-size: 16px;
+    font-weight: bold;
     text-align: center;
     color:#191919;
     padding-top: 10px;
@@ -71,7 +73,7 @@ main {
 .sidenav .closebtn {
     position: absolute;
     top: 0;
-    left: 25px;
+    left: 5px;
     font-size: 36px;
     color: solid black;
     margin-right: 50px;
