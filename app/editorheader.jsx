@@ -46,6 +46,8 @@ var EditorHeader = React.createClass({
 		    displayEnergySlider:true,
 	    	displayPulseButton:true,
 		    displaySideNavButton:true,
+		    displayFakeSlider:true,
+
 	    	//dilorom
 
 	    	displayStartButton:false,
@@ -72,14 +74,12 @@ var EditorHeader = React.createClass({
 	//dilorom
 
 	_onSliderChange : function(e) {
-		//console.log("from _onSliderChange = ", e.target.value);
 		VTIconStore.actions.increaseAmplitude(e.target.value);
-		//this.setState({value: e.target.value});
+		
 	},
 	_onSlider_FChange : function(e) {
-		//console.log("from _onSliderChange = ", e.target.value);
 		VTIconStore.actions.freq_slider(e.target.value);
-		//this.setState({value: e.target.value});
+		
 	},
 
 	_onEnergyChange : function(e) {
@@ -90,7 +90,10 @@ var EditorHeader = React.createClass({
 		//console.log("pulse");
 		VTIconStore.actions.pulse();
 	},
-
+	_onFakeClick : function(e) {
+		console.log("Faaafaaa");
+		
+	},
 	_openNav : function(e) {
 		document.getElementById("mySidenav").style.width = "250px";
 		document.getElementById("main").style.marginLeft = "250px";
@@ -216,7 +219,14 @@ var EditorHeader = React.createClass({
 				slider_F = (
 					<input id="typeinp" type="range"  min="-500" max="500" value={this.state.value} onChange={this._onSlider_FChange} step="50"/>
 				);
-			}	
+			}
+			var fake_Slider = <span />
+			if (this.props.displayFakeSlider)
+			{
+				fake_Slider = (
+					<input id="typeinp" type="range"  min="-1" max="1" value={this.state.value} onChange={this._onFakeClick} step="0.5"/>
+				);
+			}		
 		
 		//dilorom
 
@@ -269,15 +279,15 @@ var EditorHeader = React.createClass({
 							</tr>
 							<tr>
 								<td>Tempo</td>
-								<td>slider</td>
+								<td>{fake_Slider}</td>
 							</tr>
 							<tr>
 								<td>Discontinuity</td>
-								<td>slider</td>
+								<td>{fake_Slider}</td>
 							</tr>
 							<tr>
 								<td>Irregularity</td>
-								<td>Slider</td>
+								<td>{fake_Slider}</td>
 							</tr>
 						</table>
 					</section>
@@ -286,16 +296,11 @@ var EditorHeader = React.createClass({
 						<table>
 							<tr><p>EMOTION</p></tr>
 							<tr>
-								<td>Agitation</td>
-								<td>slider</td>
-							</tr>
-							<tr>
-								<td>Liveliness</td>
+								<td>Agitation&<br>Liveliness</br></td>
 								<td>{energySlider}</td>
 							</tr>
 							<tr>
-								<td>Strangeness</td>
-								<td>Button</td>
+								<td><a>Strangeness</a></td>
 							</tr>
 						</table>
 					</section>
