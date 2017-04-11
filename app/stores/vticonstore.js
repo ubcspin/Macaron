@@ -899,7 +899,6 @@ var vticonStore = Reflux.createStore({
 
 	},
 
-
 //Energy slider f2 = f1 + f1/5 + 5 
 	onEnergy(currentFreqPos) {
 		var currFreqVal = parseFloat(currentFreqPos);
@@ -957,10 +956,10 @@ var vticonStore = Reflux.createStore({
 		}
 
 	},
-//Pulse function is not fully developed yet, i'm working on ^_^
+//Pulse function is not fully developed yet ^_^
 	onPulse() {
 		
-		 var MockArray = [
+		 /*var MockArray = [
 						[0, 0.00000002],
 						[347.1, 0.072],
 		 				[638.4, 0.188],
@@ -977,36 +976,38 @@ var vticonStore = Reflux.createStore({
 		 				[2731.6, 0.683],
 		 				[2812.2, 1],
 		 				[2830, 0.00002]
-		 				];
-		//console.log("MockArray = ", MockArray);
-
-		// for(var i = 0; i < MockArray.length; i++) {
-		// 	var MockArray = MockArray[i];
-		// 	for(var j = 0; j < MockArray.length; j++) {
-		//     	console.log("MockArray[" + i + "][" + j + "] = " + MockArray[j]);
-		//     }
-		// }
+		 				];*/
 		
 		// TODO(dilorom): replace MockArray with an actual one when function logic is complete
-		var keyframes = MockArray;
+		//var keyframes = MockArray;
+		// var keyframes = this._data["main"].parameters["amplitude"].data;
+		var tempArray = [];
+		var keyframes = [];
+		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
+			tempArray.push(this._data["main"].parameters["amplitude"].data[ii].t);
+			tempArray.push(this._data["main"].parameters["amplitude"].data[ii].value);
+
+			console.log("tempArray[%d] = [%s, %s]", ii, tempArray[0], tempArray[1])
+			keyframes.push(tempArray)
+			tempArray = [];
+		}
 
 		// print for debugging
 		for (var ii = 0; ii < keyframes.length; ii++) {
 			console.log("keyframes[" + ii + "] = " + keyframes[ii]);
 		}
-
 		if (keyframes.length <= 1) {
 			console.log('too few keyframes (length = %d). No pulses. Terminating.', keyframes.length)
 			return
 		}
 
 		var pulseArray = [];
-		var tempArray = [];
 		var t1 = 0; // t1 is pulse start
 		var t2 = 0; // t2 is pulse end
 
 		// iterate through keyframes to find pulse-start (t1) and pulse-end (t2)
 		var kfIndex = 0;
+		
 		while (kfIndex < keyframes.length) {
 			// for (var ii = 0; ii < keyframes.length; ii++) {
 		 	// console.log("keyframes[" + ii + "] = " + keyframes[ii]);
@@ -1046,7 +1047,8 @@ var vticonStore = Reflux.createStore({
 			return currIndex;
 		}
 		// t1 can never be the last keyframe. Return error if called with the last keyframe
-	 	if (currIndex == keyframes.length-1) {
+	 	if (currIndex == keyframes.length-1) 
+	 	{
 			console.log("_pulseStart is called for the last keyframe (index=%d). Returning -1 to indicate there is no more pulse.", currIndex);
 			return -1;
 		}
@@ -1060,13 +1062,13 @@ var vticonStore = Reflux.createStore({
 			if (delta <= thres) {
 				console.log("pulseStart returning %d since keyframes[%d][1]=%d and keyframes[%d][1]=%d difference is within threshold %f",
 					ii, ii, keyframes[ii][1], (ii+1), keyframes[ii+1][1], thres);
-				return ii;
+				return(ii + 1);
 			} else {
 				console.log("delta = %f, moving on to the next keyframe", delta)
 			}
 		}
 	},
-	
+
 	//this function detects pulse end
 	_pulseEnd(currIndex, keyframes) {
 		//console.log("you are calling pulseEnd function!!!");

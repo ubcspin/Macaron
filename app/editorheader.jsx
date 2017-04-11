@@ -258,7 +258,7 @@ var EditorHeader = React.createClass({
 					{saveButton}
 					{loadButton}
 					{pulseButton}
-					{this.state.value}
+					{this.state.value} 
 
 					<span id="mySidenav" className="sidenav">
 					<section className="half">
@@ -291,24 +291,28 @@ var EditorHeader = React.createClass({
 							</tr>
 						</table>
 					</section>
-					
 					<section className="half">
 						<table>
 							<tr><p>EMOTION</p></tr>
 							<tr>
-								<td>Agitation&<br>Liveliness</br></td>
+								<td>Agitation</td>
 								<td>{energySlider}</td>
 							</tr>
 							<tr>
-								<td><a>Strangeness</a></td>
+								<td>Liveliness</td>
+								<td>{fake_Slider}</td>
+							</tr>
+							<tr>
+								<td>Strangeness</td>
+								<td>{fake_Slider}</td>
 							</tr>
 						</table>
 					</section>
-				</span>
+					</span>
 
 				<span id="main">
 					<span style={headerStyle} onClick={this._openNav}>Emotion Filters</span>
-				</span>
+				</span> 
 				</span>
 			</div>
 		);
