@@ -41,6 +41,7 @@ var vticonActions = Reflux.createActions(
 		'freq_slider',
 		'energy',
 		'pulse',
+		'tempo',
 		// 'jumpHistory'
 
 		//hasti Dilorom
@@ -146,6 +147,8 @@ var vticonStore = Reflux.createStore({
 		//saving initial keyframes values in this array
 		this._initialAmpVal = [];
 		this._initialFreqVal = [];
+		//declare keyframes as global var
+		this._keyframes = [];
 		
 	},
 
@@ -957,7 +960,7 @@ var vticonStore = Reflux.createStore({
 
 	},
 //Pulse function is not fully developed yet ^_^
-	onPulse() {
+	onPulse(currentDiscontPos) {
 		
 		 /*var MockArray = [
 						[0, 0.00000002],
@@ -983,6 +986,7 @@ var vticonStore = Reflux.createStore({
 		// var keyframes = this._data["main"].parameters["amplitude"].data;
 		var tempArray = [];
 		var keyframes = [];
+		var currDiscontVal = parseFloat(currentDiscontPos);
 		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
 			tempArray.push(this._data["main"].parameters["amplitude"].data[ii].t);
 			tempArray.push(this._data["main"].parameters["amplitude"].data[ii].value);
@@ -1026,16 +1030,56 @@ var vticonStore = Reflux.createStore({
 			tempArray.push(t2);
 			pulseArray.push(tempArray);
 			tempArray = [];
+			
 
 			// assign t2 to kfIndex so that next iteration will start considering keyframes after current t2
 			kfIndex = t2;
 			// break;
 		}
 
+		var T1, T2;
+		// var TimeArray =[];
+		var PulsestartT = [];
+		var PulseEndT = [];
+		var currKfTime = 0, pulseStartKfIndex = 0, pulseEndKfIndex = 0;
+		// TODO: describe what this loop does.
 		for (var ii = 0; ii < pulseArray.length; ii++) {
 			console.log("pulseArray[%d] = [%d, %d]", ii, pulseArray[ii][0], pulseArray[ii][1])
+			// TODO: follow CamelCase variable naming and make variables lowerCase
+			PulsestartT = keyframes[pulseArray[ii][0]][0];
+			PulseEndT = keyframes[pulseArray[ii][1]][0];
+			console.log("pulseStartTime=", PulsestartT, "pulseEndTime=", PulseEndT);
+			T1 = PulsestartT + (PulseEndT - PulsestartT)/4;
+			T2 = PulsestartT + (currDiscontVal)*(PulseEndT - PulsestartT)/4;
+			console.log("T1 = ", T1, "T2 = ", T2);
+
+			// TODO: use pulseStartKfIndex (and pulseEndKfIndex) instead of pulseArray[ii][0] inside loop.
+			// This improves code readability.
+			pulseStartKfIndex = pulseArray[ii][0];
+			pulseEndKfIndex = pulseArray[ii][1];
+			// check keyframes between pulseStartKfIndex and pulseEndKfIndex, and update their amplitudes.
+			// Currently "update" just means assigning 0 to keyframe amplitude.
+			for (var intervalIndex=pulseStartKfIndex; intervalIndex <= pulseEndKfIndex; intervalIndex++) {
+				currKfTime = keyframes[intervalIndex][0];
+				if ((currKfTime >= T1) && (currKfTime <= T2)) {
+					console.log("assigning 0 to keyframes[%d] amplitude since its time: %f falls within {%f, %f} time range",
+						intervalIndex, currKfTime, T1, T2)
+					// assign 0 to the amplitude of this keyframe, since
+					// keyframes[intervalIndex][1] actually corresponds to
+					// this._data["main"].parameters["amplitude"].data[intervalIndex].value
+					// we just need to assign 0 to the latter and redraw keyframes.
+					// Note that making keyframes[intervalIndex][1]=0 would not actually change
+					// our graph on the browser, since the browser graph is drawn using values at
+					// this._data["main"].parameters["amplitude"].data[intervalIndex].value
+					this._data["main"].parameters["amplitude"].data[intervalIndex].value = 0
+				} else {
+					console.log("not changing keyframes[%d] since its time: %f does not fall within {%f, %f} time range",
+						intervalIndex, currKfTime, T1, T2)
+				}
+			}
 		}
-		
+		// redraw keyframes with updated values
+		this.trigger(this._data);
 	},
 
 	//this function detects pulse start
@@ -1053,19 +1097,24 @@ var vticonStore = Reflux.createStore({
 			return -1;
 		}
 
-		var thres = 0.001; // threshold to decide equality of two coordinates
+		var thres = 0.01; // threshold to decide equality of two coordinates
 		// var t1 = currIndex;
 		var delta = 0;
 		for (var ii = currIndex; ii < keyframes.length-1; ii++) {
-			delta = Math.abs(keyframes[ii][1] - keyframes[ii+1][1])
-			console.log("delta = %f", delta)
-			if (delta <= thres) {
-				console.log("pulseStart returning %d since keyframes[%d][1]=%d and keyframes[%d][1]=%d difference is within threshold %f",
-					ii, ii, keyframes[ii][1], (ii+1), keyframes[ii+1][1], thres);
-				return(ii + 1);
-			} else {
-				console.log("delta = %f, moving on to the next keyframe", delta)
+			console.log("Outside keyframes[%d][1] = %f, keyframes[%d][1] = %f", ii, keyframes[ii][1], (ii+1), keyframes[ii+1][1]);
+			if ((keyframes[ii][1] < 0.1) && (keyframes[ii+1][1] < 0.1)) {
+				console.log("keyframes[ii][1]= %.8f, keyframes[ii+1][1]= %.8f", keyframes[ii][1], keyframes[ii+1][1]);
+				delta = Math.abs(keyframes[ii][1] - keyframes[ii+1][1]) 
+				console.log("delta = %f", delta)
+				if (delta <= thres) {
+					console.log("pulseStart returning %d since keyframes[%d][1]=%d and keyframes[%d][1]=%d difference is within threshold %f",
+						ii, ii, keyframes[ii][1], (ii+1), keyframes[ii+1][1], thres);
+					return(ii + 1);
+				} else {
+					console.log("delta = %f, moving on to the next keyframe", delta)
+				}
 			}
+			
 		}
 	},
 
@@ -1084,24 +1133,48 @@ var vticonStore = Reflux.createStore({
 			return currIndex+1;
 		}
 
-		var thres = 0.001; // threshold to decide equality of two coordinates
+		var thres = 0.01; // threshold to decide equality of two coordinates
 		var delta = 0;
 		var ii = 0;
 		for (ii = currIndex+1; ii < keyframes.length-1; ii++) {
-			delta = Math.abs(keyframes[ii][1] - keyframes[ii+1][1])
-			console.log("delta = %f", delta)
-			if (delta <= thres) {
-				console.log("pulseEnd returning %d since keyframes[%d][1]=%d and keyframes[%d][1]=%d difference is within threshold %f",
-					ii, ii, keyframes[ii][1], (ii+1), keyframes[ii+1][1], thres);
-				return ii;
-			} else {
-				console.log("delta = %f, moving on to the next keyframe", delta)
+			console.log("endpulse Outside keyframes[%d][1] = %f, keyframes[%d][1] = %f", ii, keyframes[ii][1], (ii+1), keyframes[ii+1][1]);
+			if ((keyframes[ii][1] < 0.1) && (keyframes[ii+1][1] < 0.1)) {
+				console.log("endpulse keyframes[ii][1]= %.8f, keyframes[ii+1][1]= %.8f", keyframes[ii][1], keyframes[ii+1][1]);
+				delta = Math.abs(keyframes[ii][1] - keyframes[ii+1][1])
+				console.log("delta = %f", delta)
+				if (delta <= thres) {
+					console.log("pulseEnd returning %d since keyframes[%d][1]=%d and keyframes[%d][1]=%d difference is within threshold %f",
+						ii, ii, keyframes[ii][1], (ii+1), keyframes[ii+1][1], thres);
+					return ii;
+				} else {
+					console.log("delta = %f, moving on to the next keyframe", delta)
+				}
 			}
 		}
 
 		console.log("no conditions matched, therefore the last keyframe (index=%d) is t2", ii)
 		return ii;
-	}
+	},
+
+	//this function to create 'Tempo parameter' //T1 = t1 + 1/3(t2 - t1);  T2 = t1 + 2/3(t2-t1)
+	onTempo() {
+		var T1, T2;
+		var keyframes = [];
+		var PulsestartT = [], PulseEndT = [];
+		console.log("bye bye Tempo");
+		for (var ii = 0; ii < pulseArray.length; ii++) {
+			PulsestartT = keyframes[pulseArray[ii][0]][0];
+			PulseEndT = keyframes[pulseArray[ii][1]][0];
+			T1 = PulsestartT + 1/3(PulseEndT - PulsestartT);
+			T2 = PulsestartT + 2/3(PulseEndT - PulsestartT);
+			if (T1 < keyframes[ii][0] < T2) {
+				keyframes[ii][1] = 0;
+				tempArray.push(keyframes);
+			}
+
+		}
+
+	},
 
 //Dilorom
 

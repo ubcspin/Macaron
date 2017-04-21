@@ -45,8 +45,11 @@ var EditorHeader = React.createClass({
 		    displaySlider_F:true,
 		    displayEnergySlider:true,
 	    	displayPulseButton:true,
+	    	displayTempoButton:true,
 		    displaySideNavButton:true,
 		    displayFakeSlider:true,
+		    displayTogButton:true,
+		    displayDiscontinuitySlider:true,
 
 	    	//dilorom
 
@@ -87,12 +90,23 @@ var EditorHeader = React.createClass({
 	},
 
 	_onPulseClick : function(e) {
-		//console.log("pulse");
-		VTIconStore.actions.pulse();
+		console.log("pulse");
+		//VTIconStore.actions.pulse();
+	},
+	_onDiscontClick : function(e) {
+		console.log("Discont");
+		VTIconStore.actions.pulse(e.target.value);
+	},
+	_onTempoClick : function(e) {
+		//console.log("hello Tempo");
+		VTIconStore.actions.tempo();
 	},
 	_onFakeClick : function(e) {
 		console.log("Faaafaaa");
 		
+	},
+	_onToggleButtonClick : function(e) {
+		console.log("toggle button!");
 	},
 	_openNav : function(e) {
 		document.getElementById("mySidenav").style.width = "250px";
@@ -226,7 +240,30 @@ var EditorHeader = React.createClass({
 				fake_Slider = (
 					<input id="typeinp" type="range"  min="-1" max="1" value={this.state.value} onChange={this._onFakeClick} step="0.5"/>
 				);
-			}		
+			}
+			var discontinuity_Slider = <span />
+			if (this.props.displayDiscontinuitySlider)
+			{
+				discontinuity_Slider = (
+					<input id="typeinp" type="range"  min="1" max="4" value={this.state.value} onChange={this._onDiscontClick} step="1"/>
+				);
+			}
+			//toggle switch button not working yet :(
+			var toggleButton = <span />
+			if (this.props.displayTogButton)
+			{
+				toggleButton = (
+					<input id="switch" type="checkbox" className="slider round" onClick={this._onToggleButtonClick}/>); 
+			}
+
+			var tempoButton = <span />
+			if (this.props.displayTempoButton)
+			{
+				tempoButton = (<a class="btn header" style={buttonStyle} onClick={this._onTempoClick}>Tempo</a>);
+			}
+
+		
+			
 		
 		//dilorom
 
@@ -243,8 +280,6 @@ var EditorHeader = React.createClass({
 
 		return (
 			<div className="header">
-				
-
 				{startButton}
 				<span className="title unselectable" >
 					VibTune
@@ -258,6 +293,9 @@ var EditorHeader = React.createClass({
 					{saveButton}
 					{loadButton}
 					{pulseButton}
+					{tempoButton}
+				
+					
 					{this.state.value} 
 
 					<span id="mySidenav" className="sidenav">
@@ -283,7 +321,7 @@ var EditorHeader = React.createClass({
 							</tr>
 							<tr>
 								<td>Discontinuity</td>
-								<td>{fake_Slider}</td>
+								<td>{discontinuity_Slider}</td>
 							</tr>
 							<tr>
 								<td>Irregularity</td>
@@ -303,16 +341,15 @@ var EditorHeader = React.createClass({
 								<td>{fake_Slider}</td>
 							</tr>
 							<tr>
-								<td>Strangeness</td>
-								<td>{fake_Slider}</td>
+								<td><a>Strangeness</a></td>
+								<td>button</td>
 							</tr>
 						</table>
 					</section>
 					</span>
-
-				<span id="main">
+					<span id="main">
 					<span style={headerStyle} onClick={this._openNav}>Emotion Filters</span>
-				</span> 
+					</span> 
 				</span>
 			</div>
 		);
