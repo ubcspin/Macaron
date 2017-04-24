@@ -343,7 +343,7 @@ var EditorHeader = React.createClass({
 							</tr>
 							<tr>
 								<td><a>Strangeness</a></td>
-								<td>button</td>
+								<td>{fake_Slider}</td>
 							</tr>
 						</table>
 					</section>
