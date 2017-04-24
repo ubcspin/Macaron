@@ -29,29 +29,29 @@ var EditorHeader = React.createClass({
 	propTypes: {
 			},
 
-	getInitialState : function () {
+	getInitialState : function (event) {
 		return 
 			{value: 0}; 
 	},
 
 	getDefaultProps: function() {
-	    return {
+		return {
 	    	displayAnimation:false,
 	    	displayInterfaceMode:false,
 	    	displaySaveButton:true,
            
-           //dilorom
-	    	displaySlider:true,
-		    displaySlider_F:true,
-		    displayEnergySlider:true,
-	    	displayPulseButton:true,
-	    	displayTempoButton:true,
-		    displaySideNavButton:true,
-		    displayFakeSlider:true,
-		    displayTogButton:true,
-		    displayDiscontinuitySlider:true,
+			//dilorom
+			displaySlider:true,
+			displaySlider_F:true,
+			displayEnergySlider:true,
+			displayPulseButton:true,
+			displayTempoButton:true,
+			displaySideNavButton:true,
+			displayFakeSlider:true,
+			displayTogButton:true,
+			displayDiscontinuitySlider:true,
 
-	    	//dilorom
+			//dilorom
 
 	    	displayStartButton:false,
 			uploadFileID:"uploadedFile"
@@ -95,7 +95,7 @@ var EditorHeader = React.createClass({
 	},
 	_onDiscontClick : function(e) {
 		console.log("Discont");
-		VTIconStore.actions.pulse(e.target.value);
+		VTIconStore.actions.pulse(event.target.value);
 	},
 	_onTempoClick : function(e) {
 		//console.log("hello Tempo");
@@ -111,6 +111,8 @@ var EditorHeader = React.createClass({
 	_openNav : function(e) {
 		document.getElementById("mySidenav").style.width = "250px";
 		document.getElementById("main").style.marginLeft = "250px";
+		document.getElementById("discontinuity_Slider").stepDown();
+		document.getElementById("discontinuity_Slider").stepDown();
 	},
 
 	_closeNav : function(e) {
@@ -137,7 +139,6 @@ var EditorHeader = React.createClass({
 	*/
 
 	render : function() {
-
 		var headerStyle = {
 			fontSize:15,
 			cursor:'pointer',
@@ -207,8 +208,8 @@ var EditorHeader = React.createClass({
 			//saveButton = (<button onClick={this._onSaveClick}><i class="fa fa-download"></i>Finish</button>);
 		}
           
-          //dilorom
-         var energySlider = <span />
+		//dilorom
+		var energySlider = <span />
 		if (this.props.displayEnergySlider)
 		{
 			energySlider = (
@@ -245,7 +246,7 @@ var EditorHeader = React.createClass({
 			if (this.props.displayDiscontinuitySlider)
 			{
 				discontinuity_Slider = (
-					<input id="typeinp" type="range"  min="1" max="4" value={this.state.value} onChange={this._onDiscontClick} step="1"/>
+					<input id="discontinuity_Slider" type="range"  min="1" max="3" value ={this.state.value}  onChange={this._onDiscontClick} step="1"/>
 				);
 			}
 			//toggle switch button not working yet :(
