@@ -50,6 +50,8 @@ var EditorHeader = React.createClass({
 			displayFakeSlider:true,
 			displayTogButton:true,
 			displayDiscontinuitySlider:true,
+			displayTempoSlider:true,
+			displayTempoNewSlider:true,
 
 			//dilorom
 
@@ -98,8 +100,16 @@ var EditorHeader = React.createClass({
 		VTIconStore.actions.pulse(event.target.value);
 	},
 	_onTempoClick : function(e) {
-		//console.log("hello Tempo");
-		VTIconStore.actions.tempo();
+		console.log("hello Tempo");
+		//VTIconStore.actions.tempo();
+	},
+	_onTempoChange : function(e) {
+		//console.log("hello tempo slider");
+		VTIconStore.actions.tempo(e.target.value);
+	},
+	_onTempoNewChange : function(e) {
+		console.log("Combined Tempo slider");
+		VTIconStore.actions.tempoNew(e.target.value);
 	},
 	_onFakeClick : function(e) {
 		console.log("Faaafaaa");
@@ -263,6 +273,20 @@ var EditorHeader = React.createClass({
 				tempoButton = (<a class="btn header" style={buttonStyle} onClick={this._onTempoClick}>Tempo</a>);
 			}
 
+			var tempoSlider = <span />
+			if (this.props.displayTempoSlider)
+			{
+				tempoSlider = (
+					<input id="typeinp" type="range"  min="-3" max="3" value={this.state.value} onChange={this._onTempoChange} step="1.5"/>
+					);
+			}
+			var tempoNewSlider = <span />
+			if (this.props.displayTempoNewSlider)
+			{
+				tempoNewSlider = (
+					<input id="typeinp" type="range"  min="-3" max="3" value={this.state.value} onChange={this._onTempoNewChange} step="1.5"/>
+					);
+			}
 		
 			
 		
@@ -318,7 +342,11 @@ var EditorHeader = React.createClass({
 							</tr>
 							<tr>
 								<td>Tempo</td>
-								<td>{fake_Slider}</td>
+								<td>{tempoSlider}</td>
+							</tr>
+							<tr>
+								<td>Tempo_New</td>
+								<td>{tempoNewSlider}</td>
 							</tr>
 							<tr>
 								<td>Discontinuity</td>

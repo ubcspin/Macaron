@@ -42,6 +42,7 @@ var vticonActions = Reflux.createActions(
 		'energy',
 		'pulse',
 		'tempo',
+		'tempoNew'
 		// 'jumpHistory'
 
 		//hasti Dilorom
@@ -147,8 +148,12 @@ var vticonStore = Reflux.createStore({
 		//saving initial keyframes values in this array
 		this._initialAmpVal = [];
 		this._initialFreqVal = [];
+		this._initialKfValues = [];
+		this._globalPulseArray = [];
 		//declare keyframes as global var
 		this._keyframes = [];
+		this._initialAmpTimeVal = [];
+		this._initialFreqTimeVal = [];
 		
 	},
 
@@ -599,7 +604,7 @@ var vticonStore = Reflux.createStore({
 
 	/**
 	 * KF Guards
-	 */
+	 *///TODO(dilorom) - clarify this more::This is only giving max and min values of the parameters: NOT TIME!
 	 _isValidKeyframePosition(parameter, t, v, name="")
 	 {
 	 	name = this._selectVTIcon(name);
@@ -610,11 +615,25 @@ var vticonStore = Reflux.createStore({
 	 		var min = Math.min(this._data[name].parameters[parameter].valueScale[0], this._data[name].parameters[parameter].valueScale[1]);
 	 		var max = Math.max(this._data[name].parameters[parameter].valueScale[0], this._data[name].parameters[parameter].valueScale[1]);
 
+
+
 	 		if (v >= min &&
 	 			v <= max)
 	 		{
 	 			valid = true;
 	 		}
+	 	}
+	 	return valid;
+	 },
+	 //	TODO(dilorom)-normal komentariya yoz!THis function keeps keyframes Time between max and min 
+	  _isValidKeyframeTimePosition(t)
+	 {
+	 	name = this._selectVTIcon(name);
+	 	var valid = false;
+
+	 	if(t >= 0 && t <= 3000)
+	 	{
+	 		return true;
 	 	}
 	 	return valid;
 	 },
@@ -749,8 +768,7 @@ var vticonStore = Reflux.createStore({
 	// It takes care of both amplitude increase and decrease
 	onIncreaseAmplitude(currentAmpPos) {
 		var currAmpVal = parseFloat(currentAmpPos);
-		
-        console.log('zero = ' , this._initialAmpVal);
+		console.log('zero = ' , this._initialAmpVal);
 
 		var dv = currAmpVal;
 		console.log("current = %f, dv = %f", currAmpVal, dv);
@@ -912,7 +930,7 @@ var vticonStore = Reflux.createStore({
 		var valid_change = false;
 
 		//saving initial keyframes values
-		if (this._initialFreqVal.length ==0) {
+		if (this._initialFreqVal.length == 0) {
 			this._initialFreqVal = JSON.parse(JSON.stringify(this._data["main"].parameters["frequency"].data))
 			console.log('boshlangich' , this._initialFreqVal);
 		}
@@ -981,79 +999,95 @@ var vticonStore = Reflux.createStore({
 		 				[2830, 0.00002]
 		 				];*/
 		
-		// TODO(dilorom): replace MockArray with an actual one when function logic is complete
 		//var keyframes = MockArray;
 		// var keyframes = this._data["main"].parameters["amplitude"].data;
-		var tempArray = [];
-		var keyframes = [];
-		for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
-			tempArray.push(this._data["main"].parameters["amplitude"].data[ii].t);
-			tempArray.push(this._data["main"].parameters["amplitude"].data[ii].value);
-
-			//console.log("tempArray[%d] = [%s, %s]", ii, tempArray[0], tempArray[1])
-			keyframes.push(tempArray)
-			tempArray = [];
-		}
-
-		// print for debugging
-		for (var ii = 0; ii < keyframes.length; ii++) {
-			//console.log("keyframes[" + ii + "] = " + keyframes[ii]);
-		}
-		if (keyframes.length <= 1) {
-			//console.log('too few keyframes (length = %d). No pulses. Terminating.', keyframes.length)
-			return
-		}
-
-		var pulseArray = [];
-		var t1 = 0; // t1 is pulse start
-		var t2 = 0; // t2 is pulse end
-
-		// iterate through keyframes to find pulse-start (t1) and pulse-end (t2)
-		var kfIndex = 0;
-		
-		while (kfIndex < keyframes.length) {
-			t1 = this._pulseStart(kfIndex, keyframes);
-			if (t1 == -1) {
-				console.log("got -1 from _pulseStart. This means no more pulses")
-				break;
-			} else {
-				console.log("returned from _pulseStart = %d", t1)
-			}
-			t2 = this._pulseEnd(t1, keyframes);
-
-			// add [t1, t2] to the pulseArray
-			tempArray.push(t1);
-			tempArray.push(t2);
-			pulseArray.push(tempArray);
-			tempArray = [];
-			// assign t2 to kfIndex so that next iteration will start considering keyframes after current t2
-			kfIndex = t2;
-			// break;
-		}
-
 		var T1, T2;
 		var currDiscontVal = parseFloat(currentDiscontPos);
 		console.log("currDiscontVal = %d", currDiscontVal)
+		// TODO(dilorom): explain meaning/purpose/intention (what do they do) of these two variables.
 		var PulsestartT = [];
 		var PulseEndT = [];
 		var currKfTime = 0, pulseStartKfIndex = 0, pulseEndKfIndex = 0;
+		
+
+		// TODO(dilorom): explain why this if is needed
+		if (this._initialKfValues.length == 0) {
+			console.log("this._initialKfValues = 0")
+			var tempArray = [];
+			var keyframes = [];
+			for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
+				tempArray.push(this._data["main"].parameters["amplitude"].data[ii].t);
+				tempArray.push(this._data["main"].parameters["amplitude"].data[ii].value);
+
+				//console.log("tempArray[%d] = [%s, %s]", ii, tempArray[0], tempArray[1])
+				keyframes.push(tempArray)
+				tempArray = [];
+			}
+
+			// print for debugging
+			for (var ii = 0; ii < keyframes.length; ii++) {
+				console.log("keyframes[" + ii + "] = " + keyframes[ii]);
+			}
+			if (keyframes.length <= 1) {
+				//console.log('too few keyframes (length = %d). No pulses. Terminating.', keyframes.length)
+				return
+			}
+
+			var pulseArray = [];
+			var t1 = 0; // t1 is pulse start
+			var t2 = 0; // t2 is pulse end
+
+			// iterate through keyframes to find pulse-start (t1) and pulse-end (t2)
+			var kfIndex = 0;
+			
+			while (kfIndex < keyframes.length) {
+				t1 = this._pulseStart(kfIndex, keyframes);
+				if (t1 == -1) {
+					console.log("got -1 from _pulseStart. This means no more pulses")
+					break;
+				} else {
+					console.log("returned from _pulseStart = %d", t1)
+				}
+				t2 = this._pulseEnd(t1, keyframes);
+
+				// add [t1, t2] to the pulseArray
+				tempArray.push(t1);
+				tempArray.push(t2);
+				pulseArray.push(tempArray);
+				tempArray = [];
+				// assign t2 to kfIndex so that next iteration will start considering keyframes after current t2
+				kfIndex = t2;
+				// break;
+			}
+			//TODO(dilorom): what these are doing?
+			this._initialKfValues = keyframes;
+			this._globalPulseArray = pulseArray;
+			
+		} else {
+			console.log("this._initialKfValues != 0")
+		}
+
 		// TODO: describe what this loop does.
-		for (var ii = 0; ii < pulseArray.length; ii++) {
+		for (var ii = 0; ii < this._globalPulseArray.length; ii++) {
 			//console.log("pulseArray[%d] = [%d, %d]", ii, pulseArray[ii][0], pulseArray[ii][1])
 			// TODO: follow CamelCase variable naming and make variables lowerCase
-			PulsestartT = keyframes[pulseArray[ii][0]][0];
-			PulseEndT = keyframes[pulseArray[ii][1]][0];
+			// PulsestartT = keyframes[pulseArray[ii][0]][0];
+			PulsestartT = this._initialKfValues[this._globalPulseArray[ii][0]][0];
+			// PulseEndT = keyframes[pulseArray[ii][1]][0];
+			PulseEndT = this._initialKfValues[this._globalPulseArray[ii][1]][0];
+			
 			//console.log("pulseStartTime=", PulsestartT, "pulseEndTime=", PulseEndT);
 			T1 = PulsestartT + (PulseEndT - PulsestartT)/3;
 			T2 = PulsestartT + (currDiscontVal)*(PulseEndT - PulsestartT)/3;
 			console.log("T1 time slot = ", T1, "T2 time slot = ", T2);
 
 			// TODO: use pulseStartKfIndex (and pulseEndKfIndex) instead of pulseArray[ii][0] inside loop.
-			pulseStartKfIndex = pulseArray[ii][0];
-			pulseEndKfIndex = pulseArray[ii][1];
+			pulseStartKfIndex = this._globalPulseArray[ii][0];
+			pulseEndKfIndex = this._globalPulseArray[ii][1];
 			// check keyframes between pulseStartKfIndex and pulseEndKfIndex, and update their amplitudes.Assigning 0 to keyframe amplitude.
 			for (var intervalIndex=pulseStartKfIndex; intervalIndex <= pulseEndKfIndex; intervalIndex++) {
-				currKfTime = keyframes[intervalIndex][0];
+				// currKfTime = keyframes[intervalIndex][0];
+				currKfTime = this._initialKfValues[intervalIndex][0];
 				if ((currKfTime >= T1) && (currKfTime <= T2)) {
 					console.log("assigning 0 to keyframes[%d] amplitude since its time: %f falls within {%f, %f} time range",
 						intervalIndex, currKfTime, T1, T2)
@@ -1066,10 +1100,21 @@ var vticonStore = Reflux.createStore({
 					// this._data["main"].parameters["amplitude"].data[intervalIndex].value
 					this._data["main"].parameters["amplitude"].data[intervalIndex].value = 0
 				} else {
-					console.log("not changing keyframes[%d] since its time: %f does not fall within {%f, %f} time range",
-						intervalIndex, currKfTime, T1, T2)
+					// TODO(dilorom): change this log message accordingly
+					// console.log("not changing keyframes[%d] since its time: %f does not fall within {%f, %f} time range",
+					// 	intervalIndex, currKfTime, T1, T2)
+					this._data["main"].parameters["amplitude"].data[intervalIndex].value = this._initialKfValues[intervalIndex][1]
 				}
+				//this if condition breaks if dead loop happens
+				// if (intervalIndex == 150) {
+				// 	console.log('hit the max, intervalIndex = %d', intervalIndex);
+				// 	break;
+				// }
 			}
+			// if (intervalIndex == 150) {
+			// 	console.log('hit the outer max, ii = %d', ii);
+			// 	break;
+			// }
 		}
 		// redraw keyframes with updated values
 		this.trigger(this._data);
@@ -1092,7 +1137,7 @@ var vticonStore = Reflux.createStore({
 		// var t1 = currIndex;
 		var delta = 0;
 		for (var ii = currIndex; ii < keyframes.length-1; ii++) {
-			if ((keyframes[ii][1] < 0.1) && (keyframes[ii+1][1] < 0.1)) {
+			if ((keyframes[ii][1] < 0.01) && (keyframes[ii+1][1] < 0.01)) {
 				delta = Math.abs(keyframes[ii][1] - keyframes[ii+1][1]) 
 				if (delta <= thres) {
 					return(ii + 1);
@@ -1119,7 +1164,7 @@ var vticonStore = Reflux.createStore({
 		var delta = 0;
 		var ii = 0;
 		for (ii = currIndex+1; ii < keyframes.length-1; ii++) {
-			if ((keyframes[ii][1] < 0.1) && (keyframes[ii+1][1] < 0.1)) {
+			if ((keyframes[ii][1] < 0.01) && (keyframes[ii+1][1] < 0.01)) {
 				//console.log("endpulse keyframes[ii][1]= %.8f, keyframes[ii+1][1]= %.8f", keyframes[ii][1], keyframes[ii+1][1]);
 				delta = Math.abs(keyframes[ii][1] - keyframes[ii+1][1])
 				//console.log("delta = %f", delta)
@@ -1135,25 +1180,173 @@ var vticonStore = Reflux.createStore({
 		return ii;
 	},
 
-	//this function to create 'Tempo parameter' //T1 = t1 + 1/3(t2 - t1);  T2 = t1 + 2/3(t2-t1)
-	onTempo() {
-		var T1, T2;
-		var keyframes = [];
-		var PulsestartT = [], PulseEndT = [];
-		console.log("bye bye Tempo");
-		for (var ii = 0; ii < pulseArray.length; ii++) {
-			PulsestartT = keyframes[pulseArray[ii][0]][0];
-			PulseEndT = keyframes[pulseArray[ii][1]][0];
-			T1 = PulsestartT + 1/3(PulseEndT - PulsestartT);
-			T2 = PulsestartT + 2/3(PulseEndT - PulsestartT);
-			if (T1 < keyframes[ii][0] < T2) {
-				keyframes[ii][1] = 0;
-				tempArray.push(keyframes);
-			}
 
+
+
+	
+	//this function to create 'Tempo parameter' //positive value of the slider decreases Time and negative value increases time
+	//T0 =t0
+	//T1 = t0+(t1-t0)/2
+	//T2 = T1 + (t2-t1)/2
+
+	onTempo(currentAmpTimePos) {
+		var currSliderVal = parseFloat(currentAmpTimePos);
+		console.log('currSliderVal = ' , currSliderVal);
+		var keyframes = [];
+		var tempArray = [];
+		var keyframesTime = [];
+		if (this._initialAmpTimeVal.length == 0) {
+			//TODO(dilorom): Explain what this loop does
+			for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
+				keyframes.push(this._data["main"].parameters["amplitude"].data[ii].t);
+				// tempArray.push(this._data["main"].parameters["amplitude"].data[ii].value);
+				// keyframes.push(tempArray);
+				// //
+				// tempArray = [];
+				console.log("keyframes[" + ii + "] = " + keyframes[ii]);
+			}
+			this._initialAmpTimeVal = keyframes;
+
+			//this._initialAmpTimeVal = JSON.parse(JSON.stringify(this._data["main"].parameters["amplitude"].data));
 		}
+		// print for debugging
+		// for (var ii = 0; ii < keyframes.length; ii++) {
+		// 	console.log("keyframes[" + ii + "] = " + keyframes[ii]);
+		// }
+		// keyframes only time value
+		// for (var ii = 0; ii < this._initialAmpTimeVal.length; ii++) {
+		// 	keyframesTime.push(this._initialAmpTimeVal[ii][0]);
+		// 	console.log("keyframesTime[" + ii + "] = " + keyframesTime[ii]);
+		// }
+
+		//deltaTime
+		var deltaTime = [];
+		var delta;
+		for (var ii = 0; ii < (this._initialAmpTimeVal.length-1); ii++) {
+			delta = this._initialAmpTimeVal[ii+1] - this._initialAmpTimeVal[ii];
+			deltaTime.push(delta);
+			console.log("deltaTime[" + ii + "] = " + deltaTime[ii]);
+		}
+		//define timePrime(To be time value)
+		var timePrime = [];
+		for (var ii = 0; ii < this._initialAmpTimeVal.length; ii++) {
+			if (currSliderVal == 0) {
+				timePrime = this._initialAmpTimeVal;
+			} else if (currSliderVal > 0) {
+				if (ii == 0) {
+					timePrime[0] = this._initialAmpTimeVal[0];
+				} else {
+					timePrime[ii] = timePrime[ii-1] + (deltaTime[ii-1])/currSliderVal;
+				}
+			} else if (currSliderVal < 0) {
+				if (ii == 0) {
+					timePrime[0] = this._initialAmpTimeVal[0];
+				} else {
+					timePrime[ii] = timePrime[ii-1] + (deltaTime[ii-1])*Math.abs(currSliderVal);
+				}
+			}
+			this._data["main"].parameters["amplitude"].data[ii].t = timePrime[ii];
+			//this condition keeps timePrime in the range[0;3000]
+			if (this._isValidKeyframeTimePosition(this._data["main"].parameters["amplitude"].data[ii].t)) {
+				console.log("timePrime[" + ii + "] = " + timePrime[ii]);
+			} else {
+				if (this._data["main"].parameters["amplitude"].data[ii].t < 0) {
+					this._data["main"].parameters["amplitude"].data[ii].t = 0;
+				}
+				if (this._data["main"].parameters["amplitude"].data[ii].t > 3000) {
+					this._data["main"].parameters["amplitude"].data[ii].t = 3000;
+				}
+			}
+			
+		}
+		
+		this.trigger(this._data);
+	},
+
+	onTempoNew(currentFreqTimePos) {
+		var currSliderVal = parseFloat(currentFreqTimePos);
+		console.log('currSliderVal = ' , currSliderVal);
+		var keyframes = [];
+		var tempArray = [];
+		var keyframesTime = [];
+		if (this._initialFreqTimeVal.length == 0) {
+			//TODO(dilorom): Explain what this loop does
+			for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
+				keyframes.push(this._data["main"].parameters["frequency"].data[ii].t);
+				// tempArray.push(this._data["main"].parameters["frequency"].data[ii].value);
+				// keyframes.push(tempArray);
+				// //
+				// tempArray = [];
+				console.log("keyframes[" + ii + "] = " + keyframes[ii]);
+			}
+			this._initialFreqTimeVal = keyframes;
+
+			//this._initialAmpTimeVal = JSON.parse(JSON.stringify(this._data["main"].parameters["amplitude"].data));
+		}
+		// print for debugging
+		// for (var ii = 0; ii < keyframes.length; ii++) {
+		// 	console.log("keyframes[" + ii + "] = " + keyframes[ii]);
+		// }
+		// keyframes only time value
+		// for (var ii = 0; ii < this._initialAmpTimeVal.length; ii++) {
+		// 	keyframesTime.push(this._initialAmpTimeVal[ii][0]);
+		// 	console.log("keyframesTime[" + ii + "] = " + keyframesTime[ii]);
+		// }
+
+		//deltaTime
+		var deltaTime = [];
+		var delta;
+		for (var ii = 0; ii < (this._initialFreqTimeVal.length-1); ii++) {
+			delta = this._initialFreqTimeVal[ii+1] - this._initialFreqTimeVal[ii];
+			deltaTime.push(delta);
+			console.log("deltaTime[" + ii + "] = " + deltaTime[ii]);
+		}
+		//define timePrime(To be time value)
+		var timePrime = [];
+		for (var ii = 0; ii < this._initialFreqTimeVal.length; ii++) {
+			if (currSliderVal == 0) {
+				timePrime = this._initialFreqTimeVal;
+			} else if (currSliderVal > 0) {
+				if (ii == 0) {
+					timePrime[0] = this._initialFreqTimeVal[0];
+				} else {
+					timePrime[ii] = timePrime[ii-1] + (deltaTime[ii-1])/currSliderVal;
+				}
+			} else if (currSliderVal < 0) {
+				if (ii == 0) {
+					timePrime[0] = this._initialFreqTimeVal[0];
+				} else {
+					timePrime[ii] = timePrime[ii-1] + (deltaTime[ii-1])*Math.abs(currSliderVal);
+				}
+			}
+			this._data["main"].parameters["frequency"].data[ii].t = timePrime[ii];
+			//this condition keeps timePrime in the range[0;3000]
+			if (this._isValidKeyframeTimePosition(this._data["main"].parameters["frequency"].data[ii].t)) {
+				console.log("timePrime[" + ii + "] = " + timePrime[ii]);
+			} else {
+				if (this._data["main"].parameters["frequency"].data[ii].t < 0) {
+					this._data["main"].parameters["frequency"].data[ii].t = 0;
+				}
+				if (this._data["main"].parameters["frequency"].data[ii].t > 3000) {
+					this._data["main"].parameters["frequency"].data[ii].t = 3000;
+				}
+			}
+			
+		}
+		
+		this.trigger(this._data);
 
 	},
+
+
+
+	// onTempoNew(currentAmpTimePos) {
+	// 	console.log("hello New Tempo combined functions")
+	// 	this._tempofreq(currentFreqTimePos);
+	// 	this._tempo(currentAmpTimePos);
+
+
+	// },
 
 //Dilorom
 
