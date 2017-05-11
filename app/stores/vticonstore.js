@@ -855,7 +855,6 @@ var vticonStore = Reflux.createStore({
 
 
 	onFreq_slider(currentFreqPos) {
-
 		var currFreqVal = parseFloat(currentFreqPos);
 		var df = currFreqVal;
 		console.log("current = %f, df = %f", currFreqVal, df);
@@ -920,7 +919,7 @@ var vticonStore = Reflux.createStore({
 
 	},
 
-//Energy slider f2 = f1 + f1/5 + 5 
+	//Energy slider f2 = f1 + f1/5 + 5 
 	onEnergy(currentFreqPos) {
 		var currFreqVal = parseFloat(currentFreqPos);
 		var df = currFreqVal + (currFreqVal)/5 +5;
@@ -979,28 +978,6 @@ var vticonStore = Reflux.createStore({
 	},
 //this is Discontinuity slider function
 	onPulse(currentDiscontPos) {
-		
-		 /*var MockArray = [
-						[0, 0.00000002],
-						[347.1, 0.072],
-		 				[638.4, 0.188],
-		 				[873.9, 0.333],
-		 				[1028.9, 0.494],
-		 				[1140.4, 0.683],
-						[1221, 1],
-		  				[1239.6, 0.0002],
-		 				[1591.1, 0.0002],
-		 				[1938.3, 0.072],
-		 				[2229.6, 0.188],
-		 				[2465.1, 0.333],
-		 				[2620.1, 0.494],
-		 				[2731.6, 0.683],
-		 				[2812.2, 1],
-		 				[2830, 0.00002]
-		 				];*/
-		
-		//var keyframes = MockArray;
-		// var keyframes = this._data["main"].parameters["amplitude"].data;
 		var T1, T2;
 		var currDiscontVal = parseFloat(currentDiscontPos);
 		console.log("currDiscontVal = %d", currDiscontVal)
@@ -1008,9 +985,6 @@ var vticonStore = Reflux.createStore({
 		var PulsestartT = [];
 		var PulseEndT = [];
 		var currKfTime = 0, pulseStartKfIndex = 0, pulseEndKfIndex = 0;
-		
-
-		// TODO(dilorom): explain why this if is needed
 		if (this._initialKfValues.length == 0) {
 			console.log("this._initialKfValues = 0")
 			var tempArray = [];
@@ -1018,26 +992,20 @@ var vticonStore = Reflux.createStore({
 			for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
 				tempArray.push(this._data["main"].parameters["amplitude"].data[ii].t);
 				tempArray.push(this._data["main"].parameters["amplitude"].data[ii].value);
-
-				//console.log("tempArray[%d] = [%s, %s]", ii, tempArray[0], tempArray[1])
 				keyframes.push(tempArray)
 				tempArray = [];
 			}
-
 			// print for debugging
 			for (var ii = 0; ii < keyframes.length; ii++) {
 				console.log("keyframes[" + ii + "] = " + keyframes[ii]);
 			}
 			if (keyframes.length <= 1) {
-				//console.log('too few keyframes (length = %d). No pulses. Terminating.', keyframes.length)
 				return
 			}
 
 			var pulseArray = [];
 			var t1 = 0; // t1 is pulse start
 			var t2 = 0; // t2 is pulse end
-
-			// iterate through keyframes to find pulse-start (t1) and pulse-end (t2)
 			var kfIndex = 0;
 			
 			while (kfIndex < keyframes.length) {
@@ -1049,34 +1017,22 @@ var vticonStore = Reflux.createStore({
 					console.log("returned from _pulseStart = %d", t1)
 				}
 				t2 = this._pulseEnd(t1, keyframes);
-
-				// add [t1, t2] to the pulseArray
 				tempArray.push(t1);
 				tempArray.push(t2);
 				pulseArray.push(tempArray);
 				tempArray = [];
-				// assign t2 to kfIndex so that next iteration will start considering keyframes after current t2
 				kfIndex = t2;
-				// break;
 			}
-			//TODO(dilorom): what these are doing?
+			//these variables are global and they keep initial value of keyframes without changing
 			this._initialKfValues = keyframes;
 			this._globalPulseArray = pulseArray;
 			
 		} else {
 			console.log("this._initialKfValues != 0")
 		}
-
-		// TODO: describe what this loop does.
 		for (var ii = 0; ii < this._globalPulseArray.length; ii++) {
-			//console.log("pulseArray[%d] = [%d, %d]", ii, pulseArray[ii][0], pulseArray[ii][1])
-			// TODO: follow CamelCase variable naming and make variables lowerCase
-			// PulsestartT = keyframes[pulseArray[ii][0]][0];
 			PulsestartT = this._initialKfValues[this._globalPulseArray[ii][0]][0];
-			// PulseEndT = keyframes[pulseArray[ii][1]][0];
 			PulseEndT = this._initialKfValues[this._globalPulseArray[ii][1]][0];
-			
-			//console.log("pulseStartTime=", PulsestartT, "pulseEndTime=", PulseEndT);
 			T1 = PulsestartT + (PulseEndT - PulsestartT)/3;
 			T2 = PulsestartT + (currDiscontVal)*(PulseEndT - PulsestartT)/3;
 			console.log("T1 time slot = ", T1, "T2 time slot = ", T2);
@@ -1100,21 +1056,9 @@ var vticonStore = Reflux.createStore({
 					// this._data["main"].parameters["amplitude"].data[intervalIndex].value
 					this._data["main"].parameters["amplitude"].data[intervalIndex].value = 0
 				} else {
-					// TODO(dilorom): change this log message accordingly
-					// console.log("not changing keyframes[%d] since its time: %f does not fall within {%f, %f} time range",
-					// 	intervalIndex, currKfTime, T1, T2)
 					this._data["main"].parameters["amplitude"].data[intervalIndex].value = this._initialKfValues[intervalIndex][1]
 				}
-				//this if condition breaks if dead loop happens
-				// if (intervalIndex == 150) {
-				// 	console.log('hit the max, intervalIndex = %d', intervalIndex);
-				// 	break;
-				// }
 			}
-			// if (intervalIndex == 150) {
-			// 	console.log('hit the outer max, ii = %d', ii);
-			// 	break;
-			// }
 		}
 		// redraw keyframes with updated values
 		this.trigger(this._data);
@@ -1132,7 +1076,6 @@ var vticonStore = Reflux.createStore({
 			console.log("_pulseStart is called for the last keyframe (index=%d). Returning -1 to indicate there is no more pulse.", currIndex);
 			return -1;
 		}
-
 		var thres = 0.01; // threshold to decide equality of two coordinates
 		// var t1 = currIndex;
 		var delta = 0;
@@ -1145,7 +1088,6 @@ var vticonStore = Reflux.createStore({
 					//console.log("delta = %f, moving on to the next keyframe", delta)
 				}
 			}
-			
 		}
 	},
 
@@ -1175,16 +1117,12 @@ var vticonStore = Reflux.createStore({
 				}
 			}
 		}
-
 		console.log("no conditions matched, therefore the last keyframe (index=%d) is t2", ii)
 		return ii;
 	},
 
-
-
-
-	
-	//this function to create 'Tempo parameter' //positive value of the slider decreases Time and negative value increases time
+	//this function to creates 'Tempo parameter' for the amplitude
+	//positive value of the slider decreases Time and negative value increases time
 	//T0 =t0
 	//T1 = t0+(t1-t0)/2
 	//T2 = T1 + (t2-t1)/2
@@ -1196,29 +1134,12 @@ var vticonStore = Reflux.createStore({
 		var tempArray = [];
 		var keyframesTime = [];
 		if (this._initialAmpTimeVal.length == 0) {
-			//TODO(dilorom): Explain what this loop does
 			for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
 				keyframes.push(this._data["main"].parameters["amplitude"].data[ii].t);
-				// tempArray.push(this._data["main"].parameters["amplitude"].data[ii].value);
-				// keyframes.push(tempArray);
-				// //
-				// tempArray = [];
 				console.log("keyframes[" + ii + "] = " + keyframes[ii]);
 			}
 			this._initialAmpTimeVal = keyframes;
-
-			//this._initialAmpTimeVal = JSON.parse(JSON.stringify(this._data["main"].parameters["amplitude"].data));
 		}
-		// print for debugging
-		// for (var ii = 0; ii < keyframes.length; ii++) {
-		// 	console.log("keyframes[" + ii + "] = " + keyframes[ii]);
-		// }
-		// keyframes only time value
-		// for (var ii = 0; ii < this._initialAmpTimeVal.length; ii++) {
-		// 	keyframesTime.push(this._initialAmpTimeVal[ii][0]);
-		// 	console.log("keyframesTime[" + ii + "] = " + keyframesTime[ii]);
-		// }
-
 		//deltaTime
 		var deltaTime = [];
 		var delta;
@@ -1257,12 +1178,14 @@ var vticonStore = Reflux.createStore({
 					this._data["main"].parameters["amplitude"].data[ii].t = 3000;
 				}
 			}
-			
 		}
-		
 		this.trigger(this._data);
 	},
-
+	//this function to creates 'Tempo parameter' for the frequency
+	//positive value of the slider decreases Time and negative value increases time
+	//T0 =t0
+	//T1 = t0+(t1-t0)/2
+	//T2 = T1 + (t2-t1)/2
 	onTempoNew(currentFreqTimePos) {
 		var currSliderVal = parseFloat(currentFreqTimePos);
 		console.log('currSliderVal = ' , currSliderVal);
@@ -1270,29 +1193,13 @@ var vticonStore = Reflux.createStore({
 		var tempArray = [];
 		var keyframesTime = [];
 		if (this._initialFreqTimeVal.length == 0) {
-			//TODO(dilorom): Explain what this loop does
+			//this loop is pushing each keyframe Time value to keyframes variable
 			for (var ii = 0; ii < this._data["main"].parameters["frequency"].data.length; ii++) {
 				keyframes.push(this._data["main"].parameters["frequency"].data[ii].t);
-				// tempArray.push(this._data["main"].parameters["frequency"].data[ii].value);
-				// keyframes.push(tempArray);
-				// //
-				// tempArray = [];
 				console.log("keyframes[" + ii + "] = " + keyframes[ii]);
 			}
 			this._initialFreqTimeVal = keyframes;
-
-			//this._initialAmpTimeVal = JSON.parse(JSON.stringify(this._data["main"].parameters["amplitude"].data));
 		}
-		// print for debugging
-		// for (var ii = 0; ii < keyframes.length; ii++) {
-		// 	console.log("keyframes[" + ii + "] = " + keyframes[ii]);
-		// }
-		// keyframes only time value
-		// for (var ii = 0; ii < this._initialAmpTimeVal.length; ii++) {
-		// 	keyframesTime.push(this._initialAmpTimeVal[ii][0]);
-		// 	console.log("keyframesTime[" + ii + "] = " + keyframesTime[ii]);
-		// }
-
 		//deltaTime
 		var deltaTime = [];
 		var delta;
@@ -1320,7 +1227,8 @@ var vticonStore = Reflux.createStore({
 				}
 			}
 			this._data["main"].parameters["frequency"].data[ii].t = timePrime[ii];
-			//this condition keeps timePrime in the range[0;3000]
+			
+			//this condition keeps timePrime in the Time range[0;3000]
 			if (this._isValidKeyframeTimePosition(this._data["main"].parameters["frequency"].data[ii].t)) {
 				console.log("timePrime[" + ii + "] = " + timePrime[ii]);
 			} else {
@@ -1331,24 +1239,11 @@ var vticonStore = Reflux.createStore({
 					this._data["main"].parameters["frequency"].data[ii].t = 3000;
 				}
 			}
-			
 		}
-		
 		this.trigger(this._data);
-
 	},
 
-
-
-	// onTempoNew(currentAmpTimePos) {
-	// 	console.log("hello New Tempo combined functions")
-	// 	this._tempofreq(currentFreqTimePos);
-	// 	this._tempo(currentAmpTimePos);
-
-
-	// },
-
-//Dilorom
+//Coding Dilorom//
 
 	});
 

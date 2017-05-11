@@ -45,12 +45,10 @@ var EditorHeader = React.createClass({
 			displaySlider_F:true,
 			displayEnergySlider:true,
 			displayPulseButton:true,
-			displayTempoButton:true,
 			displaySideNavButton:true,
 			displayFakeSlider:true,
 			displayTogButton:true,
 			displayDiscontinuitySlider:true,
-			displayTempoSlider:true,
 			displayTempoNewSlider:true,
 
 			//dilorom
@@ -76,8 +74,7 @@ var EditorHeader = React.createClass({
 		SaveLoadStore.actions.save();
 	},
 
-	//dilorom
-
+	//Coding dilorom
 	_onSliderChange : function(e) {
 		VTIconStore.actions.increaseAmplitude(e.target.value);
 		
@@ -99,16 +96,10 @@ var EditorHeader = React.createClass({
 		console.log("Discont");
 		VTIconStore.actions.pulse(event.target.value);
 	},
-	_onTempoClick : function(e) {
-		console.log("hello Tempo");
-		//VTIconStore.actions.tempo();
-	},
-	_onTempoChange : function(e) {
-		//console.log("hello tempo slider");
-		VTIconStore.actions.tempo(e.target.value);
-	},
+	//this Tempo slider is calling 2function(both amplitude&frequency)
 	_onTempoNewChange : function(e) {
 		console.log("Combined Tempo slider");
+		VTIconStore.actions.tempo(e.target.value);
 		VTIconStore.actions.tempoNew(e.target.value);
 	},
 	_onFakeClick : function(e) {
@@ -266,20 +257,6 @@ var EditorHeader = React.createClass({
 				toggleButton = (
 					<input id="switch" type="checkbox" className="slider round" onClick={this._onToggleButtonClick}/>); 
 			}
-
-			var tempoButton = <span />
-			if (this.props.displayTempoButton)
-			{
-				tempoButton = (<a class="btn header" style={buttonStyle} onClick={this._onTempoClick}>Tempo</a>);
-			}
-
-			var tempoSlider = <span />
-			if (this.props.displayTempoSlider)
-			{
-				tempoSlider = (
-					<input id="typeinp" type="range"  min="-3" max="3" value={this.state.value} onChange={this._onTempoChange} step="1.5"/>
-					);
-			}
 			var tempoNewSlider = <span />
 			if (this.props.displayTempoNewSlider)
 			{
@@ -288,9 +265,7 @@ var EditorHeader = React.createClass({
 					);
 			}
 		
-			
-		
-		//dilorom
+		//Coding dilorom
 
 		var loadButton = <span />
 		if (this.props.displaySaveButton)
@@ -318,9 +293,6 @@ var EditorHeader = React.createClass({
 					{saveButton}
 					{loadButton}
 					{pulseButton}
-					{tempoButton}
-				
-					
 					{this.state.value} 
 
 					<span id="mySidenav" className="sidenav">
@@ -342,10 +314,6 @@ var EditorHeader = React.createClass({
 							</tr>
 							<tr>
 								<td>Tempo</td>
-								<td>{tempoSlider}</td>
-							</tr>
-							<tr>
-								<td>Tempo_New</td>
 								<td>{tempoNewSlider}</td>
 							</tr>
 							<tr>
