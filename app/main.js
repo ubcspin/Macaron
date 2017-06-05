@@ -1,5 +1,5 @@
 import React from 'react';
-var VTEditor = require('./vteditor.jsx');
+var MobileEditor = require('./mobileeditor.jsx');
 require('../css/macaron.css');
 require('../css/mcpolicy.css');
 require('../css/mcinstructions.css');
@@ -11,5 +11,5 @@ require('../css/saveload.css')
 main();
 
 function main() {
-		React.render(<VTEditor />, document.getElementById('app'));
+		React.render(<MobileEditor />, document.getElementById('app'));
 	}

@@ -31,7 +31,8 @@ var EditorHeader = React.createClass({
 	    	displaySaveButton:true,
 	    	displayStartButton:false,
 				displayMixButton:true,
-				uploadFileID:"uploadedFile"
+				uploadFileID:"uploadedFile",
+				displayMenu:true
 	    }
 	},
 
@@ -169,20 +170,25 @@ var EditorHeader = React.createClass({
 			siteTitle = (<span className="title unselectable" > Macaron </span>);
 		}
 
-
-		return (
-			<div className="header" style={headerStyle}>
-				{startButton}
-				{siteTitle}
-				<VersionHistory/>
-				<span className="menu">
+		var menuSpan = <span />
+		if (this.props.displayMenu) {
+			menuSpan = (<span className="menu">
 					{animationOptionDisplay}
 					{interfaceModeDisplay}
 					<UserAgreement />
 					{mixButton}
 					{saveButton}
 					{loadButton}
-				</span>
+				</span>);
+		}
+
+
+		return (
+			<div className="header" style={headerStyle}>
+				{startButton}
+				{siteTitle}
+				<VersionHistory/>
+				{menuSpan}
 			</div>
 		);
 	}
