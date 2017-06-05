@@ -4,6 +4,7 @@ require('../css/macaron.css');
 require('../css/mcpolicy.css');
 require('../css/mcinstructions.css');
 require('../css/saveload.css');
+require('../css/macaronmobile.css');
 
 //require('../img/');
 
