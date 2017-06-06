@@ -273,7 +273,12 @@ var vticonStore = Reflux.createStore({
 	onNewKeyframe(parameter, t, value, addToSelection=false, name="") {
 		this._saveStateForUndo();
 		name = this._selectVTIcon(name);
-
+		// console.log("trying to generate!");
+		// console.log("value: " + value);
+		// console.log("t: " + t);
+		// console.log(parameter);
+		// console.log(value);
+		// console.log(t);
 		LogStore.actions.log("VTICON_NEWKEYFRAME_"+name);
 
 		var new_id = this._addNewKeyframe(parameter, t, value, addToSelection, name=name);

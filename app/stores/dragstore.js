@@ -130,7 +130,7 @@ var dragStore = Reflux.createStore({
 	 	var pmap = {};
 
 	 	for (var p in this._scales[this._targetName].topOffsetParameter) {
-	 		pmap[p] = this._scales[this._targetName].scaleParameter[p].invert(y-this._scales[this._targetName].topOffsetParameter[p]);
+	 		//pmap[p] = this._scales[this._targetName].scaleParameter[p].invert(y-this._scales[this._targetName].topOffsetParameter[p]);
 	 	}
 
 	 	return pmap;

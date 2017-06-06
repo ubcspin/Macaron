@@ -265,12 +265,12 @@ var KeyframeEditor = React.createClass({
 
 	        var scaleY = this.state.scales[this.props.name].scaleParameter[this.props.parameter];
 
-	        var x = e.clientX - this.state.offsetLeft;
-	        var y = e.clientY - this.state.offsetTop;
-					console.log(scaleY.invert(y));
+	        var x = e.clientX - (this.state.offsetLeft + 30);
+	        var y = e.clientY - (this.state.offsetTop + 300 - document.body.scrollTop);
+					console.log("test: " + this.props.scaleX.invert(x));
 
 	        VTIconStore.actions.newKeyframe(this.props.parameter, this.props.scaleX.invert(x), scaleY.invert(y), e.shiftKey, name=this.props.name);
-	        DragStore.actions.startKeyframeDrag(this.props.name, e.shiftKey);
+					DragStore.actions.startKeyframeDrag(this.props.name, e.shiftKey);
 
 		} else if (this.props.selectable) {
   			DragStore.actions.startSelectDrag(this.props.name, e.shiftKey);

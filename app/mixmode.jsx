@@ -442,8 +442,10 @@ var MixMode = React.createClass({
       if ((n=="wave1")||(n=="mixedWave")||(n=="wave2")) {
         ScaleStore.actions.setTimelineRange(n, this._calculateTimelineRange(n));
         var actualLeft = this.refs[n+"EditorRef"].getDOMNode().offsetLeft;
-        // var actualTop = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
+        var actualTop = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
+        console.log("actual top: " + actualTop);
         ScaleStore.actions.setLeftOffset(n, actualLeft);
+        ScaleStore.actions.setTopOffset(n, actualTop);
       }
     }
   },
