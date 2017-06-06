@@ -452,7 +452,7 @@ var MixMode = React.createClass({
 
   _calculateTimelineRange(name) {
     var actualWidth = this.refs[name+"EditorRef"].getDOMNode().clientWidth;
-    // var actualHeight = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
+    var actualHeight = this.refs[name+"EditorRef"].getDOMNode().clientHeight;
     return [this.props.timelineLeftOffset+this.props.keyframeCircleRadius, actualWidth-this.props.keyframeCircleRadius-this.props.timelineRightOffset];
   }
 
