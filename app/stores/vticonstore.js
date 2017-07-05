@@ -981,9 +981,10 @@ var vticonStore = Reflux.createStore({
 		}
 
 	},
-//this is Discontinuity slider function
+
+	//this is Discontinuity slider function
 	onPulse(currentDiscontPos) {
-		var T1, T2;
+		var T1, T2, middleResult;
 		var currDiscontVal = parseFloat(currentDiscontPos);
 		console.log("currDiscontVal = %d", currDiscontVal)
 		// TODO(dilorom): explain meaning/purpose/intention (what do they do) of these two variables.
@@ -1001,12 +1002,17 @@ var vticonStore = Reflux.createStore({
 				tempArray = [];
 			}
 			// print for debugging
-			for (var ii = 0; ii < keyframes.length; ii++) {
-				console.log("keyframes[" + ii + "] = " + keyframes[ii]);
-			}
+			// for (var ii = 0; ii < keyframes.length; ii++) {
+			// 	console.log("keyframes[" + ii + "] = " + keyframes[ii]);
+			// }
+			this._print2DArray("keyframes", keyframes)
+
 			if (keyframes.length <= 1) {
 				return
 			}
+			// deep copy keyframes array's content to middleResult as we will 
+			// modify middleResult at runtime, while keeping keyframes content constant.
+			middleResult = JSON.parse(JSON.stringify(keyframes));
 
 			var pulseArray = [];
 			var t1 = 0; // t1 is pulse start
@@ -1037,7 +1043,6 @@ var vticonStore = Reflux.createStore({
 		}
 		//TvaluesArray is a array and it is keeping all T1 and T2 values, I use this array to adding newkeyframes 
 		var TvaluesArray = [];
-		// r1 = extracted this._data
 		for (var ii = 0; ii < this._globalPulseArray.length; ii++) {
 			PulsestartT = this._initialKfValues[this._globalPulseArray[ii][0]][0];
 			PulseEndT = this._initialKfValues[this._globalPulseArray[ii][1]][0];
@@ -1065,9 +1070,11 @@ var vticonStore = Reflux.createStore({
 					// Note that making keyframes[intervalIndex][1]=0 would not actually change
 					// our graph on the browser, since the browser graph is drawn using values at
 					// this._data["main"].parameters["amplitude"].data[intervalIndex].value
-					this._data["main"].parameters["amplitude"].data[intervalIndex].value = 0
+					// this._data["main"].parameters["amplitude"].data[intervalIndex].value = 0
+					middleResult[intervalIndex][1] = 0;
 				} else {
-					this._data["main"].parameters["amplitude"].data[intervalIndex].value = this._initialKfValues[intervalIndex][1]
+					middleResult[intervalIndex][1] = this._initialKfValues[intervalIndex][1];
+					// this._data["main"].parameters["amplitude"].data[intervalIndex].value = this._initialKfValues[intervalIndex][1]
 				}
 			}
 		}
@@ -1075,9 +1082,8 @@ var vticonStore = Reflux.createStore({
 		// t1 and t2 values in additional array: [[25, 0], [45, 0], [65, 0], [85, 0]]
 		//final keyframes must be like this: [[0,0], [10, 0], [20, 0], [25, 0] [30, 0], [40,0], [45, 0], [50, 0], [60, 0], [65, 0], [70, 0], [80,0], [85, 0], [90, 0]]
 
-
-
-
+		// this._print2DArray("keyframes", keyframes)
+		// this._print2DArray("middleResult", middleResult)
 
 
 		// console.log("pre-length = %d", this._data["main"].parameters["amplitude"].data.length)
@@ -1102,12 +1108,84 @@ var vticonStore = Reflux.createStore({
 			//console.log("TvaluesArray[0]", TvaluesArray[0]);
 			if ((currDiscontVal == 2) || (currDiscontVal == 3)) {
 				this._addNewKeyframe("amplitude", TvaluesArray[ii], 0, false, "main");
-				//this._addNewKeyframe("amplitude", TvaluesArray[ii][1], 0, false, "main");
+				// this._addNewKeyframe("amplitude", TvaluesArray[ii][1], 0, false, "main");
 			}
 		}
+
+		// go through the modified this._data and synchronize middleResult values
+		// with this._data. As an example, it works like this
+		// initial this._data = [[10, 5], [20, 6], [30, 7], [40, 8]]
+		// which has 3 keyframes. First element of each keyframe is 'time' and the
+		// second element is 'value'.
+		
+		// middleResult = [[10, 5], [20, 0], [30, 0], [40, 8]
+		// note the updated 'value' for the second and the third keyframes (t=20,t=30)
+
+		// modified this._data = [[10, 5], [15, 0], [20, 6], [30, 7], [35, 0], [40, 8]]
+		// note added [15, 0] and [35, 0] keyframes by this._addNewKeyframe function
+
+		// the following loop will go through modified this._data and whenever 
+		// a keyframe has the same 'time' (for middleResult and 'modified this._data')
+		// middleResult's 'value' is assigned to the modified this._data. 
+		// In other words, whenever 'time' value (the first element of the keyframe)
+		// of the modified this._data is equal to 'time' value of the middleResult,
+		// modified this._data gets assigned middleResult's 'value'. Conversely,
+		// when 'time' values are not equal, this means that particular keyframe 
+		// was added to this._data by this._addNewKeyframe function, and
+		// this particular keyframe did not exist in initial this._data 
+		// (hence, middleResult does not have this keyframe either). These 
+		// keyframes will be skipped (will not get assigned middleResult's value)
+		// by the following loop, which is exactly what we want. I.e., the final 
+		// this._data (to be drawn) will have all keyframes which consists of
+		// the union of middleResult keyframes and modified this._data keyframe.
+		
+		// after the loop the final this._data will look like following
+		// final this._data = [[10, 5], [15, 0], [20, 0], [30, 0], [35, 0], [40, 8]]
+
+		var modifiedDataLength = this._data["main"].parameters["amplitude"].data.length;
+		var middleResultIndex = 0;
+		for (var ii = 0; ii < modifiedDataLength; ii++) {
+			if (this._data["main"].parameters["amplitude"].data[ii].t == middleResult[middleResultIndex][0]) {
+				this._data["main"].parameters["amplitude"].data[ii].value = middleResult[middleResultIndex][1];
+				console.log("assigned new value=%f to this._data on t=%d", 
+					middleResult[middleResultIndex][1],
+					this._data["main"].parameters["amplitude"].data[ii].t);
+				middleResultIndex += 1
+			} else {
+				console.log("keeping value=%f for this._data on t=%d", 
+					this._data["main"].parameters["amplitude"].data[ii].value,
+					this._data["main"].parameters["amplitude"].data[ii].t);
+			}
+		}
+
+		// note that the loop above assumes data is sorted by 'time' for 
+		// middleResult and modified this._data array. This is true by design,
+		// i.e., our middleResult is sorted since our 'keyframes' were sorted,
+		// and modified this._data is also sorted since _addNewKeyframe sorted
+		// array after inserting a new keyframe.
+		// This also assumes modified this._data is a superset of the middleResult,
+		// which is also true by design. I.e., modified this._data contains all
+		// keyframes middleResult has, since modified this._data was constructed
+		// by adding more keyframes with _addNewKeyframe function.
+		
+		// restore keyframes content on middleResult for the next round,
+		// when another discontinuety value is selected.
+		middleResult = JSON.parse(JSON.stringify(keyframes));
+
 		console.log("this._data =", this._data);
 		this.trigger(this._data);
 
+	},
+
+	_print2DArray(arr_name, arr_content) {
+		const util = require('util');
+		var result = "[", temp = "";
+		for (var ii = 0; ii < arr_content.length; ii++) {
+			temp = util.format("[%d, %d], ", arr_content[ii][0].toFixed(2), arr_content[ii][1].toFixed(4));
+			result = util.format("%s%s", result, temp)
+		}
+		result = util.format("%s]", result)
+		console.log("%s = %s", arr_name, result);
 	},
 
 	//this function detects pulse start
