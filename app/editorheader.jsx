@@ -50,6 +50,7 @@ var EditorHeader = React.createClass({
 			displayTogButton:true,
 			displayDiscontinuitySlider:true,
 			displayTempoNewSlider:true,
+			displayIrregularitySlider:true,
 
 			//dilorom
 
@@ -96,11 +97,15 @@ var EditorHeader = React.createClass({
 		console.log("Discont");
 		VTIconStore.actions.pulse(event.target.value);
 	},
-	//this Tempo slider is calling 2function(both amplitude&frequency)
+	//this Tempo slider is calling 2function (both amplitude&frequency) at the same time
 	_onTempoNewChange : function(e) {
 		console.log("Combined Tempo slider");
 		VTIconStore.actions.tempo(e.target.value);
 		VTIconStore.actions.tempoNew(e.target.value);
+	},
+	_onIrregularityChange : function(e) {
+		console.log("Irregularity slider");
+		VTIconStore.actions.irregularity(e.target.value);
 	},
 	_onFakeClick : function(e) {
 		console.log("Faaafaaa");
@@ -114,6 +119,9 @@ var EditorHeader = React.createClass({
 		document.getElementById("main").style.marginLeft = "250px";
 		document.getElementById("discontinuity_Slider").stepDown();
 		document.getElementById("discontinuity_Slider").stepDown();
+		// document.getElementById("irregularitySlider").stepDown();
+		// document.getElementById("irregularitySlider").stepDown();
+		
 	},
 
 	_closeNav : function(e) {
@@ -247,7 +255,7 @@ var EditorHeader = React.createClass({
 			if (this.props.displayDiscontinuitySlider)
 			{
 				discontinuity_Slider = (
-					<input id="discontinuity_Slider" type="range"  min="1" max="3" value ={this.state.value}  onChange={this._onDiscontClick} step="1"/>
+					<input id="discontinuity_Slider" type="range"  min="0" max="3" value ={this.state.value}  onChange={this._onDiscontClick} step="1"/>
 				);
 			}
 			//toggle switch button not working yet :(
@@ -262,6 +270,13 @@ var EditorHeader = React.createClass({
 			{
 				tempoNewSlider = (
 					<input id="typeinp" type="range"  min="-3" max="3" value={this.state.value} onChange={this._onTempoNewChange} step="1.5"/>
+					);
+			}
+			var irregularitySlider = <span />
+			if (this.props.displayIrregularitySlider)
+			{
+				irregularitySlider = (
+					<input id="irregularitySlider" type="range"  min="0" max="4" value={this.state.value} onChange={this._onIrregularityChange} step="1"/>
 					);
 			}
 		
@@ -322,7 +337,7 @@ var EditorHeader = React.createClass({
 							</tr>
 							<tr>
 								<td>Irregularity</td>
-								<td>{fake_Slider}</td>
+								<td>{irregularitySlider}</td>
 							</tr>
 						</table>
 					</section>

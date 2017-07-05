@@ -42,7 +42,9 @@ var vticonActions = Reflux.createActions(
 		'energy',
 		'pulse',
 		'tempo',
-		'tempoNew'
+		'tempoNew',
+		'irregularity'
+
 		// 'jumpHistory'
 
 		//hasti Dilorom
@@ -150,10 +152,13 @@ var vticonStore = Reflux.createStore({
 		this._initialFreqVal = [];
 		this._initialKfValues = [];
 		this._globalPulseArray = [];
+		this._globalSilenceArray = [];
 		//declare keyframes as global var
 		this._keyframes = [];
 		this._initialAmpTimeVal = [];
 		this._initialFreqTimeVal = [];
+		//irregularity global variable to save initial keyframes value
+		this._initialKeyframesVal = [];
 		
 	},
 
@@ -1030,12 +1035,18 @@ var vticonStore = Reflux.createStore({
 		} else {
 			console.log("this._initialKfValues != 0")
 		}
+		//TvaluesArray is a array and it is keeping all T1 and T2 values, I use this array to adding newkeyframes 
+		var TvaluesArray = [];
+		// r1 = extracted this._data
 		for (var ii = 0; ii < this._globalPulseArray.length; ii++) {
 			PulsestartT = this._initialKfValues[this._globalPulseArray[ii][0]][0];
 			PulseEndT = this._initialKfValues[this._globalPulseArray[ii][1]][0];
 			T1 = PulsestartT + (PulseEndT - PulsestartT)/3;
 			T2 = PulsestartT + (currDiscontVal)*(PulseEndT - PulsestartT)/3;
 			console.log("T1 time slot = ", T1, "T2 time slot = ", T2);
+			TvaluesArray.push(T1);
+			TvaluesArray.push(T2);
+			console.log("TvaluesArray = ", TvaluesArray);
 
 			// TODO: use pulseStartKfIndex (and pulseEndKfIndex) instead of pulseArray[ii][0] inside loop.
 			pulseStartKfIndex = this._globalPulseArray[ii][0];
@@ -1060,8 +1071,43 @@ var vticonStore = Reflux.createStore({
 				}
 			}
 		}
+		//original keyframes  [[0,0], [10, 0], [20, 0], [30, 0], [40,0], [50, 0], [60, 0], [70, 0], [80,0], [90, 0]]
+		// t1 and t2 values in additional array: [[25, 0], [45, 0], [65, 0], [85, 0]]
+		//final keyframes must be like this: [[0,0], [10, 0], [20, 0], [25, 0] [30, 0], [40,0], [45, 0], [50, 0], [60, 0], [65, 0], [70, 0], [80,0], [85, 0], [90, 0]]
+
+
+
+
+
+
+		// console.log("pre-length = %d", this._data["main"].parameters["amplitude"].data.length)
+		// if (currDiscontVal == 2) {
+		// 	this._addNewKeyframe("amplitude", T1, 0, false, "main");
+		// 	this._addNewKeyframe("amplitude", T2, 0, false, "main");
+
+		// 	// // this._addNewKeyframe("amplitude", 1500, 0.5, false, "main");
+
+		// 	// var lastIndex = intervalIndex-1
+		// 	// // this._data["main"].parameters["amplitude"].data.push(this._data["main"].parameters["amplitude"].data[lastIndex])
+		// 	// var newLength = this._data["main"].parameters["amplitude"].data.length
+		// 	// this._data["main"].parameters["amplitude"].data[newLength-1].t = 1500
+		// 	// this._data["main"].parameters["amplitude"].data[newLength-1].value = 0.5
+		// }
+		// console.log("post-length = %d", this._data["main"].parameters["amplitude"].data.length)
+
 		// redraw keyframes with updated values
+		
+		//this adds a newkeyframes at T1 and T2 point
+		for (var ii = 0; ii < TvaluesArray.length; ii++) {
+			//console.log("TvaluesArray[0]", TvaluesArray[0]);
+			if ((currDiscontVal == 2) || (currDiscontVal == 3)) {
+				this._addNewKeyframe("amplitude", TvaluesArray[ii], 0, false, "main");
+				//this._addNewKeyframe("amplitude", TvaluesArray[ii][1], 0, false, "main");
+			}
+		}
+		console.log("this._data =", this._data);
 		this.trigger(this._data);
+
 	},
 
 	//this function detects pulse start
@@ -1131,7 +1177,6 @@ var vticonStore = Reflux.createStore({
 		var currSliderVal = parseFloat(currentAmpTimePos);
 		console.log('currSliderVal = ' , currSliderVal);
 		var keyframes = [];
-		var tempArray = [];
 		var keyframesTime = [];
 		if (this._initialAmpTimeVal.length == 0) {
 			for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
@@ -1190,7 +1235,6 @@ var vticonStore = Reflux.createStore({
 		var currSliderVal = parseFloat(currentFreqTimePos);
 		console.log('currSliderVal = ' , currSliderVal);
 		var keyframes = [];
-		var tempArray = [];
 		var keyframesTime = [];
 		if (this._initialFreqTimeVal.length == 0) {
 			//this loop is pushing each keyframe Time value to keyframes variable
@@ -1241,6 +1285,198 @@ var vticonStore = Reflux.createStore({
 			}
 		}
 		this.trigger(this._data);
+	},
+
+
+	//This function creates irregularity parameter
+	onIrregularity(currentIrregPos) {
+		// var T1, T2;
+		var currSliderVal = parseFloat(currentIrregPos);
+		console.log("currSliderVal =", currSliderVal);
+		
+		 if (this._initialKeyframesVal.length == 0) {
+			console.log("this._initialKfValues = 0")
+			var tempArray = [];
+			var keyframes = [];
+			for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
+				tempArray.push(this._data["main"].parameters["amplitude"].data[ii].t);
+				tempArray.push(this._data["main"].parameters["amplitude"].data[ii].value);
+				keyframes.push(tempArray)
+				tempArray = [];
+			}
+			// print for debugging
+			// for (var ii = 0; ii < keyframes.length; ii++) {
+			// 	console.log("keyframes[" + ii + "] = " + keyframes[ii]);
+			// }
+			if (keyframes.length <= 1) {
+				return
+			}
+
+			var silenceArray = [];
+			var s1 = 0; // s1 is silence start
+			var s2 = 0; // s2 is silence end
+			//SilenceStart never starts from the first keyframe
+			var kfIndex = 1;
+			
+			while (kfIndex < keyframes.length) {
+				s1 = this._silenceStart(kfIndex, keyframes);
+				if (s1 == -1) {
+					console.log("got -1 from _silenceStart. This means no more silence")
+					break;
+				} else {
+					console.log("returned from _silenceStart = %d", s1)
+				}
+				s2 = this._silenceEnd(s1, keyframes);
+				tempArray.push(s1);
+				tempArray.push(s2);
+				silenceArray.push(tempArray);
+				tempArray = [];
+				kfIndex = s2;
+			}
+			//these variables are global and they keep initial value of keyframes without changing
+			this._initialKeyframesVal = keyframes;
+			this._globalSilenceArray = silenceArray;
+			console.log(this._globalSilenceArray);
+			//console.log("this._initialKeyframesVal = ", this._initialKeyframesVal);
+			
+		} else {
+			console.log("this._initialKeyframesVal != 0")
+		}
+		//1232
+		var silenceStartT =[];
+		var silenceEndT =[];
+		var deltaT = 0;
+		var ranT;
+		for (var ii = 0; ii < this._globalSilenceArray.length; ii++) {
+			silenceStartT = this._initialKeyframesVal[this._globalSilenceArray[ii][0]][0];
+			silenceEndT = this._initialKeyframesVal[this._globalSilenceArray[ii][1]][0];
+			deltaT = silenceEndT - silenceStartT;
+			//randT = myArray[Math.floor(Math.random() * this._globalSilenceArray.length)];
+			console.log('silenceStartT =', silenceStartT, 'silenceEndT =', silenceEndT);
+			console.log("deltaT =", deltaT);
+
+		}
+		
+		
+
+
+
+// for (var ii = 0; ii < this._globalPulseArray.length; ii++) {
+// 			PulsestartT = this._initialKfValues[this._globalPulseArray[ii][0]][0];
+// 			PulseEndT = this._initialKfValues[this._globalPulseArray[ii][1]][0];
+// 			T1 = PulsestartT + (PulseEndT - PulsestartT)/3;
+// 			T2 = PulsestartT + (currDiscontVal)*(PulseEndT - PulsestartT)/3;
+// 			console.log("T1 time slot = ", T1, "T2 time slot = ", T2);
+// //deltaT/4; 2*deltaT/4; 3*deltaT/4
+
+		// var currSliderVal = parseFloat(currentIrregPos);
+		// console.log("currSliderVal =", currSliderVal);
+		// var keyframes = [];
+		// var keyframesVal = [];
+		// if (this._initialKeyframesVal.length == 0) {
+		// 	//this loop is pushing each keyframe Time value to keyframes variable
+		// 	for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
+		// 		keyframesVal.push(this._data["main"].parameters["amplitude"].data[ii].value);
+		// 		console.log("keyframesVal[" + ii + "] = " + keyframesVal[ii]);
+		// 	}
+		// 	this._initialKeyframesVal = keyframesVal;
+		// }
+
+		// var thres = 0.01; // threshold to decide equality of two coordinates
+		// var delta = 0;
+		// // pulseArray = [[1,3], [5,7], [9,11]]
+		// //slots = [[1,2,3], [5,6,7], [9,10,11]]
+		// //slot = [[1,3], [5,7], [9, 11]] this correct!
+		// // var tempArray = [];
+		// // 	var keyframes = [];
+		// // 	for (var ii = 0; ii < this._data["main"].parameters["amplitude"].data.length; ii++) {
+		// // 		tempArray.push(this._data["main"].parameters["amplitude"].data[ii].t);
+		// // 		tempArray.push(this._data["main"].parameters["amplitude"].data[ii].value);
+		// // 		keyframes.push(tempArray)
+		// // 		tempArray = [];
+		// // 	}
+
+
+
+		// var tempArray = [];
+		// var silence = []; // [1,2,3, 5,6,7, 9, 10, 11]
+		// for (var ii = 1; ii < this._initialKeyframesVal.length-1; ii++) {
+		// 	if ((this._initialKeyframesVal[ii] < 0.01) && (this._initialKeyframesVal[ii+1] < 0.01)) {
+		// 		//delta = Math.abs(this._initialKeyframesVal[ii] - this._initialKeyframesVal[ii+1]) 
+		// 		console.log("this._initialKeyframesVal[" + ii + "] = " + this._initialKeyframesVal[ii], "this._initialKeyframesVal[" + (ii + 1) +"] = " + this._initialKeyframesVal[ii+1]);
+		// 		tempArray.push(this._initialKeyframesVal[ii]);
+		// 		tempArray.push(this._initialKeyframesVal[ii+1]);
+		// 		silence.push(tempArray);
+
+		// 		//console.log("silence[" + ii + "] = " + silence);
+		// 	}
+
+		// }
+		// //print for debugging
+		// for (var ii = 0; ii < silence.length; ii++) {
+		// 		console.log("silence[" + ii + "] = " + silence[ii]);
+		// 	}
+		// 	if (silence.length <= 1) {
+		// 		return`
+		// 	}
+
+		// // var rand = myArray[Math.floor(Math.random() * myArray.length)];
+		// //AddTime = currSliderVal*(t1-t2)/4;
+
+
+	},
+
+
+
+	_silenceStart(currIndex, keyframes) {
+		// //the first keyframe is always t1
+	 // 	if (currIndex == 0) {
+		// 	return currIndex;
+		// }
+		// // t1 can never be the last keyframe. Return error if called with the last keyframe
+	 	if (currIndex > keyframes.length) {
+	 		console.log("_silenceStart is called for the last keyframe (index=%d). Returning -1 to indicate there is no more silence.", currIndex);
+	 		return -1;
+	 	}
+
+		var thres = 0.01; // threshold to decide equality of two coordinates
+		var s1 = currIndex;
+		var delta = 0;
+		for (var ii = currIndex; ii < keyframes.length-1; ii++) {
+			if ((keyframes[ii][1] < thres) && (keyframes[ii+1][1] < thres)) {
+				// delta = Math.abs(keyframes[ii][1] - keyframes[ii+1][1]) 
+				// if (delta <= thres) {
+				// 	return(ii);
+				// } else {
+				// 	console.log("delta = %f, moving on to the next keyframe", delta)
+				// }
+				return ii;
+			}
+		}
+		return -1;
+	},
+
+	//this function detects pulse end
+	_silenceEnd(currIndex, keyframes) {
+		var thres = 0.01; // threshold to decide equality of two coordinates
+		var delta = 0;
+		var ii = 0;
+		for (ii = currIndex; ii < keyframes.length-1; ii++) {
+			if ((keyframes[ii][1] < thres) && (keyframes[ii+1][1] > thres)) {
+				// //console.log("endpulse keyframes[ii][1]= %.8f, keyframes[ii+1][1]= %.8f", keyframes[ii][1], keyframes[ii+1][1]);
+				// delta = Math.abs(keyframes[ii][1] - keyframes[ii+1][1])
+				// //console.log("delta = %f", delta)
+				// if (delta <= thres) {
+				// 	return(ii);
+				// } else {
+				// 	console.log("delta = %f, moving on to the next keyframe", delta)
+				// }
+				return ii;
+
+			}
+		}
+		console.log("no conditions matched, therefore the last keyframe (index=%d) is s2", ii)
+		return -1;
 	},
 
 //Coding Dilorom//
