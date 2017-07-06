@@ -151,6 +151,7 @@ var vticonStore = Reflux.createStore({
 		this._initialAmpVal = [];
 		this._initialFreqVal = [];
 		this._initialKfValues = [];
+		this._keyframes = [];
 		this._globalPulseArray = [];
 		this._globalSilenceArray = [];
 		//declare keyframes as global var
@@ -1006,6 +1007,7 @@ var vticonStore = Reflux.createStore({
 			// 	console.log("keyframes[" + ii + "] = " + keyframes[ii]);
 			// }
 			this._print2DArray("keyframes", keyframes)
+			this._keyframes = keyframes;
 
 			if (keyframes.length <= 1) {
 				return
@@ -1043,6 +1045,11 @@ var vticonStore = Reflux.createStore({
 		}
 		//TvaluesArray is a array and it is keeping all T1 and T2 values, I use this array to adding newkeyframes 
 		var TvaluesArray = [];
+
+		// re-assign this._keyframes again to get initial values before any modification.
+		// TODO(dilorom): explain more why it is needed.
+		middleResult = JSON.parse(JSON.stringify(this._keyframes));
+
 		for (var ii = 0; ii < this._globalPulseArray.length; ii++) {
 			PulsestartT = this._initialKfValues[this._globalPulseArray[ii][0]][0];
 			PulseEndT = this._initialKfValues[this._globalPulseArray[ii][1]][0];
@@ -1104,12 +1111,28 @@ var vticonStore = Reflux.createStore({
 		// redraw keyframes with updated values
 		
 		//this adds a newkeyframes at T1 and T2 point
+		var kfWithTimeExists = false;
 		for (var ii = 0; ii < TvaluesArray.length; ii++) {
 			//console.log("TvaluesArray[0]", TvaluesArray[0]);
 			if ((currDiscontVal == 2) || (currDiscontVal == 3)) {
-				this._addNewKeyframe("amplitude", TvaluesArray[ii], 0, false, "main");
+				// add a new keyframe only if there is no existing keyframe on this position,
+				// i.e., no keyframe exists with the same 'time'. Keyframes with the same 'time'
+				// breaks other parts of the code by making it hard to reason about all
+				// keyframes we see and how many are actually present. Therefore, we want to 
+				// avoid having multiple keyframes with the same 'time' value. Following loop
+				// with 'if' condition is a safeguard against those duplicate keyframes.
+				for (var inner = 0; inner < this._data["main"].parameters["amplitude"].data.length; inner++) {
+					if (TvaluesArray[ii] == this._data["main"].parameters["amplitude"].data[inner].t) {
+						console.log("keyframe with t=%d already exist, not adding a new", TvaluesArray[ii])
+						kfWithTimeExists = true;
+					}
+				}
+				if (!kfWithTimeExists) {
+					this._addNewKeyframe("amplitude", TvaluesArray[ii], 0, false, "main");
+				}
 				// this._addNewKeyframe("amplitude", TvaluesArray[ii][1], 0, false, "main");
 			}
+			kfWithTimeExists = false;
 		}
 
 		// go through the modified this._data and synchronize middleResult values
@@ -1124,7 +1147,7 @@ var vticonStore = Reflux.createStore({
 		// modified this._data = [[10, 5], [15, 0], [20, 6], [30, 7], [35, 0], [40, 8]]
 		// note added [15, 0] and [35, 0] keyframes by this._addNewKeyframe function
 
-		// the following loop will go through modified this._data and whenever 
+		// the following loop will go through modified this._data and whenever
 		// a keyframe has the same 'time' (for middleResult and 'modified this._data')
 		// middleResult's 'value' is assigned to the modified this._data. 
 		// In other words, whenever 'time' value (the first element of the keyframe)
@@ -1144,8 +1167,10 @@ var vticonStore = Reflux.createStore({
 
 		var modifiedDataLength = this._data["main"].parameters["amplitude"].data.length;
 		var middleResultIndex = 0;
+		console.log("modifiedDataLength = %d", modifiedDataLength)
 		for (var ii = 0; ii < modifiedDataLength; ii++) {
 			if (this._data["main"].parameters["amplitude"].data[ii].t == middleResult[middleResultIndex][0]) {
+
 				this._data["main"].parameters["amplitude"].data[ii].value = middleResult[middleResultIndex][1];
 				console.log("assigned new value=%f to this._data on t=%d", 
 					middleResult[middleResultIndex][1],
@@ -1157,6 +1182,7 @@ var vticonStore = Reflux.createStore({
 					this._data["main"].parameters["amplitude"].data[ii].t);
 			}
 		}
+		console.log("ii = %d, middleResultIndex = %d", ii, middleResultIndex)
 
 		// note that the loop above assumes data is sorted by 'time' for 
 		// middleResult and modified this._data array. This is true by design,
@@ -1170,7 +1196,7 @@ var vticonStore = Reflux.createStore({
 		
 		// restore keyframes content on middleResult for the next round,
 		// when another discontinuety value is selected.
-		middleResult = JSON.parse(JSON.stringify(keyframes));
+		middleResult = JSON.parse(JSON.stringify(this._keyframes));
 
 		console.log("this._data =", this._data);
 		this.trigger(this._data);
